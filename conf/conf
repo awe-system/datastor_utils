@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+conf_dest=$(cat yunke_serversan.conf | grep conf_dest | cut -d '=' -f2)
+echo $conf_dest

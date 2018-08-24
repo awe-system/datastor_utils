@@ -1,0 +1,15 @@
+CMakeCache.txt
+CMakeFiles/*
+CPackConfig.cmake
+CPackSourceConfig.cmake
+Makefile
+_CPack_Packages/
+cmake_install.cmake
+install_manifest.txt
+ss-conf-*-Linux.rpm
+ss_conf_profile.sh
+.idea/
+ss_conf.cbp
+/cmake-build-debug
+*.so
+*.pyc

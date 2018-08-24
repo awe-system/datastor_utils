@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<funcs>
+    <!--value_str:   C++type        python
+        string      string        ""
+        int         int           int
+        long        long          long
+        ulong       unsigned long ulong
+        uint        unsigned int  uint
+        bool        bool          bool
+        list_string list<string>  [""]     cannot return in c++
+        vec_string  vector<string>  [""]     cannot return in c++
+        map_string  map<string, string>  [""]     cannot return in c++
+        json        json_obj      all
+     -->
+    <!--type: in out in/out
+
+     -->
+    <sock name="/tmp/yunke_serversan/ss-cluster.socket" type="local"/>
+    <client type="python" filename="admin_cluster_client"/>
+    <server type="C++" namespace="ss_cluster" filename="event"/>
+
+    <func name="create_cluster">
+        <param name="ips" value="vec_string" type="in"/>
+    </func>
+
+    <func name="zk_server">
+        <param name="operate" value="string" type="in"/>
+    </func>
+
+    <func name="sync_event">
+        <param name="event_id" value="int" type="in"/>
+        <param name="event_path" value="string" type="in"/>
+    </func>
+
+    <func name="sync_hosts">
+        <param name="hosts" value="string" type="in"/>
+    </func>
+
+    <func name="init_local_znode">
+    </func>
+
+    <func name="init_zk_handler">
+    </func>
+
+    <func name="set_stand_alone">
+    </func>
+
+    <func name="add_node">
+        <param name="ip" value="string" type="in"/>
+    </func>
+
+    <func name="remove_node">
+        <param name="host_id" value="string" type="in"/>
+    </func>
+
+    <func name="data_ip_in">
+        <param name="host_id" value="string" type="in"/>
+        <param name="ips" value="vec_string" type="in"/>
+    </func>
+
+    <func name="data_ip_out">
+        <param name="host_id" value="string" type="in"/>
+        <param name="ips" value="vec_string" type="in"/>
+    </func>
+
+    <func name="disk_in">
+        <param name="host_id" value="string" type="in"/>
+        <param name="dev_paths" value="vec_string" type="in"/>
+    </func>
+
+    <func name="disk_out">
+        <param name="host_id" value="string" type="in"/>
+        <param name="dev_paths" value="vec_string" type="in"/>
+    </func>
+
+    <func name="execute_on">
+        <param name="id" value="string" type="in"/>
+        <param name="cmd" value="string" type="in"/>
+        <param name="result" value="string" type="out"/>
+        <param name="error" value="string" type="out"/>
+    </func>
+
+    <func name="execute_on_ip">
+        <param name="ip" value="string" type="in"/>
+        <param name="cmd" value="string" type="in"/>
+        <param name="result" value="string" type="out"/>
+        <param name="error" value="string" type="out"/>
+    </func>
+
+    <func name="is_master">
+        <param name="is_master" value="bool" type="out"/>
+    </func>
+
+    <func name="in_stand_alone">
+        <param name="in_stand_alone" value="bool" type="out"/>
+    </func>
+
+    <func name="local_id">
+        <param name="local_id" value="string" type="out"/>
+    </func>
+
+    <func name="master_id">
+        <param name="master_id" value="string" type="out"/>
+    </func>
+
+    <func name="cluster_ids">
+        <param name="ids" value="vec_string" type="out"/>
+    </func>
+
+    <func name="ips_by_id">
+        <param name="id" value="string" type="in"/>
+        <param name="ips" value="vec_string" type="out"/>
+    </func>
+
+    <func name="cluster_ip_by_id">
+        <param name="id" value="string" type="in"/>
+        <param name="ip" value="string" type="out"/>
+    </func>
+
+    <func name="get_hostid">
+        <param name="ip" value="string" type="in"/>
+        <param name="id" value="string" type="out"/>
+    </func>
+
+    <func name="list_hosts">
+        <param name="host_objs" value="json" type="out"/>
+    </func>
+
+    <func name="ip_out">
+        <param name="host_id" value="string" type="in"/>
+        <param name="flag" value="string" type="in"/>
+    </func>
+
+
+</funcs>

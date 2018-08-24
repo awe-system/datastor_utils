@@ -1,0 +1,41 @@
+#!/bin/bash
+basepath=$(cd `dirname $0`; pwd)
+
+source $basepath/serversan_env
+
+conf_dir=$conf_dest/yunke_serversan/conf
+
+get_env_name()
+{
+	echo $1"_"$2 | cut -d '-' -f2
+}
+
+
+#main
+if [ $# = 0 ];then
+	files=$(ls $conf_dir/*.conf)
+	for file in $files;do
+		echo ""
+		echo -e "\033[32m$file\033[0m"
+		cat $file
+	done
+	exit 0
+elif [[ $# != 2 ]];then
+	echo "-------------help-------------------"
+	echo "                  ;list all env"
+	echo "<repo_name> <env> ;get env val"
+	exit 0
+fi
+
+repo_name=$1
+val=$2
+envname=$(get_env_name $repo_name $val)
+if [ ${!envname} ];then
+   echo ${!envname}
+else
+   conf_path=$(ls $conf_dir | grep $repo_name.conf)
+   export $envname=$(cat $conf_dir/$repo_name.conf | grep $val | cut -d '=' -f2)
+   #echo $envname" is "${!envname}" empty"
+   echo ${!envname}
+fi
+

@@ -1,4 +1,5 @@
 #include "lt_session.h"
+#include "../lt_function_error.h"
 
 lt_session::lt_session(boost::asio::io_service *_io_service, lt_session_callback *_cb) :
         lt_reference(),

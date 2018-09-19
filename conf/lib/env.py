@@ -22,18 +22,11 @@ def write_env_intotmp(reponame,key,val):
     except:
         sys.stderr.write("write_env_intotmp faild\n")
 
-def getenv_noss(reponame,key):
+def getenv(reponame,key):
     try:
         return try_getenv_fromtmp(reponame,key)
     except:
-        res = commands.getoutput("/usr/bin/serversan_list ss-"+reponame+" "+key)
+        res = commands.getoutput("/usr/bin/awe_env "+reponame+" "+key)
         if res == "":return res
         write_env_intotmp(reponame,key,res)
         return res
-
-def getenv(reponame,key):
-    try:
-        if(reponame[0:3] == "ss-"):
-            return getenv_noss(reponame[3:],key)
-    except:
-        return getenv_noss(reponame,key)

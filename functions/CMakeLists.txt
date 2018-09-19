@@ -42,6 +42,7 @@ add_library(lt_function SHARED ${THREAD_POOL_FILES} ${COMMUNICATE_FILES} ${UTILS
 set_target_properties(lt_function PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(lt_function ss_log lt_data boost_system boost_thread)
 INSTALL (TARGETS lt_function LIBRARY DESTINATION /usr/local/lib)
+
 INSTALL(FILES thread_pool/thread_pool.hpp
         communicate/action_stub.h
         communicate/lt_async_2safe_async.h
@@ -66,9 +67,59 @@ INSTALL(FILES thread_pool/thread_pool.hpp
         lt_function_error.h
         DESTINATION /usr/local/include/lt_function)
 
+##################################################################################
+###conf###########################################################################
+
+set(ENV_SOURCE_FILES
+        env/env.cpp
+        env/env.h)
+add_library(ss_env SHARED ${ENV_SOURCE_FILES})
+
+execute_process(COMMAND python -m py_compile lib/env.py)
+
+INSTALL (TARGETS ss_env
+        LIBRARY DESTINATION /usr/local/lib)
+INSTALL(FILES env/env.h DESTINATION /usr/local/include/ss_conf)
+INSTALL(FILES lib/env.py DESTINATION /usr/lib64/python2.7)
+INSTALL(FILES lib/env.pyc DESTINATION /usr/lib64/python2.7)
+INSTALL(FILES ss_conf_error.h DESTINATION /usr/local/include/ss_conf)
+
+execute_process(COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/conf OUTPUT_VARIABLE conf_dest)
 execute_process(COMMAND date "+%Y%m%d" OUTPUT_VARIABLE date_time)
 string(REPLACE "\n" "" date_time ${date_time} )
 MESSAGE(STATUS "date_time : ${date_time}")
+
+string(REPLACE "\n" "" conf_dest ${conf_dest} )
+MESSAGE(STATUS "conf_dest : ${conf_dest}")
+
+execute_process(COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/conf/generate_profile.sh)
+
+install(DIRECTORY awe_conf/conf DESTINATION "${conf_dest}/awe/")
+install(DIRECTORY awe_conf/xml DESTINATION "${conf_dest}/yunke_serversan/")
+install(FILES awe_env.conf DESTINATION "/etc")
+install(PROGRAMS awe_conf/bin/awe_env_base DESTINATION "${conf_dest}/yunke_serversan/bin/")
+install(PROGRAMS awe_conf/bin/asw_env DESTINATION "${conf_dest}/yunke_serversan/bin/")
+install(PROGRAMS awe_conf/bin/version DESTINATION "${conf_dest}/yunke_serversan/bin/")
+install(PROGRAMS awe_conf/bin/awe_env_base DESTINATION "/usr/bin/")
+install(PROGRAMS awe_conf/bin/asw_env DESTINATION "/usr/bin/")
+install(PROGRAMS awe_conf/bin/version DESTINATION "/usr/bin/")
+install(PROGRAMS ss_conf_profile.sh DESTINATION "/etc/profile.d/")
+
+###end conf
+##################################################################################
+
+
+
+
+
+
+
+
+
+execute_process(COMMAND date "+%Y%m%d" OUTPUT_VARIABLE date_time)
+string(REPLACE "\n" "" date_time ${date_time} )
+MESSAGE(STATUS "date_time : ${date_time}")
+
 
 # 以下为RPM信息的设置，包名,概述，供应者，版本, 分组等等信息，通过其变量名称可以知道意思
 set(CPACK_PACKAGE_NAME "lt-function_${date_time}")

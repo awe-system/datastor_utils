@@ -1,0 +1,8 @@
+#!/bin/bash
+basepath=$(cd `dirname $0`; pwd)
+
+source $basepath/awe_env
+
+version_path=$conf_dest/awe_conf/conf/version
+cat $version_path
+

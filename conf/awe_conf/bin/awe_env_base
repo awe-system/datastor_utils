@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export conf_dest=$(cat /etc/awe_env.conf | grep conf_dest | cut -d '=' -f2)
+export tmp_dest=$(cat /etc/awe_env.conf | grep tmp_dest | cut -d '=' -f2)

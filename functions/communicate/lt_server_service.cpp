@@ -1,4 +1,5 @@
 #include "lt_server_service.h"
+#include "../lt_function_error.h"
 
 
 void lt_server_service::connected(lt_session *sess)

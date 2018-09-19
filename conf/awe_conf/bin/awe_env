@@ -1,9 +1,9 @@
 #!/bin/bash
 basepath=$(cd `dirname $0`; pwd)
 
-source $basepath/serversan_env
+source $basepath/awe_env_base
 
-conf_dir=$conf_dest/yunke_serversan/conf
+conf_dir=$conf_dest/awe_conf/conf
 
 get_env_name()
 {

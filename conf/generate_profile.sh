@@ -3,8 +3,8 @@
 cd $(dirname $0)
 curdir=$(pwd)
 cd -
-bin_dir=$curdir"/yunke_serversan/bin"
-conf_dir=$curdir"/yunke_serversan/conf"
+bin_dir=$curdir"/awe_conf/bin"
+conf_dir=$curdir"/awe_conf/conf"
 
 get_env_name()
 {
@@ -12,7 +12,7 @@ get_env_name()
 	echo $pre"_"$2
 }
 
-rm -f $curdir"/ss_conf_profile.sh"
+rm -f $curdir"/awe_conf_profile.sh"
 
 files=$(ls $conf_dir/*.conf)
 for file in $files;do
@@ -22,6 +22,6 @@ for file in $files;do
             val=$(echo $env_item | cut -d '=' -f2)
             filename=$(basename $file)
             export_key=$(get_env_name $filename $key)
-            echo "export "$export_key"="$val >> ss_conf_profile.sh
+            echo "export "$export_key"="$val >> awe_conf_profile.sh
         done
 done

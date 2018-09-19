@@ -1,4 +1,5 @@
 #include "lt_session_cli.h"
+#include "../lt_function_error.h"
 
 lt_session_cli::lt_session_cli(boost::asio::io_service *_io_service, lt_session_callback *cb) :
         lt_session(_io_service, cb)

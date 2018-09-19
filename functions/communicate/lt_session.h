@@ -8,12 +8,11 @@
 #include <mutex>
 #include <condition_variable>
 #include <list>
-#include <lt_data_t.h>
-#include "lt_function_error.h"
 #include "lt_async_2safe_async.h"
 #include "lt_reference.h"
 #include "lt_safe_state.hpp"
 #include "lt_session_dog.h"
+#include "../../data/data/lt_data_t.h"
 
 #define DEFAULT_WAIT_SECONDS 120
 

@@ -1,4 +1,5 @@
 #include "lt_client_service.h"
+#include "../lt_function_error.h"
 
 void lt_client_service::rcv_done(lt_session *sess, lt_data_t *received_data, int error)
 {

@@ -1,8 +1,0 @@
-#!/bin/bash
-basepath=$(cd `dirname $0`; pwd)
-
-source $basepath/serversan_env
-
-version_path=$conf_dest/yunke_serversan/conf/version
-cat $version_path
-

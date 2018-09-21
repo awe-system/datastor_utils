@@ -242,7 +242,8 @@ string(REPLACE "\n" "" conf_dest ${conf_dest} )
 MESSAGE(STATUS "conf_dest : ${conf_dest}")
 
 #execute_process(COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/conf/generate_profile.sh)
-
+#install(DIRECTORY conf/awe_conf DESTINATION "${conf_dest}/")
+MESSAGE(STATUS "${conf_dest}/")
 install(DIRECTORY conf/awe_conf/conf DESTINATION "${conf_dest}/awe_conf/")
 install(FILES conf/awe_env.conf DESTINATION "/etc")
 install(PROGRAMS conf/awe_conf/bin/awe_env_base DESTINATION "${conf_dest}/awe_conf/bin/")

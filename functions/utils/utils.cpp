@@ -1,9 +1,12 @@
-#include <unistd.h>
+#ifndef WIN32
 #include <assert.h>
+
+#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <errno.h>
 #include <dirent.h>
+
 
 #include <vector>
 #include <list>
@@ -227,3 +230,4 @@ bool ip_valid(const char *ip)
         return false;
     return true;
 }
+#endif

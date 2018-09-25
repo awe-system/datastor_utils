@@ -4,7 +4,7 @@
 
 lt_watch_dog::lt_watch_dog(boost::asio::io_service *_io_service) : timer(*_io_service), seconds(DEFALUT_TIMER_SECS)
 {
-    on_monitor.store(false);
+    on_monitor = false;
 }
 
 void lt_watch_dog::start_monitor()
@@ -59,7 +59,9 @@ void lt_watch_dog::set_seconds(int sec)
 
 void lt_watch_dog::start_timer()
 {
+    std::unique_lock<std::mutex> lock(pending_m);
     on_monitor = true;
+    lock.unlock();
     timer.expires_from_now(boost::posix_time::seconds(seconds));
     timer.async_wait(boost::bind(&lt_watch_dog::timer_handler, this, boost::asio::placeholders::error));
 }

@@ -3,6 +3,8 @@
 #define MAX_SIXE   1024
 env::env(const char *repo_name,const char *key)
 {
+#ifdef WIN32
+#else
     char tmp_buf[MAX_SIXE] = {0};
     string cmd = "/usr/bin/sudo /usr/bin/awe_env ";
     cmd += string(repo_name) + string(" ");
@@ -16,6 +18,7 @@ env::env(const char *repo_name,const char *key)
     val = string(tmp_buf);
     // cout<<val<<endl;
     pclose(pf);
+#endif
 }
 
 int env::get_int()

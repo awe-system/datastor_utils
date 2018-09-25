@@ -2,11 +2,21 @@ cmake_minimum_required(VERSION 3.7)
 project(datastor_utils)
 
 set(CMAKE_CXX_STANDARD 11)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
 set(CPACK_GENERATOR RPM)
 
 set(BOOST_INCLUDEDIR "/usr/local/include")
 set(BOOST_LIBRARYDIR "/usr/local/lib")
 find_package(Boost 1.62.0 EXACT REQUIRED COMPONENTS)
+
+endif ()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+include_directories("./include")
+include_directories(".")
+#    set(BOOST_LIBRARYDIR "D:\\tool\\boost_1_62_0-bin-msvc-all-32-64\\boost_1_62_0\\lib32-msvc-14.0")#换成安装路径
+endif ()
 
 set(SOURCE_FILES
         conf/env/env.cpp
@@ -187,9 +197,14 @@ set(SOURCE_FILES
 #        log/readne.txt
 #        log/ss_log_error.h
         README.md)
-
-add_library(datastor_utils SHARED ${SOURCE_FILES})
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    add_library(datastor_utils ${SOURCE_FILES})
+endif()
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_library(datastor_utils SHARED ${SOURCE_FILES})
+endif()
 set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 target_link_libraries(datastor_utils boost_system boost_thread)
 
 INSTALL (TARGETS datastor_utils LIBRARY DESTINATION /usr/local/lib)
@@ -271,8 +286,10 @@ set(CPACK_PACKAGE_VERSION_MAJOR "1")
 set(CPACK_PACKAGE_VERSION_MINOR "1")
 set(CPACK_PACKAGE_VERSION_PATCH "1")
 set(CPACK_RPM_PACKAGE_GROUP "AWE")
-set(CPACK_RPM_PACKAGE_URL "https://github.com/awe-systerm/conf_rpc/tree/master")
+set(CPACK_RPM_PACKAGE_URL "https://github.com/awe-systerm/datastor_utils/tree/master")
 set(CPACK_RPM_PACKAGE_DESCRIPTION "awe datastor Dependencies")
 set(CPACK_PACKAGE_RELEASE 1)
 set(CPACK_RPM_PACKAGE_LICENSE "AWE Licence")
 include (CPack)
+
+endif ()

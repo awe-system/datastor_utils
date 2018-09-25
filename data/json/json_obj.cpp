@@ -1,8 +1,7 @@
 #include "json_obj.h"// #include <Python.h>
 #include <stdio.h>
-#include "json_obj.h"
 #include "../lt_data_error.h"
-#include <boost/bind.hpp>
+#include "boost/bind.hpp"
 #ifdef JSON_TEST
 #include <iostream>
 #endif
@@ -149,7 +148,6 @@ json_obj::json_obj() :
 {
 }
 
-//复制构造函数
 json_obj::json_obj(const json_obj &other)
 {
     clear();
@@ -515,7 +513,7 @@ void json_obj::load_array(const rapidjson::Value &val_input)
     // 	cout<<"not IsArray"<<endl<<endl;
     // 	getchar();
     // }
-    for ( int i = 0; i < val_input.Size(); ++i )
+    for (int i = 0; i < val_input.Size(); ++i )
     {
         const rapidjson::Value &val = val_input[i];
         json_obj obj(val);
@@ -609,7 +607,7 @@ void json_obj::loads(const char *s)
 
 void json_obj::loads(std::string &str)
 {
-    clear();
+    this->clear();
     rapidjson::Document doc;
     doc.Parse(str.c_str());
     // cout<<"doc.Parse(str.c_str());"<<endl;
@@ -749,7 +747,6 @@ void json_obj::dump_array(rapidjson::Document &doc, rapidjson::Value &val_out) c
     }
 }
 
-//把自己填充到一个rapidjson变量中
 void json_obj::dumps(rapidjson::Document &doc, rapidjson::Value &val) const
 {
     switch ( _type )
@@ -783,7 +780,6 @@ void json_obj::dumps(rapidjson::Document &doc, rapidjson::Value &val) const
     }
 }
 
-//把自己填充到一个rapidjson的document中
 void json_obj::dumps(rapidjson::Document &doc) const
 {
     switch ( _type )
@@ -924,6 +920,7 @@ long long json_obj::get_number() const
         return (long long)i_val;
     return 0;
 }
+
 
 #ifdef JSON_TEST
 int main(int argc, const char *argv[])

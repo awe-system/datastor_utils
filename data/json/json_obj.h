@@ -56,7 +56,6 @@ private:
 public:
     bool is_empty() const;
 
-    //把自己填充到一个rapidjson变量中
     void dumps(rapidjson::Document &doc, rapidjson::Value &val) const;
 
     void dump_string(rapidjson::Document &doc) const;
@@ -84,7 +83,6 @@ public:
     void dump_array(rapidjson::Document &doc, rapidjson::Value &val) const;
 
 private:
-    //把自己填充到一个rapidjson的document中
     void dumps(rapidjson::Document &doc) const;
 
 private:
@@ -156,7 +154,6 @@ public:
 
     json_obj();
 
-    //复制构造函数
     json_obj(const json_obj &other);
 
     void clear();

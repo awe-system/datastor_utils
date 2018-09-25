@@ -1,8 +1,10 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
-
+#ifndef WIN32
 #include <sys/types.h>
+
 #include <sys/wait.h>
+
 
 #include <iostream>
 #include <sstream>
@@ -101,7 +103,5 @@ template <typename TMap>
         delete it->second;
     map.clear();
 }
-
 #endif
-
-//utf8标记
+#endif

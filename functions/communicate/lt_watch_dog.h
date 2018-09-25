@@ -14,7 +14,7 @@ private:
     bool is_monitoring;
     boost::asio::deadline_timer timer;
 
-    std::atomic<bool> on_monitor;
+    bool on_monitor;
     std::mutex pending_m;
     std::condition_variable pending_cond;
 public:
@@ -23,13 +23,13 @@ public:
     void set_seconds(int sec);
 
     ~lt_watch_dog();
+
 public:
     void start_monitor();
 
     void stop_monitor();
 
 public:
-    //看门狗定期检查调用check_feed 发现返回指为false时发送消息并且关闭监听
     virtual bool is_to_feed() const = 0;
 
     virtual void handle_event() = 0;

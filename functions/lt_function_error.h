@@ -10,15 +10,7 @@ typedef enum
     FUN_ERROR_TYPE_UNKNOWN = 1099
 } LT_FUNERROR_T;
 
-static inline int boost_err_translate(const boost::system::error_code &error)
-{
-    if ( error )
-    {
-        return -RPC_ERROR_TYPE_NET_BROKEN;
-    }
-    return 0;
-}
-
+#define boost_err_translate(error) ((error)?-RPC_ERROR_TYPE_NET_BROKEN:0)
 
 #endif //LT_FUNCTION_LT_FUNCTION_ERROR_H
 

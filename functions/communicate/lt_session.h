@@ -12,7 +12,7 @@
 #include "lt_reference.h"
 #include "lt_safe_state.hpp"
 #include "lt_session_dog.h"
-#include "../../data/data/lt_data_t.h"
+#include "lt_data/lt_data_t.h"
 
 #define DEFAULT_WAIT_SECONDS 120
 

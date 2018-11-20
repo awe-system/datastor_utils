@@ -6,7 +6,7 @@ set(CPACK_GENERATOR RPM)
 
 set(BOOST_INCLUDEDIR "/usr/local/include")
 set(BOOST_LIBRARYDIR "/usr/local/lib")
-find_package(Boost 1.62.0 EXACT REQUIRED COMPONENTS)
+find_package(Boost 1.68.0 EXACT REQUIRED COMPONENTS)
 
 set(SOURCE_FILES
         conf/env/env.cpp
@@ -230,7 +230,7 @@ execute_process(COMMAND python -m py_compile conf/lib/env.py)
 
 INSTALL(FILES conf/env/env.h DESTINATION /usr/local/include/awe_conf)
 INSTALL(FILES conf/lib/env.py DESTINATION /usr/lib64/python2.7)
-INSTALL(FILES conf/lib/env.pyc DESTINATION /usr/lib64/python2.7)
+#INSTALL(FILES conf/lib/env.pyc DESTINATION /usr/lib64/python2.7)
 INSTALL(FILES conf/awe_conf_error.h DESTINATION /usr/local/include/awe_conf)
 
 execute_process(COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/conf/conf OUTPUT_VARIABLE conf_dest)

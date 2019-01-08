@@ -16,6 +16,16 @@
 
 #define DEFAULT_WAIT_SECONDS 120
 
+class lt_session_description
+{
+private:
+    void *description_internal_pri;
+public:
+    void set_session_private(void *pri);
+    
+    void *get_session_private() const;
+};
+
 class lt_session;
 
 class lt_session_callback
@@ -30,7 +40,7 @@ public:
     virtual void connected(lt_session *sess) = 0;
 };
 
-class lt_session : public lt_reference, public lt_session_dog
+class lt_session : public lt_reference, public lt_session_dog, lt_session_description
 {
 private:
     int max_wait_seconds;
@@ -92,6 +102,8 @@ public:
     bool is_to_feed() const override;
 
     void handle_event() override;
+    
+  
 
 };
 

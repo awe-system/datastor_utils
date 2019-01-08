@@ -172,3 +172,13 @@ void lt_session::handle_event()
     let_it_down();
 }
 
+void *lt_session_description::get_session_private() const
+{
+    return description_internal_pri;
+}
+
+void lt_session_description::set_session_private(void *_pri)
+{
+    description_internal_pri = _pri;
+}
+

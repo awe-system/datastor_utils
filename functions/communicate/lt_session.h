@@ -18,6 +18,14 @@
 
 class lt_session_description
 {
+public:
+    virtual void set_session_private(void *pri) = 0;
+
+    virtual void *get_session_private() const = 0;
+};
+
+class lt_session_description_imp : public lt_session_description
+{
 private:
     void *description_internal_pri;
 public:
@@ -40,7 +48,7 @@ public:
     virtual void connected(lt_session *sess) = 0;
 };
 
-class lt_session : public lt_reference, public lt_session_dog, lt_session_description
+class lt_session : public lt_reference, public lt_session_dog,public lt_session_description_imp
 {
 private:
     int max_wait_seconds;

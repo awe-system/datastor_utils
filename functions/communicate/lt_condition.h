@@ -2,7 +2,7 @@
 #define LT_CONDITION_H
 
 #include <condition_variable>
-#include <lt_data_t.h>
+#include "lt_data/lt_data_t.h"
 
 class lt_condition
 {
@@ -31,6 +31,13 @@ public:
         {
             _data = data;
         }
+        std::unique_lock<std::mutex> lck(lock);
+        is_to_wait = false;
+        cond.notify_one();
+    }
+    
+    void notify()
+    {
         std::unique_lock<std::mutex> lck(lock);
         is_to_wait = false;
         cond.notify_one();

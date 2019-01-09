@@ -2,10 +2,10 @@
 #include "lt_thread_server.h"
 
 lt_thread_single::lt_thread_single()
-        : _io_service(), _work(_io_service), is_start(false)
+        : _io_service(), _work(_io_service)
 {
     th = new boost::thread(boost::bind(&lt_thread_single::run, this));
-    while ( !is_start ) usleep(1);
+    cond.wait();
 }
 
 lt_thread_single::~lt_thread_single()
@@ -22,12 +22,11 @@ boost::asio::io_service *lt_thread_single::get_io_service()
 
 void lt_thread_single::run()
 {
-    is_start = true;
+    cond.notify();
     _io_service.run();
 }
 
-lt_thread_server::lt_thread_server(int thread_num) : max(thread_num),
-                                                     curret_cnt(0),
+lt_thread_server::lt_thread_server(int thread_num) : curret_cnt(0),
                                                      splck()
 {
     for ( int i = 0; i < thread_num; ++i )
@@ -39,23 +38,19 @@ lt_thread_server::lt_thread_server(int thread_num) : max(thread_num),
 
 boost::asio::io_service *lt_thread_server::get_io_service()
 {
-    int i = 0;
-    do
-    {
-        splck.lock();
-        if ( ++curret_cnt == max )
-        { curret_cnt = 0; }
-        i = curret_cnt;
-        splck.unlock();
-    } while ( 0 );
-    
-    return threads[i]->get_io_service();
+    boost::lock_guard<boost::detail::spinlock> lck(splck);
+    if(threads.empty()) return nullptr;
+    if ( ++curret_cnt == threads.size() )
+    { curret_cnt = 0; }
+    return threads[curret_cnt]->get_io_service();
 }
 
 lt_thread_server::~lt_thread_server()
 {
-    for ( lt_thread_single *t : threads )
+    boost::lock_guard<boost::detail::spinlock> lck(splck);
+    while(!threads.empty())
     {
-        delete t;
+        delete threads.back();
+        threads.pop_back();
     }
 }

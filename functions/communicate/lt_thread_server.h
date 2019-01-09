@@ -3,6 +3,7 @@
 
 #include <boost/asio/io_service.hpp>
 #include <boost/thread.hpp>
+#include "lt_condition.h"
 
 
 class lt_thread_single
@@ -10,7 +11,7 @@ class lt_thread_single
     boost::asio::io_service _io_service;
     boost::asio::io_service::work _work;
     boost::thread* th;
-    bool is_start;
+    lt_condition cond;
 public:
     void run();
 public:
@@ -24,7 +25,6 @@ class lt_thread_server
 private:
     boost::detail::spinlock splck;
     int curret_cnt;
-    int max;
     std::vector<lt_thread_single *> threads;
 public:
     lt_thread_server(int thread_num);

@@ -50,7 +50,8 @@ void lt_server_service::snd_done(lt_session *sess, lt_data_t *sent_data, int err
 
 void lt_server_service::disconnected(lt_session *sess)
 {
-    //do_nothing
+    lt_session_description *session = (lt_session_description *) sess;
+    cb->disconnected(session);
 }
 
 

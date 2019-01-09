@@ -12,9 +12,27 @@
 #include "lt_reference.h"
 #include "lt_safe_state.hpp"
 #include "lt_session_dog.h"
-#include "../../data/data/lt_data_t.h"
+#include "lt_data/lt_data_t.h"
 
 #define DEFAULT_WAIT_SECONDS 120
+
+class lt_session_description
+{
+public:
+    virtual void set_session_private(void *pri) = 0;
+
+    virtual void *get_session_private() const = 0;
+};
+
+class lt_session_description_imp : public lt_session_description
+{
+private:
+    void *description_internal_pri;
+public:
+    void set_session_private(void *pri);
+    
+    void *get_session_private() const;
+};
 
 class lt_session;
 
@@ -30,7 +48,7 @@ public:
     virtual void connected(lt_session *sess) = 0;
 };
 
-class lt_session : public lt_reference, public lt_session_dog
+class lt_session : public lt_reference, public lt_session_dog,public lt_session_description_imp
 {
 private:
     int max_wait_seconds;
@@ -92,6 +110,8 @@ public:
     bool is_to_feed() const override;
 
     void handle_event() override;
+    
+  
 
 };
 

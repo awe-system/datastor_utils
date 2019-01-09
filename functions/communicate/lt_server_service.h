@@ -11,6 +11,7 @@ class lt_server_callback
 {
 public:
     virtual void do_func(lt_data_t *data, lt_session_serv *sess) = 0;
+    virtual void disconnected(lt_session_description *sess) = 0;
 };
 
 class lt_server_service : public lt_session_callback
@@ -47,6 +48,5 @@ private:
 
     void connected(lt_session *sess) override;
 };
-
 
 #endif //TEST_COMMUNICATE_LT_SERVER_SERVICE_H

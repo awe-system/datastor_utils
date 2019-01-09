@@ -41,6 +41,7 @@ find_package(Boost 1.62.0 EXACT REQUIRED COMPONENTS)
 add_library(lt_function SHARED ${THREAD_POOL_FILES} ${COMMUNICATE_FILES} ${UTILS_FILES} ${BASE64_FILES})
 set_target_properties(lt_function PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(lt_function ss_log lt_data boost_system boost_thread)
+
 INSTALL (TARGETS lt_function LIBRARY DESTINATION /usr/local/lib)
 
 INSTALL(FILES thread_pool/thread_pool.hpp

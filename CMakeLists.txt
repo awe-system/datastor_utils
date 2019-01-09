@@ -8,7 +8,7 @@ set(CPACK_GENERATOR RPM)
 
 set(BOOST_INCLUDEDIR "/usr/local/include")
 set(BOOST_LIBRARYDIR "/usr/local/lib")
-find_package(Boost 1.62.0 EXACT REQUIRED COMPONENTS)
+find_package(Boost 1.68.0 EXACT REQUIRED COMPONENTS)
 
 endif ()
 
@@ -207,6 +207,9 @@ set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 target_link_libraries(datastor_utils boost_system boost_thread)
 
+add_executable(test_function functions/test_functions.cpp)
+target_link_libraries(test_function datastor_utils boost_system boost_thread pthread)
+
 INSTALL (TARGETS datastor_utils LIBRARY DESTINATION /usr/local/lib)
 INSTALL(FILES functions/thread_pool/thread_pool.hpp
         functions/communicate/action_stub.h
@@ -245,7 +248,7 @@ execute_process(COMMAND python -m py_compile conf/lib/env.py)
 
 INSTALL(FILES conf/env/env.h DESTINATION /usr/local/include/awe_conf)
 INSTALL(FILES conf/lib/env.py DESTINATION /usr/lib64/python2.7)
-INSTALL(FILES conf/lib/env.pyc DESTINATION /usr/lib64/python2.7)
+#INSTALL(FILES conf/lib/env.pyc DESTINATION /usr/lib64/python2.7)
 INSTALL(FILES conf/awe_conf_error.h DESTINATION /usr/local/include/awe_conf)
 
 execute_process(COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/conf/conf OUTPUT_VARIABLE conf_dest)

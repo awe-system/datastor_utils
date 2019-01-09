@@ -5,7 +5,7 @@ set(CPACK_GENERATOR "RPM")
 include_directories(include)
 
 set(DATA_FILES
-        data/lt_data_t.h)
+        lt_data/lt_data_t.h)
 
 set(JSON_FILES
         json/json_obj.h
@@ -26,7 +26,7 @@ target_link_libraries(test_json lt_data boost_system boost_thread)
 
 
 INSTALL (TARGETS lt_data LIBRARY DESTINATION /usr/local/lib)
-INSTALL(FILES data/lt_data_t.h
+INSTALL(FILES lt_data/lt_data_t.h
         json/json_obj.h
         object/ref_obj.h
         lt_data_error.h

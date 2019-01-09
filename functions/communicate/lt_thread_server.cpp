@@ -23,7 +23,6 @@ boost::asio::io_service *lt_thread_single::get_io_service()
 void lt_thread_single::run()
 {
     is_start = true;
-    std::cout<<"run"<<std::endl;
     _io_service.run();
 }
 

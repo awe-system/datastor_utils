@@ -11,6 +11,7 @@ set(BOOST_LIBRARYDIR "/usr/local/lib")
 find_package(Boost 1.68.0 EXACT REQUIRED COMPONENTS)
 
 endif ()
+include_directories("./data")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 include_directories("./include")
@@ -24,7 +25,7 @@ set(SOURCE_FILES
         conf/env/env.h
         conf/awe_conf_error.h
         conf/awe_env.conf
-        data/data/lt_data_t.h
+        data/lt_data/lt_data_t.h
         data/json/json_obj.cpp
         data/json/json_obj.h
         data/json/test_json.cpp
@@ -235,7 +236,7 @@ INSTALL(FILES functions/thread_pool/thread_pool.hpp
         functions/base64/base64.h
         functions/lt_function_error.h
         DESTINATION /usr/local/include/lt_function)
-INSTALL(FILES data/data/lt_data_t.h
+INSTALL(FILES data/lt_data/lt_data_t.h
         data/json/json_obj.h
         data/object/ref_obj.h
         data/lt_data_error.h
@@ -245,7 +246,7 @@ INSTALL(FILES data/data/lt_data_t.h
 
 ##################################################################################
 ###conf###########################################################################
-execute_process(COMMAND python -m py_compile conf/lib/env.py)
+execute_process(COMMAND python -m py_compile ../conf/lib/env.py)
 
 INSTALL(FILES conf/env/env.h DESTINATION /usr/local/include/awe_conf)
 INSTALL(FILES conf/lib/env.py DESTINATION /usr/lib64/python2.7)

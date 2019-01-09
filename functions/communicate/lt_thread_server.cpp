@@ -5,7 +5,7 @@ lt_thread_single::lt_thread_single()
         : _io_service(), _work(_io_service), is_start(false)
 {
     th = new boost::thread(boost::bind(&lt_thread_single::run, this));
-    while(!is_start) usleep(1);
+    while ( !is_start ) usleep(1);
 }
 
 lt_thread_single::~lt_thread_single()
@@ -26,9 +26,10 @@ void lt_thread_single::run()
     _io_service.run();
 }
 
-lt_thread_server::lt_thread_server(int thread_num) : max(thread_num), curret_cnt(0)
+lt_thread_server::lt_thread_server(int thread_num) : max(thread_num),
+                                                     curret_cnt(0),
+                                                     splck()
 {
-    pthread_spin_init(&splck, PTHREAD_PROCESS_PRIVATE);
     for ( int i = 0; i < thread_num; ++i )
     {
         lt_thread_single *t = new lt_thread_single();
@@ -41,11 +42,11 @@ boost::asio::io_service *lt_thread_server::get_io_service()
     int i = 0;
     do
     {
-        pthread_spin_lock(&splck);
+        splck.lock();
         if ( ++curret_cnt == max )
         { curret_cnt = 0; }
         i = curret_cnt;
-        pthread_spin_unlock(&splck);
+        splck.unlock();
     } while ( 0 );
     
     return threads[i]->get_io_service();
@@ -57,5 +58,4 @@ lt_thread_server::~lt_thread_server()
     {
         delete t;
     }
-    pthread_spin_destroy(&splck);
 }

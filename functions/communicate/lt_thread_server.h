@@ -22,7 +22,7 @@ public:
 class lt_thread_server
 {
 private:
-    pthread_spinlock_t splck;
+    boost::detail::spinlock splck;
     int curret_cnt;
     int max;
     std::vector<lt_thread_single *> threads;

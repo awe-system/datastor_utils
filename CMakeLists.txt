@@ -15,6 +15,7 @@ endif ()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 include_directories("./include")
 include_directories(".")
+include_directories("D:\\tool\\boost_1_62_0-bin-msvc-all-32-64\\boost_1_62_0")
 #    set(BOOST_LIBRARYDIR "D:\\tool\\boost_1_62_0-bin-msvc-all-32-64\\boost_1_62_0\\lib32-msvc-14.0")#换成安装路径
 endif ()
 

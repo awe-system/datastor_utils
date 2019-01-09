@@ -192,6 +192,9 @@ add_library(datastor_utils SHARED ${SOURCE_FILES})
 set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(datastor_utils boost_system boost_thread)
 
+add_executable(test_function functions/test_functions.cpp)
+target_link_libraries(test_function datastor_utils boost_system boost_thread pthread)
+
 INSTALL (TARGETS datastor_utils LIBRARY DESTINATION /usr/local/lib)
 INSTALL(FILES functions/thread_pool/thread_pool.hpp
         functions/communicate/action_stub.h

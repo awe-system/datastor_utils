@@ -64,3 +64,8 @@ int lt_client_service::snd(lt_session_cli_safe *sess, boost::function<int(lt_dat
     }
     return 0;
 }
+
+void lt_client_service::set_ioservice(boost::asio::io_service *_io_service)
+{
+    io_service = _io_service;
+}

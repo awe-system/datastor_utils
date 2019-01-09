@@ -46,3 +46,8 @@ lt_session_cli_safe *lt_session_cli_set::get_session(const std::string &key)
     }
     return res;
 }
+
+void lt_session_cli_set::set_ioservice(boost::asio::io_service *_io_service)
+{
+    io_service = _io_service;
+}

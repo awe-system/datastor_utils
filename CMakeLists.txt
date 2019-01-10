@@ -208,7 +208,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(datastor_utils "${boostdir}boost_chrono-vc141-mt-gd-x64-1_68.lib")
 endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    add_library(datastor_utils ${SOURCE_FILES})
+    add_library(datastor_utils SHARED ${SOURCE_FILES})
     target_link_libraries(datastor_utils boost_system boost_thread)
 endif()
 

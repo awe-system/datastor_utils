@@ -16,8 +16,7 @@ include_directories("./data")
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 include_directories("./include")
 include_directories(".")
-include_directories("D:\\tool\\boost_1_62_0-bin-msvc-all-32-64\\boost_1_62_0")
-#    set(BOOST_LIBRARYDIR "D:\\tool\\boost_1_62_0-bin-msvc-all-32-64\\boost_1_62_0\\lib32-msvc-14.0")#换成安装路径
+include_directories("D://tool//boost_1_68_0//boost_1_68_0")
 endif ()
 
 set(SOURCE_FILES
@@ -200,17 +199,25 @@ set(SOURCE_FILES
 #        log/ss_log_error.h
         README.md)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(boostdir "D://tool//boost_1_68_0//boost_1_68_0//stage//lib//lib")#根据boost安装位置调整
     add_library(datastor_utils ${SOURCE_FILES})
+    target_link_libraries(datastor_utils "${boostdir}boost_system-vc141-mt-gd-x64-1_68.lib")
+    target_link_libraries(datastor_utils "${boostdir}boost_date_time-vc141-mt-gd-x64-1_68.lib")
+    target_link_libraries(datastor_utils "${boostdir}boost_regex-vc141-mt-gd-x64-1_68.lib")
+    target_link_libraries(datastor_utils "${boostdir}boost_thread-vc141-mt-gd-x64-1_68.lib")
+    target_link_libraries(datastor_utils "${boostdir}boost_chrono-vc141-mt-gd-x64-1_68.lib")
 endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    add_library(datastor_utils SHARED ${SOURCE_FILES})
+    add_library(datastor_utils ${SOURCE_FILES})
+    target_link_libraries(datastor_utils boost_system boost_thread)
 endif()
-set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-target_link_libraries(datastor_utils boost_system boost_thread)
 
+set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
 add_executable(test_function functions/test_functions.cpp)
-target_link_libraries(test_function datastor_utils boost_system boost_thread pthread)
+target_link_libraries(test_function datastor_utils)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+target_link_libraries(test_function boost_system boost_thread pthread)
 
 INSTALL (TARGETS datastor_utils LIBRARY DESTINATION /usr/local/lib)
 INSTALL(FILES functions/thread_pool/thread_pool.hpp

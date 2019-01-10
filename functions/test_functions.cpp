@@ -5,6 +5,13 @@
 #include <iostream>
 #include "communicate/lt_thread_server.h"
 
+#if defined(__linux__)
+// Linux系统
+#elif defined(_WIN32)
+// Windows系统
+#pragma comment (lib, "datastor_utils.lib")
+#endif
+
 void func1()
 {
     std::cout<<"func1\n"<<std::endl;

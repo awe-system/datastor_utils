@@ -216,10 +216,12 @@ set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
 add_executable(test_function functions/test_functions.cpp)
 target_link_libraries(test_function datastor_utils)
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-target_link_libraries(test_function boost_system boost_thread pthread)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(include_dir "include")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(include_dir "/usr/local/include")
+endif ()
 
-INSTALL (TARGETS datastor_utils LIBRARY DESTINATION /usr/local/lib)
 INSTALL(FILES functions/thread_pool/thread_pool.hpp
         functions/communicate/action_stub.h
         functions/communicate/lt_async_2safe_async.h
@@ -242,23 +244,27 @@ INSTALL(FILES functions/thread_pool/thread_pool.hpp
         functions/utils/utils.h
         functions/base64/base64.h
         functions/lt_function_error.h
-        DESTINATION /usr/local/include/lt_function)
+        DESTINATION ${include_dir}/lt_function)
 INSTALL(FILES data/lt_data/lt_data_t.h
         data/json/json_obj.h
         data/object/ref_obj.h
         data/lt_data_error.h
-        DESTINATION /usr/local/include/lt_data)
+        DESTINATION ${include_dir}/lt_data)
+INSTALL(FILES conf/env/env.h DESTINATION  ${include_dir}/awe_conf)
+INSTALL(FILES conf/awe_conf_error.h DESTINATION  ${include_dir}/awe_conf)
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+target_link_libraries(test_function boost_system boost_thread pthread)
 
+INSTALL (TARGETS datastor_utils LIBRARY DESTINATION /usr/local/lib)
 
 ##################################################################################
 ###conf###########################################################################
 execute_process(COMMAND python -m py_compile ../conf/lib/env.py)
 
-INSTALL(FILES conf/env/env.h DESTINATION /usr/local/include/awe_conf)
+
 INSTALL(FILES conf/lib/env.py DESTINATION /usr/lib64/python2.7)
 #INSTALL(FILES conf/lib/env.pyc DESTINATION /usr/lib64/python2.7)
-INSTALL(FILES conf/awe_conf_error.h DESTINATION /usr/local/include/awe_conf)
 
 execute_process(COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/conf/conf OUTPUT_VARIABLE conf_dest)
 execute_process(COMMAND date "+%Y%m%d" OUTPUT_VARIABLE date_time)

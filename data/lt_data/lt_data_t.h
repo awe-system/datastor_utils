@@ -33,7 +33,7 @@ public:
 
     lt_data_t(const lt_data_t &other)
     {
-        if ( is_buf_from_outside())
+        if ( other.is_buf_from_outside())
         {
             _buf_from_outside = other._buf_from_outside;
             _buf_self_generated = NULL;

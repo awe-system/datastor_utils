@@ -167,6 +167,11 @@ target_link_libraries(test_function boost_system boost_thread pthread)
 
 INSTALL (TARGETS datastor_utils LIBRARY DESTINATION /usr/local/lib)
 
+INSTALL (FILES raid/common.py raid/err.py raid/raid_manager.py raid/raid.py
+        raid/storage.py raid/vg.py
+        DESTINATION /opt/raid)
+
+
 ##################################################################################
 ###conf###########################################################################
 execute_process(COMMAND python -m py_compile ../conf/lib/env.py)

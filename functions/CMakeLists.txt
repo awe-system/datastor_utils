@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CPACK_GENERATOR "RPM")
 
 include_directories(./)
-include_directories(utils)
+include_directories(lt_function)
 include_directories(/usr/local/include/lt_data)
 include_directories(/usr/local/include/ss_log)
 
@@ -29,7 +29,7 @@ set(COMMUNICATE_FILES
         communicate/lt_watch_dog.cpp)
 
 set(UTILS_FILES
-        utils/utils.cpp)
+        lt_function/utils.cpp)
 
 set(BASE64_FILES
         base64/base64.cpp)
@@ -62,8 +62,8 @@ INSTALL(FILES thread_pool/thread_pool.hpp
         communicate/lt_session_serv.h
         communicate/lt_thread_server.h
         communicate/lt_watch_dog.h
-        utils/stronger_cond.h
-        utils/utils.h
+        lt_function/stronger_cond.h
+        lt_function/utils.h
         base64/base64.h
         lt_function_error.h
         DESTINATION /usr/local/include/lt_function)

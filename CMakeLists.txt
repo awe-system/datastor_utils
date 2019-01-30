@@ -11,6 +11,7 @@ set(BOOST_LIBRARYDIR "/usr/local/lib")
 find_package(Boost 1.68.0 EXACT REQUIRED COMPONENTS)
 
 endif ()
+
 include_directories("./data")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -67,136 +68,25 @@ set(SOURCE_FILES
         functions/communicate/lt_watch_dog.h
         functions/thread_pool/thread_pool.hpp
         functions/lt_function_error.h
-        functions/utils/stronger_cond.h
-        functions/utils/utils.cpp
-        functions/utils/utils.h
+        functions/lt_function/stronger_cond.h
+        functions/lt_function/utils.cpp
+        functions/lt_function/utils.h
         functions/CMakeLists.txt
-#        functions/lt_function_error.h
-#        log/include/log4cpp/threading/BoostThreads.hh
-#        log/include/log4cpp/threading/DummyThreads.hh
-#        log/include/log4cpp/threading/Makefile
-#        log/include/log4cpp/threading/Makefile.am
-#        log/include/log4cpp/threading/Makefile.in
-#        log/include/log4cpp/threading/MSThreads.hh
-#        log/include/log4cpp/threading/OmniThreads.hh
-#        log/include/log4cpp/threading/PThreads.hh
-#        log/include/log4cpp/threading/Threading.hh
-#        log/include/log4cpp/AbortAppender.hh
-#        log/include/log4cpp/Appender.hh
-#        log/include/log4cpp/AppendersFactory.hh
-#        log/include/log4cpp/AppenderSkeleton.hh
-#        log/include/log4cpp/BasicConfigurator.hh
-#        log/include/log4cpp/BasicLayout.hh
-#        log/include/log4cpp/BufferingAppender.hh
-#        log/include/log4cpp/Category.hh
-#        log/include/log4cpp/CategoryStream.hh
-#        log/include/log4cpp/config-MinGW32.h
-#        log/include/log4cpp/config-openvms.h
-#        log/include/log4cpp/config-win32-stlport-boost.h
-#        log/include/log4cpp/config-win32.h
-#        log/include/log4cpp/config.h
-#        log/include/log4cpp/Configurator.hh
-#        log/include/log4cpp/convenience.h
-#        log/include/log4cpp/DailyRollingFileAppender.hh
-#        log/include/log4cpp/Export.hh
-#        log/include/log4cpp/FactoryParams.hh
-#        log/include/log4cpp/FileAppender.hh
-#        log/include/log4cpp/Filter.hh
-#        log/include/log4cpp/FixedContextCategory.hh
-#        log/include/log4cpp/HierarchyMaintainer.hh
-#        log/include/log4cpp/IdsaAppender.hh
-#        log/include/log4cpp/Layout.hh
-#        log/include/log4cpp/LayoutAppender.hh
-#        log/include/log4cpp/LayoutsFactory.hh
-#        log/include/log4cpp/LevelEvaluator.hh
-#        log/include/log4cpp/LoggingEvent.hh
-#        log/include/log4cpp/Makefile
-#        log/include/log4cpp/Makefile.am
-#        log/include/log4cpp/Makefile.in
-#        log/include/log4cpp/Manipulator.hh
-#        log/include/log4cpp/NDC.hh
-#        log/include/log4cpp/NTEventLogAppender.hh
-#        log/include/log4cpp/OstreamAppender.hh
-#        log/include/log4cpp/PassThroughLayout.hh
-#        log/include/log4cpp/PatternLayout.hh
-#        log/include/log4cpp/Portability.hh
-#        log/include/log4cpp/Priority.hh
-#        log/include/log4cpp/PropertyConfigurator.hh
-#        log/include/log4cpp/RemoteSyslogAppender.hh
-#        log/include/log4cpp/RollingFileAppender.hh
-#        log/include/log4cpp/SimpleConfigurator.hh
-#        log/include/log4cpp/SimpleLayout.hh
-#        log/include/log4cpp/SmtpAppender.hh
-#        log/include/log4cpp/ss_log4cpp.h
-#        log/include/log4cpp/StringQueueAppender.hh
-#        log/include/log4cpp/SyslogAppender.hh
-#        log/include/log4cpp/TimeStamp.hh
-#        log/include/log4cpp/TriggeringEventEvaluator.hh
-#        log/include/log4cpp/TriggeringEventEvaluatorFactory.hh
-#        log/include/log4cpp/Win32DebugAppender.hh
-#        log/include/ss_log.h
-#        log/src/log4cpp_src/AbortAppender.cpp
-#        log/src/log4cpp_src/Appender.cpp
-#        log/src/log4cpp_src/AppendersFactory.cpp
-#        log/src/log4cpp_src/AppenderSkeleton.cpp
-#        log/src/log4cpp_src/BasicConfigurator.cpp
-#        log/src/log4cpp_src/BasicLayout.cpp
-#        log/src/log4cpp_src/BufferingAppender.cpp
-#        log/src/log4cpp_src/Category.cpp
-#        log/src/log4cpp_src/CategoryStream.cpp
-#        log/src/log4cpp_src/Configurator.cpp
-#        log/src/log4cpp_src/DailyRollingFileAppender.cpp
-#        log/src/log4cpp_src/DllMain.cpp
-#        log/src/log4cpp_src/DummyThreads.cpp
-#        log/src/log4cpp_src/FactoryParams.cpp
-#        log/src/log4cpp_src/FileAppender.cpp
-#        log/src/log4cpp_src/Filter.cpp
-#        log/src/log4cpp_src/FixedContextCategory.cpp
-#        log/src/log4cpp_src/HierarchyMaintainer.cpp
-#        log/src/log4cpp_src/IdsaAppender.cpp
-#        log/src/log4cpp_src/LayoutAppender.cpp
-#        log/src/log4cpp_src/LayoutsFactory.cpp
-#        log/src/log4cpp_src/LevelEvaluator.cpp
-#        log/src/log4cpp_src/Localtime.cpp
-#        log/src/log4cpp_src/Localtime.hh
-#        log/src/log4cpp_src/LoggingEvent.cpp
-#        log/src/log4cpp_src/MSThreads.cpp
-#        log/src/log4cpp_src/NDC.cpp
-#        log/src/log4cpp_src/NTEventLogAppender.cpp
-#        log/src/log4cpp_src/OmniThreads.cpp
-#        log/src/log4cpp_src/OstreamAppender.cpp
-#        log/src/log4cpp_src/PassThroughLayout.cpp
-#        log/src/log4cpp_src/PatternLayout.cpp
-#        log/src/log4cpp_src/PortabilityImpl.cpp
-#        log/src/log4cpp_src/PortabilityImpl.hh
-#        log/src/log4cpp_src/Priority.cpp
-#        log/src/log4cpp_src/Properties.cpp
-#        log/src/log4cpp_src/Properties.hh
-#        log/src/log4cpp_src/PropertyConfigurator.cpp
-#        log/src/log4cpp_src/PropertyConfiguratorImpl.cpp
-#        log/src/log4cpp_src/PropertyConfiguratorImpl.hh
-#        log/src/log4cpp_src/PThreads.cpp
-#        log/src/log4cpp_src/RemoteSyslogAppender.cpp
-#        log/src/log4cpp_src/RollingFileAppender.cpp
-#        log/src/log4cpp_src/SimpleConfigurator.cpp
-#        log/src/log4cpp_src/SimpleLayout.cpp
-#        log/src/log4cpp_src/SmtpAppender.cpp
-#        log/src/log4cpp_src/snprintf.c
-#        log/src/log4cpp_src/StringQueueAppender.cpp
-#        log/src/log4cpp_src/StringUtil.cpp
-#        log/src/log4cpp_src/StringUtil.hh
-#        log/src/log4cpp_src/SyslogAppender.cpp
-#        log/src/log4cpp_src/TimeStamp.cpp
-#        log/src/log4cpp_src/TriggeringEventEvaluatorFactory.cpp
-#        log/src/log4cpp_src/Win32DebugAppender.cpp
-#        log/src/ss_log.cpp
-#        log/src/ss_log4cpp.cpp
-#        log/src/ss_logger.cpp
-#        log/src/ss_logger.h
-#        log/CMakeLists.txt
-#        log/main.cpp
-#        log/readne.txt
-#        log/ss_log_error.h
+        algo/algo.cpp algo/algo.h
+        algo/algo_block_io_jbod.cpp algo/algo_block_io_jbod.h
+        algo/algo_block_io_jbod_nosuper.cpp algo/algo_block_io_jbod_nosuper.h
+        algo/algo_block_io_super.cpp algo/algo_block_io_super.h
+        algo/algo_block_multi_super.cpp algo/algo_block_multi_super.h
+        algo/algo_block_open_ref.cpp algo/algo_block_open_ref.h
+        algo/block_request.h algo/block_request.cpp
+        algo/algo_nocopy_request_mapper.cpp algo/algo_nocopy_request_mapper.h
+        algo/algo_range.cpp algo/algo_range.h
+        algo/algo_section.cpp algo/algo_section.h
+        algo/request_ref.h algo/request_ref.cpp
+        algo/super_algo_device.cpp algo/super_algo_device.h
+        algo/test_algo_device.h algo/test_algo_device.cpp
+        algo/algo_interface.h algo/algo_interface.cpp
+        algo/debug.h algo/debug.cpp
         README.md)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(boostdir "D://tool//boost_1_68_0//boost_1_68_0//stage//lib//lib")#根据boost安装位置调整
@@ -240,8 +130,8 @@ INSTALL(FILES functions/thread_pool/thread_pool.hpp
         functions/communicate/lt_session_serv.h
         functions/communicate/lt_thread_server.h
         functions/communicate/lt_watch_dog.h
-        functions/utils/stronger_cond.h
-        functions/utils/utils.h
+        functions/lt_function/stronger_cond.h
+        functions/lt_function/utils.h
         functions/base64/base64.h
         functions/lt_function_error.h
         DESTINATION ${include_dir}/lt_function)
@@ -250,6 +140,25 @@ INSTALL(FILES data/lt_data/lt_data_t.h
         data/object/ref_obj.h
         data/lt_data_error.h
         DESTINATION ${include_dir}/lt_data)
+
+INSTALL(FILES algo/algo.h
+        algo/algo_error.h
+        algo/algo_interface.h
+        algo/algo_block_io_jbod.h
+        algo/algo_block_io_jbod_nosuper.h
+        algo/algo_block_io_super.h
+        algo/algo_block_multi_super.h
+        algo/algo_block_open_ref.h
+        algo/algo_nocopy_request_mapper.h
+        algo/algo_range.h
+        algo/algo_section.h
+        algo/block_request.h
+        algo/request_ref.h
+        algo/super_algo_device.h
+        algo/test_algo_device.h
+        algo/debug.h
+        DESTINATION ${include_dir}/algo)
+
 INSTALL(FILES conf/env/env.h DESTINATION  ${include_dir}/awe_conf)
 INSTALL(FILES conf/awe_conf_error.h DESTINATION  ${include_dir}/awe_conf)
 

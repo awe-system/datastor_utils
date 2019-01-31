@@ -5,9 +5,9 @@ using namespace ServerSan_Algo;
 
 namespace ServerSan_Algo
 {
-env disk_info_sec("ss-metadata","disk_info_sec");
-env pool_vols_sec("ss-metadata","pool_vols_sec");
-env pool_info_sec("ss-metadata","pool_info_sec");
+env disk_info_sec("awe_algo","disk_info_sec");
+env pool_vols_sec("awe_algo","pool_vols_sec");
+env pool_info_sec("awe_algo","pool_info_sec");
 };
 
 #ifdef TEST_ALGO

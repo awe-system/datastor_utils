@@ -1,7 +1,7 @@
 #include "debug.h"
 #include "algo.h"
 
-static env jbod_super("ss-metadata", "pool_vols_sec");
+static env jbod_super("awe_algo", "jbod_super_sec");
 const unsigned long  jbod_super_byte = ((unsigned long)jbod_super.get_int())<<10;
 const unsigned long  jbod_super_sec = ((unsigned long)jbod_super.get_int());
 

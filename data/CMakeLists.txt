@@ -8,8 +8,8 @@ set(DATA_FILES
         lt_data/lt_data_t.h)
 
 set(JSON_FILES
-        json/json_obj.h
-        json/json_obj.cpp
+        lt_data/json_obj.h
+        lt_data/json_obj.cpp
         lt_data_error.h)
 
 set(OBJECT_FILES
@@ -21,13 +21,13 @@ add_library(lt_data SHARED ${DATA_FILES}  ${JSON_FILES} ${OBJECT_FILES})
 target_link_libraries(lt_data boost_system boost_thread)
 set_target_properties(lt_data PROPERTIES LINKER_LANGUAGE CXX)
 
-add_executable(test_json json/test_json.cpp ${DATA_FILES}  ${JSON_FILES} ${OBJECT_FILES})
+add_executable(test_json lt_data/test_json.cpp ${DATA_FILES}  ${JSON_FILES} ${OBJECT_FILES})
 target_link_libraries(test_json lt_data boost_system boost_thread)
 
 
 INSTALL (TARGETS lt_data LIBRARY DESTINATION /usr/local/lib)
 INSTALL(FILES lt_data/lt_data_t.h
-        json/json_obj.h
+        lt_data/json_obj.h
         object/ref_obj.h
         lt_data_error.h
         DESTINATION /usr/local/include/lt_data)

@@ -1,6 +1,6 @@
 #include "json_obj.h"// #include <Python.h>
 #include <stdio.h>
-#include "../lt_data_error.h"
+#include "lt_data_error.h"
 #include "boost/bind.hpp"
 #ifdef JSON_TEST
 #include <iostream>

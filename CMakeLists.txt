@@ -27,9 +27,9 @@ set(SOURCE_FILES
         conf/awe_conf_error.h
         conf/awe_env.conf
         data/lt_data/lt_data_t.h
-        data/json/json_obj.cpp
-        data/json/json_obj.h
-        data/json/test_json.cpp
+        data/lt_data/json_obj.cpp
+        data/lt_data/json_obj.h
+        data/lt_data/test_json.cpp
         data/object/ref_obj.cpp
         data/object/ref_obj.h
         data/clean.sh
@@ -139,7 +139,7 @@ INSTALL(FILES functions/thread_pool/thread_pool.hpp
         functions/lt_function_error.h
         DESTINATION ${include_dir}/lt_function)
 INSTALL(FILES data/lt_data/lt_data_t.h
-        data/json/json_obj.h
+        data/lt_data/json_obj.h
         data/object/ref_obj.h
         data/lt_data_error.h
         DESTINATION ${include_dir}/lt_data)

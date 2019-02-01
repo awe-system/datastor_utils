@@ -3,10 +3,12 @@
 
 #include "lt_session_cli_safe.h"
 #include "lt_thread_server.h"
+#include "lt_function/lt_safe_set.h"
 
 class lt_client_service : public lt_session_callback
 {
     boost::asio::io_service *io_service;
+    lt_safe_set<lt_data_t *> rcvdata_set;
 public:
     lt_client_service(boost::asio::io_service *_io_service,
                       unsigned short port);

@@ -13,6 +13,7 @@ find_package(Boost 1.68.0 EXACT REQUIRED COMPONENTS)
 endif ()
 
 include_directories("./data")
+include_directories("./functions")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 include_directories("./include")
@@ -69,6 +70,7 @@ set(SOURCE_FILES
         functions/thread_pool/thread_pool.hpp
         functions/lt_function_error.h
         functions/lt_function/stronger_cond.h
+        functions/lt_function/lt_safe_set.h
         functions/lt_function/utils.cpp
         functions/lt_function/utils.h
         functions/CMakeLists.txt
@@ -87,7 +89,7 @@ set(SOURCE_FILES
         algo/test_algo_device.h algo/test_algo_device.cpp
         algo/algo_interface.h algo/algo_interface.cpp
         algo/debug.h algo/debug.cpp
-        README.md)
+        README.md functions/lt_function/lt_safe_set.h)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(boostdir "D://tool//boost_1_68_0//boost_1_68_0//stage//lib//lib")#根据boost安装位置调整
     add_library(datastor_utils ${SOURCE_FILES})
@@ -131,6 +133,7 @@ INSTALL(FILES functions/thread_pool/thread_pool.hpp
         functions/communicate/lt_thread_server.h
         functions/communicate/lt_watch_dog.h
         functions/lt_function/stronger_cond.h
+        functions/lt_function/lt_safe_set.h
         functions/lt_function/utils.h
         functions/base64/base64.h
         functions/lt_function_error.h

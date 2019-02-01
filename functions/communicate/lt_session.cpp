@@ -108,6 +108,7 @@ void lt_session::connected()
 
 void lt_session::disconnected()
 {
+    //FIXME:加入flag控制 使得在断开后不会出现新的 rcv
     cb->disconnected(this);
     queue.clear();
     _socket.close();

@@ -1,8 +1,10 @@
 #include "lt_client_service.h"
 #include "../lt_function_error.h"
-
+//NOTE: 前提是disconect被调用后不会出现新的rcv_done
 void lt_client_service::rcv_done(lt_session *sess, lt_data_t *received_data, int error)
 {
+    if( !rcvdata_set.erase(received_data))
+        return;
     lt_data_t *sent_data = (lt_data_t *) received_data->pop_private();
 
     if ( error )
@@ -31,11 +33,16 @@ void lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int err
 
     lt_session_cli_safe *session = (lt_session_cli_safe *) sess;
     session->rcv(received_data);
-
+    assert(rcvdata_set.insert(received_data));
 }
 
 void lt_client_service::disconnected(lt_session *sess)
-{//NOTE:do nothing
+{
+    lt_data_t * rcv_data;
+    while(rcvdata_set.first(rcv_data))
+    {
+        rcv_done(sess, rcv_data, -RPC_ERROR_TYPE_NET_BROKEN);
+    }
 }
 
 void lt_client_service::connected(lt_session *sess)

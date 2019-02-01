@@ -29,6 +29,7 @@ public:
         if(it == set.end())
             return false;
         item = *it;
+        set.erase(it);
         return true;
     }
     

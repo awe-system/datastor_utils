@@ -3,8 +3,8 @@
 cd $(dirname $0)
 curdir=$(pwd)
 cd -
-bin_dir=$curdir"/awe_conf/bin"
-conf_dir=$curdir"/awe_conf/conf"
+bin_dir=$curdir"/conf/bin"
+conf_dir=$curdir"/conf/conf"
 
 get_env_name()
 {

@@ -14,6 +14,7 @@ endif ()
 
 include_directories("./data")
 include_directories("./functions")
+include_directories("conf")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 include_directories("./include")
@@ -22,8 +23,8 @@ include_directories("D://tool//boost_1_68_0//boost_1_68_0")
 endif ()
 
 set(SOURCE_FILES
-        conf/env/env.cpp
-        conf/env/env.h
+        conf/awe_conf/env.cpp
+        conf/awe_conf/env.h
         conf/awe_conf_error.h
         conf/awe_env.conf
         data/lt_data/lt_data_t.h
@@ -162,7 +163,7 @@ INSTALL(FILES algo/algo.h
         algo/debug.h
         DESTINATION ${include_dir}/algo)
 
-INSTALL(FILES conf/env/env.h DESTINATION  ${include_dir}/awe_conf)
+INSTALL(FILES conf/awe_conf/env.h DESTINATION  ${include_dir}/awe_conf)
 INSTALL(FILES conf/awe_conf_error.h DESTINATION  ${include_dir}/awe_conf)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -192,16 +193,16 @@ string(REPLACE "\n" "" conf_dest ${conf_dest} )
 MESSAGE(STATUS "conf_dest : ${conf_dest}")
 
 #execute_process(COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/conf/generate_profile.sh)
-#install(DIRECTORY conf/awe_conf DESTINATION "${conf_dest}/")
+#install(DIRECTORY conf/conf DESTINATION "${conf_dest}/")
 MESSAGE(STATUS "${conf_dest}/")
-install(DIRECTORY conf/awe_conf/conf DESTINATION "${conf_dest}/awe_conf/")
+install(DIRECTORY conf/awe-conf/conf DESTINATION "${conf_dest}/awe_conf/")
 install(FILES conf/awe_env.conf DESTINATION "/etc")
-install(PROGRAMS conf/awe_conf/bin/awe_env_base DESTINATION "${conf_dest}/awe_conf/bin/")
-install(PROGRAMS conf/awe_conf/bin/awe_env DESTINATION "${conf_dest}/awe_conf/bin/")
-install(PROGRAMS conf/awe_conf/bin/version DESTINATION "${conf_dest}/awe_conf/bin/")
-install(PROGRAMS conf/awe_conf/bin/awe_env_base DESTINATION "/usr/bin/")
-install(PROGRAMS conf/awe_conf/bin/awe_env DESTINATION "/usr/bin/")
-install(PROGRAMS conf/awe_conf/bin/version DESTINATION "/usr/bin/")
+install(PROGRAMS conf/awe-conf/bin/awe_env_base DESTINATION "${conf_dest}/awe_conf/bin/")
+install(PROGRAMS conf/awe-conf/bin/awe_env DESTINATION "${conf_dest}/awe_conf/bin/")
+install(PROGRAMS conf/awe-conf/bin/version DESTINATION "${conf_dest}/awe_conf/bin/")
+install(PROGRAMS conf/awe-conf/bin/awe_env_base DESTINATION "/usr/bin/")
+install(PROGRAMS conf/awe-conf/bin/awe_env DESTINATION "/usr/bin/")
+install(PROGRAMS conf/awe-conf/bin/version DESTINATION "/usr/bin/")
 #install(PROGRAMS conf/awe_conf_profile.sh DESTINATION "/etc/profile.d/")
 
 ###end conf

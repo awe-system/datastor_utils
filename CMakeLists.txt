@@ -90,7 +90,7 @@ set(SOURCE_FILES
         algo/test_algo_device.h algo/test_algo_device.cpp
         algo/algo_interface.h algo/algo_interface.cpp
         algo/debug.h algo/debug.cpp
-        README.md functions/lt_function/lt_safe_set.h)
+        README.md functions/lt_function/lt_safe_set.h algo/test_block_io_set.cpp algo/test_block_io_set.h)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(boostdir "D://tool//boost_1_68_0//boost_1_68_0//stage//lib//lib")#根据boost安装位置调整
     add_library(datastor_utils ${SOURCE_FILES})
@@ -106,7 +106,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
-add_executable(test_function functions/test_functions.cpp)
+add_executable(test_function functions/test_functions.cpp algo/test_block_io_set.cpp algo/test_block_io_set.h)
 target_link_libraries(test_function datastor_utils)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -160,6 +160,7 @@ INSTALL(FILES algo/algo.h
         algo/request_ref.h
         algo/super_algo_device.h
         algo/test_algo_device.h
+        algo/test_block_io_set.h
         algo/debug.h
         DESTINATION ${include_dir}/algo)
 

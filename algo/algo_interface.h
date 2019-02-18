@@ -60,6 +60,26 @@ static inline unsigned long size_to_sec(unsigned long size)
     return size >> 9;
 }
 
+static inline unsigned long k64_to_size(unsigned int sec)
+{
+    return sec << 16;
+}
+
+static inline unsigned long size_to_k64(unsigned long size)
+{
+    return size << 16;
+}
+
+static inline unsigned long k64_to_sec(unsigned long sec)
+{
+    return sec << 7;
+}
+
+static inline unsigned long sec_to_k64(unsigned long k64)
+{
+    return k64 >> 7;
+}
+
 class algo_obj
 {
 public:

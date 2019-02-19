@@ -3,6 +3,8 @@
 //
 #include "algo.h"
 #include "debug.h"
+#include "algo_interface.h"
+
 
 namespace ServerSan_Algo
 {
@@ -168,6 +170,11 @@ void block_io::complete_request(request_t *request, int error)
 //        dbg << "stack " << color_blue << request->to_json_obj().dumps() << end_dbgl;
         request->request_done(error);
     }
+}
+
+int block_io_set::get_block_async(const json_obj &key, block_io_set_cb_t *)
+{
+    return -ERROR_TYPE_NOTSUPPORT;
 }
 }
 

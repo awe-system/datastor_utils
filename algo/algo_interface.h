@@ -163,7 +163,7 @@ public:
 
 class block_io_set_cb_t
 {
-    virtual void block_got(block_io * ,int err) = 0;
+    virtual void block_got(block_io * ,void* ctx,int err) = 0;
 };
 
 class block_io_set
@@ -171,7 +171,7 @@ class block_io_set
 public:
     virtual block_io *get_block(const json_obj & key) = 0;
     
-    virtual int get_block_async(const json_obj & key,block_io_set_cb_t *);
+    virtual int get_block_async(const json_obj & key,block_io_set_cb_t *, void * ctx);
   
     virtual void put_block(block_io *) = 0;
 };

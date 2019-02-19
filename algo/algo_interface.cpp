@@ -172,7 +172,8 @@ void block_io::complete_request(request_t *request, int error)
     }
 }
 
-int block_io_set::get_block_async(const json_obj &key, block_io_set_cb_t *)
+int block_io_set::get_block_async(const json_obj &key, block_io_set_cb_t *,
+                                  void *ctx)
 {
     return -ERROR_TYPE_NOTSUPPORT;
 }

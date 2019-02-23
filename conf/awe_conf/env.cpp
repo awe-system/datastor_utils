@@ -6,7 +6,7 @@ env::env(const char *repo_name,const char *key)
 #ifdef WIN32
 #else
     char tmp_buf[MAX_SIXE] = {0};
-    string cmd = "/usr/bin/sudo /usr/bin/awe_env ";
+    string cmd = "/bin/bash /usr/bin/awe_env ";
     cmd += string(repo_name) + string(" ");
     cmd += string(key);
     // cout<<cmd<<endl;

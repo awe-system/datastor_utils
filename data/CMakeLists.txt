@@ -13,8 +13,8 @@ set(JSON_FILES
         lt_data_error.h)
 
 set(OBJECT_FILES
-        object/ref_obj.h
-        object/ref_obj.cpp)
+        lt_data/ref_obj.h
+        lt_data/ref_obj.cpp)
 
 
 add_library(lt_data SHARED ${DATA_FILES}  ${JSON_FILES} ${OBJECT_FILES})
@@ -28,7 +28,7 @@ target_link_libraries(test_json lt_data boost_system boost_thread)
 INSTALL (TARGETS lt_data LIBRARY DESTINATION /usr/local/lib)
 INSTALL(FILES lt_data/lt_data_t.h
         lt_data/json_obj.h
-        object/ref_obj.h
+        lt_data/ref_obj.h
         lt_data_error.h
         DESTINATION /usr/local/include/lt_data)
 

@@ -31,8 +31,8 @@ set(SOURCE_FILES
         data/lt_data/json_obj.cpp
         data/lt_data/json_obj.h
         data/lt_data/test_json.cpp
-        data/object/ref_obj.cpp
-        data/object/ref_obj.h
+        data/lt_data/ref_obj.cpp
+        data/lt_data/ref_obj.h
         data/clean.sh
         data/CMakeLists.txt
         data/lt_data_error.h
@@ -141,7 +141,7 @@ INSTALL(FILES functions/thread_pool/thread_pool.hpp
         DESTINATION ${include_dir}/lt_function)
 INSTALL(FILES data/lt_data/lt_data_t.h
         data/lt_data/json_obj.h
-        data/object/ref_obj.h
+        data/lt_data/ref_obj.h
         data/lt_data_error.h
         DESTINATION ${include_dir}/lt_data)
 

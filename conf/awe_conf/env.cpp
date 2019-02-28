@@ -14,9 +14,8 @@ env::env(const char *repo_name,const char *key)
     FILE *pf = popen(cmd.c_str(), "r");//和fopen一样的
     fgets(tmp_buf,MAX_SIXE,pf);
     if(0 == strcmp(tmp_buf,"")) abort();
-    // cout<<tmp_buf<<endl;
-    val = string(tmp_buf).substr(0,val.find_last_not_of('\n'));
-    // cout<<val<<endl;
+    string tmp = string(tmp_buf);
+    val = tmp.substr(0,tmp.find_last_not_of('\n')+1);
     pclose(pf);
 #endif
 }

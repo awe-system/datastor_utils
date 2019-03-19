@@ -32,29 +32,52 @@ public:
 };
 
 
-testcli cli;
+
 
 
 int main(int argc, const char *argv[])
 {
-    int err = cli.connect("127.0.0.1");
-    for(int i =0;i<99999;++i)
     {
-        if ( err )
+        testcli cli;
+        int err = cli.connect("127.0.0.1");
+        for(int i =0;i<2;++i)
         {
-            sleep(1);
-            err = cli.connect("127.0.0.1");
-            if(err) continue;
+            if ( err )
+            {
+                sleep(1);
+                err = cli.connect("127.0.0.1");
+                if(err) continue;
+            }
+            unsigned int out;
+            err = cli.test(i, out);
+            if(err)
+                cout<<"test err wait 1 second"<<endl;
+            else
+                cout<<"output"<<out<<endl;
         }
-        unsigned int out;
-        err = cli.test(i, out);
-        if(err)
-            cout<<"test err wait 1 second"<<endl;
-        else
-            cout<<"output"<<out<<endl;
+        cli.disconnect();
+    
     }
-    
-    
+    cout << "+++++++++++++++++++++++++" << endl;
+    {
+        testcli cli;
+        int err = cli.connect("127.0.0.1");
+        for(int i =0;i<20;++i)
+        {
+            if ( err )
+            {
+                sleep(1);
+                err = cli.connect("127.0.0.1");
+                if(err) continue;
+            }
+            unsigned int out;
+            err = cli.test(i, out);
+            if(err)
+                cout<<"test err wait 1 second"<<endl;
+            else
+                cout<<"output"<<out<<endl;
+        }
+    }
     while(1)
     {
         sleep(1);

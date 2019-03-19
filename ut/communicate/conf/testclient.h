@@ -8,6 +8,9 @@ namespace testclient
 
 class testclient
 {
+    bool to_destroy;
+    
+    std::thread * th;
     std::mutex conn_m;
     lt_condition discon_cond;
     std::mutex disconn_m;
@@ -18,6 +21,8 @@ private:
 
 public:
     testclient();
+    virtual ~testclient();
+    void run();
     
     virtual int connect(const std::string &ip);
     void disconnect();

@@ -7,10 +7,8 @@ namespace testclient
 
 #include <lt_function/lt_function_error.h>
 
-testclient_client::testclient_client(testclient_client_callback *_cb) : cb(_cb),
-                                                                        sess(NULL)
-{
-}
+testclient_client::testclient_client(testclient_client_callback *_cb) : cb(_cb), sess(NULL)
+{}
 
 int testclient_client::connect(const std::string &ip)
 {
@@ -33,28 +31,23 @@ int testclient_client::connect(const std::string &ip)
 
 void testclient_client::disconnect()
 {
-    std::lock_guard<std::mutex> lck(m);
-    if ( !sess ) return;
+     std::lock_guard < std::mutex > lck(m);
+    if (!sess) return;
     sess->disconnect();
     cb->put_session(sess);
     sess = NULL;
 }
-
-int testclient_client::test(IN const unsigned int &input_int, INOUT
-                            void *&internal_pri)
+int testclient_client::test(IN const unsigned int &input_int, INOUT void *&internal_pri)
 {
     if ( !sess )
         return -RPC_ERROR_TYPE_CONNECT_FAIL;
-    return cb->snd(sess, boost::bind(&testclient_client::test_gendata, this,
-                                     input_int, internal_pri, _1));
+    return cb->snd(sess, boost::bind(&testclient_client::test_gendata, this, input_int,  internal_pri, _1));
 }
 
-int testclient_client::test_gendata(IN const unsigned int &input_int, INOUT
-                                    void *&internal_pri, lt_data_t *data)
+int testclient_client::test_gendata(IN const unsigned int &input_int, INOUT void *&internal_pri,lt_data_t *data)
 {
     unsigned int func_type = server_function_callback_type_7777_test;
-    data->_length = sizeof(func_type) + sizeof(unsigned int) + sizeof(void *) +
-                    sizeof(void *);
+    data->_length = sizeof(func_type) + sizeof(unsigned int) + sizeof(void *) + sizeof(void *);
     data->realloc_buf();
     unsigned char *buf = data->get_buf();
     lt_data_translator::by_uint(func_type, buf);
@@ -63,9 +56,7 @@ int testclient_client::test_gendata(IN const unsigned int &input_int, INOUT
     return 0;
 }
 
-testclient_client_callback::testclient_client_callback(int thread_num,
-                                                       testclient_callback_handler *cb_handler)
-        :
+testclient_client_callback::testclient_client_callback(int thread_num, testclient_callback_handler *cb_handler) :
         cb_handler(cb_handler),
         server(thread_num),
         lt_session_cli_set(NULL, this),
@@ -77,15 +68,15 @@ testclient_client_callback::testclient_client_callback(int thread_num,
 
 void testclient_client_callback::handler_by_output(lt_data_t *received_data)
 {
-    unsigned char *buf      = received_data->get_buf();
-    unsigned int  func_type = lt_data_translator::to_uint(buf);
+    unsigned char *buf = received_data->get_buf();
+    unsigned int func_type = lt_data_translator::to_uint(buf);
     switch ( func_type )
     {
         case client_function_callback_type_7777_test:
         {
-            unsigned int output_int     = lt_data_translator::to_uint(buf);
+            unsigned int output_int = lt_data_translator::to_uint(buf);
             unsigned int error_internal = lt_data_translator::to_uint(buf);
-            void *internal_pri = lt_data_translator::to_void_p(buf);
+            void * internal_pri = lt_data_translator::to_void_p(buf);
             cb_handler->test_callback(output_int, internal_pri, error_internal);
         }
             break;
@@ -94,18 +85,17 @@ void testclient_client_callback::handler_by_output(lt_data_t *received_data)
     }
 }
 
-void testclient_client_callback::handler_by_input(lt_data_t *sent_data,
-                                                  int error_internal)
+void testclient_client_callback::handler_by_input(lt_data_t *sent_data, int error_internal)
 {
-    unsigned char *buf      = sent_data->get_buf();
-    unsigned int  func_type = lt_data_translator::to_uint(buf);
+    unsigned char *buf = sent_data->get_buf();
+    unsigned int func_type = lt_data_translator::to_uint(buf);
     switch ( func_type )
     {
         case server_function_callback_type_7777_test:
         {
             lt_data_translator::skip_uint(buf);
             unsigned int output_int;
-            void *internal_pri = lt_data_translator::to_void_p(buf);
+            void * internal_pri = lt_data_translator::to_void_p(buf);
             cb_handler->test_callback(output_int, internal_pri, error_internal);
         }
             break;
@@ -119,4 +109,5 @@ void testclient_client_callback::disconnected(lt_session *sess)
     lt_client_service::disconnected(sess);
     cb_handler->disconnected(sess);
 }
+
 }

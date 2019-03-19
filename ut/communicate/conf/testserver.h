@@ -67,13 +67,13 @@ public:
     void test_done(unsigned int &output_int, lt_session_description *server_context, int error_internal);
 
 };
-
-class testserver: public server, public server_handler
+class testserver:  public server, public server_handler
 {
 public:
-    testserver(int threadnum): testserver::server(threadnum, (server_handler * )this)
-    {
-    }
+    testserver(int threadnum):
+        server(threadnum, (server_handler *)this)
+    {}
 };
+
 }
 #endif

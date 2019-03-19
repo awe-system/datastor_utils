@@ -23,10 +23,11 @@ private:
     rcv_done(lt_session *sess, lt_data_t *received_data, int error) override;
     
     void snd_done(lt_session *sess, lt_data_t *sent_data, int error) override;
+
+protected:
+    virtual void disconnected(lt_session *sess) override;
     
-    void disconnected(lt_session *sess) override;
-    
-    void connected(lt_session *sess) override;
+    virtual void connected(lt_session *sess) override;
 
 private:
     virtual void handler_by_output(lt_data_t *received_data) = 0;

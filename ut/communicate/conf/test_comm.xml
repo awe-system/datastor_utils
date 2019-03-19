@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<funcs>
+    <port content="7777"/>
+    <project content="test_comm"/>
+
+    <client type="C++" namespace="testclient" filename="testclient"/>
+    <server type="C++" namespace="testserver" filename="testserver"/>
+
+    <func name="test" type="async"  subtype="sync">
+        <param name="input_int" value="uint" type="in"/>
+        <param name="output_int" value="uint" type="out"/>
+    </func>
+
+
+</funcs>

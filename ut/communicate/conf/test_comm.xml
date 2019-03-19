@@ -3,7 +3,7 @@
     <port content="7777"/>
     <project content="test_comm"/>
 
-    <client type="C++" namespace="testclient" filename="testclient"/>
+    <client type="C++" namespace="testclient" filename="testclient" withping="true"/>
     <server type="C++" namespace="testserver" filename="testserver"/>
 
     <func name="test" type="async"  subtype="sync">

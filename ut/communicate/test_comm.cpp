@@ -22,7 +22,7 @@ public:
         cout<<"testcli::not_closing"<<endl;
     }
     
-    int connect(const std::string &ip) override
+    int connect(const std::string &ip)
     {
         if(is_closing) return -1;
     

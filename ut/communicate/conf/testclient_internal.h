@@ -39,9 +39,9 @@ namespace testclient
 class testclient_callback_handler
 {
 public:
-    virtual void test_callback(OUT unsigned int &output_int, INOUT void *&internal_pri, int error_internal) = 0;
-    
     virtual void disconnected(lt_session *sess) = 0;
+    virtual void test_callback(OUT unsigned int &output_int, INOUT void *&internal_pri, int error_internal) = 0;
+
 };
 
 class testclient_client_callback : public lt_client_service, public lt_session_cli_set
@@ -60,7 +60,6 @@ private:
 
 protected:
     virtual void disconnected(lt_session *sess) override;
-    
 };
 
 class testclient_client

@@ -66,7 +66,6 @@ void lt_server_service::accepted(lt_session_serv *sess, const boost::system::err
     int err = boost_err_translate(error);
     if ( err )
     {
-        disconnected(sess);
         return;
     }
     sess->let_it_up();

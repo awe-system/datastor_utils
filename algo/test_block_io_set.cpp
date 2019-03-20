@@ -33,3 +33,28 @@ ServerSan_Algo::test_block_io_set::test_block_io_set(std::string _file_dir,
         obj_map.insert(make_pair(obj,device));
     }
 }
+
+void ServerSan_Algo::test_block_io_set::set_io_cb(
+        ServerSan_Algo::block_io_callback *cb)
+{
+    for (auto it : obj_map)
+    {
+        it.second->set_io_callback(cb);
+    }
+}
+
+void ServerSan_Algo::test_block_io_set::open_all()
+{
+    for (auto it : obj_map)
+    {
+        it.second->open();
+    }
+}
+
+void ServerSan_Algo::test_block_io_set::close_all()
+{
+    for (auto it : obj_map)
+    {
+        it.second->close();
+    }
+}

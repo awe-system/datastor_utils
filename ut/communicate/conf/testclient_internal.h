@@ -7,10 +7,12 @@
 enum client_function_callback_type_7777
 {
     client_function_callback_type_7777_test,
+    client_function_callback_type_7777_ping_internal,
 };
 enum server_function_callback_type_7777
 {
     server_function_callback_type_7777_test,
+    server_function_callback_type_7777_ping_internal,
 };
 
 #endif
@@ -78,8 +80,12 @@ public:
 
     int test(IN const unsigned int &input_int, INOUT void *&internal_pri);
 
+    int ping_internal(INOUT void *&internal_pri);
+
 private:
     int test_gendata(IN const unsigned int &input_int, INOUT void *&internal_pri, lt_data_t *data);
+
+    int ping_internal_gendata(lt_condition *_internal_sync_cond, INOUT void *&internal_pri, lt_data_t *data);
 
 };
 }

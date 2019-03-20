@@ -47,6 +47,15 @@ void server::do_func(lt_data_t *received_data, lt_session_serv *sess)
             int error_internal = handler->test(input_int, (lt_session_description  *) context);
         }
             break;
+        case server_function_callback_type_7777_ping_internal:
+        {
+            void *internal_sync_cond_p = lt_data_translator::to_void_p(buf);
+            void * internal_pri = lt_data_translator::to_void_p(buf);
+            int error_internal = handler->ping_internal();
+            service.snd(sess, boost::bind(&server::ping_internal_gendata, this, error_internal, internal_sync_cond_p, internal_pri, _1));
+            delete request_data;
+        }
+            break;
         default:
             abort();
     }
@@ -62,6 +71,19 @@ int server::test_done_gendata(unsigned int output_int, lt_session_description *s
     lt_data_translator::by_uint(output_int, res_buf);
     lt_data_translator::by_uint(error_internal, res_buf);
     lt_data_translator::by_void_p(context->cli_pri, res_buf);
+    return 0;
+}
+
+int server::ping_internal_gendata(int error_internal, void *internal_sync_cond_p, void *internal_pri,lt_data_t *data)
+{
+    unsigned int func_type = client_function_callback_type_7777_ping_internal;
+    data->_length = sizeof(func_type) + sizeof(int) + sizeof(void *) + sizeof(void *);
+    data->realloc_buf();
+    unsigned char *res_buf = data->get_buf();
+    lt_data_translator::by_uint(func_type, res_buf);
+    lt_data_translator::by_uint(error_internal, res_buf);
+    lt_data_translator::by_void_p(internal_sync_cond_p, res_buf);
+    lt_data_translator::by_void_p(internal_pri, res_buf);
     return 0;
 }
 

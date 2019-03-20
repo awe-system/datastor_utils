@@ -7,10 +7,12 @@
 enum client_function_callback_type_7777
 {
     client_function_callback_type_7777_test,
+    client_function_callback_type_7777_ping_internal,
 };
 enum server_function_callback_type_7777
 {
     server_function_callback_type_7777_test,
+    server_function_callback_type_7777_ping_internal,
 };
 
 #endif
@@ -39,6 +41,8 @@ class server_handler
 public:
     virtual int test(IN const unsigned int &input_int, lt_session_description *server_context) = 0;
 
+    virtual int ping_internal(){return 0;};
+
 };
 
 class server_handler_done
@@ -62,6 +66,8 @@ public:
 
 private:
     int test_done_gendata(unsigned int output_int, lt_session_description *server_context, int error_internal, lt_data_t *data);
+
+    int ping_internal_gendata(int error_internal, void *internal_sync_cond_p, void *internal_pri, lt_data_t *data);
 
 public:
     void test_done(unsigned int &output_int, lt_session_description *server_context, int error_internal);

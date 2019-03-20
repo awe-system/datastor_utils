@@ -33,6 +33,8 @@ public:
 public:
     int test(IN const unsigned int &input_int, OUT unsigned int &output_int);
 
+    int ping_internal();
+
 };
 
 }

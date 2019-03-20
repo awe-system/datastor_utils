@@ -49,6 +49,7 @@ int main(int argc, const char *argv[])
                 if(err) continue;
             }
             unsigned int out;
+//            err = cli.ping_internal();
             err = cli.test(i, out);
             if(err)
                 cout<<"test err wait 1 second"<<endl;
@@ -77,9 +78,10 @@ int main(int argc, const char *argv[])
             else
                 cout<<"output"<<out<<endl;
         }
+        while(1)
+        {
+            sleep(1);
+        }
     }
-    while(1)
-    {
-        sleep(1);
-    }
+   
 }

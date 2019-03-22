@@ -19,6 +19,8 @@
 class lt_session_description
 {
 public:
+    virtual bool is_connected() const = 0;
+    
     virtual void set_session_private(void *pri) = 0;
 
     virtual void *get_session_private() const = 0;
@@ -27,11 +29,13 @@ public:
 class lt_session_description_imp : public lt_session_description
 {
 private:
-    void *description_internal_pri;
+    void *description_internal_pri = nullptr;
 public:
     void set_session_private(void *pri);
     
     void *get_session_private() const;
+    
+    virtual bool is_connected() const = 0;
 };
 
 class lt_session;
@@ -87,7 +91,8 @@ private:
 private:
     void state_changed(const bool &is_con);
 
-    bool is_connected() const;
+public:
+    bool is_connected() const override;
 protected:
     virtual void disconnected();
 

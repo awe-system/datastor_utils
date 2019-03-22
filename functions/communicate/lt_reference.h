@@ -7,7 +7,7 @@
 class lt_reference
 {
 private:
-    std::atomic<int> ref;
+   int ref;
 public:
     explicit lt_reference();
 

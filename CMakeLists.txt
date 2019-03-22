@@ -103,7 +103,7 @@ endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_library(datastor_utils SHARED ${SOURCE_FILES})
     target_link_libraries(datastor_utils boost_system boost_thread)
-    add_subdirectory(ut)
+#    add_subdirectory(ut)
 endif()
 
 set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)

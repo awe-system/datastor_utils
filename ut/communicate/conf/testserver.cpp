@@ -17,7 +17,12 @@ public:
     {
         return sess->get_session_private();
     }
-
+    
+    bool is_connected() const override
+    {
+        return sess->is_connected();
+    }
+    
     void *cli_pri;
     lt_data_t *request_data;
     lt_session_serv *sess;

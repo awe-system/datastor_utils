@@ -13,6 +13,7 @@ void lt_session_cli_set::put_session(lt_session_cli_safe *sess)
     {
         std::unique_lock<std::mutex> lck(m);
         set.erase_val(sess);
+        lck.unlock();
         delete sess;
     }
 }

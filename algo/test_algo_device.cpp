@@ -20,7 +20,7 @@ void request_worker(test_algo_device *device)
             continue;
         }
 
-        assert(device->io_callback);
+//        assert(device->io_callback);
         device->io_request_queue.pop(request);
         try
         {
@@ -142,7 +142,7 @@ void test_algo_device::do_request(request_t *request)
 {
     bool is_sync = false;
 
-    assert(io_callback);
+//    assert(io_callback);
     try
     {
         unsigned int real_len = 0;

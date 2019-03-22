@@ -146,6 +146,8 @@ public:
     
     virtual void do_request(request_t *request) = 0;
     
+    void do_request_withcb(request_t *request, block_io_callback *cb);
+    
     virtual int set_io_callback(block_io_callback *_io_callback);
     
     virtual void complete_request(request_t *request, int error);

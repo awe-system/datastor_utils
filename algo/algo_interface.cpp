@@ -172,6 +172,14 @@ void block_io::complete_request(request_t *request, int error)
     }
 }
 
+void
+block_io::do_request_withcb(request_t *request, block_io_callback *cb)
+{
+    assert(nullptr == io_callback);
+    request->push_private(io_callback);
+    do_request(request);
+}
+
 int block_io_set::get_block_async(const json_obj &key, block_io_set_cb_t *,
                                   void *ctx)
 {

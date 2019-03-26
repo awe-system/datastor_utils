@@ -22,6 +22,7 @@ public:
     json_obj to_json_obj() const override;
 
 public:
+    
     algo_section(request_t *request);
 
     algo_section(unsigned long _start, unsigned long _len);
@@ -29,11 +30,20 @@ public:
     algo_section(const algo_section &other);
 
     void dump() const;
-
+    
+    bool is_neighbour(const algo_section &other);
+    
+    void merge(const algo_section &other);
+    
     //区域不重叠且other在this的右侧
     bool operator<(const algo_section& other)const;
     //区域不重叠且other在this的左侧
     bool operator>(const algo_section& other)const;
+    
+    bool is_is_point_insections(unsigned long offset);
+    
+    algo_section alloc(unsigned long len);
+    
     //交集
     void intersection(const algo_section& other, algo_section &res);
     //从small的把section分割开来

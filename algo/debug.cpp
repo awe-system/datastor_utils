@@ -263,6 +263,7 @@ debug &debug::operator<<(const std::vector<void *> &stack_out)
 debug &debug::operator<<(const color_type &color)
 {
     set_color(color);
+    return *this;
 }
 
 debug &debug::operator<<(const dbg_end_type &end)

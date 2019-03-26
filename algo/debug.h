@@ -34,7 +34,7 @@ class dbg_end_type
 static dbg_end_type end_dbg;
 
 
-#define end_dbgl (dbg<<color_bblue<<__FILE__<<":"<<__LINE__<<color_red<<":"<<color_normal)
+#define end_dbgl ({dbg<<color_bblue<<__FILE__<<":"<<__LINE__<<color_red<<":"<<color_normal;;})
 
 class debug
 {

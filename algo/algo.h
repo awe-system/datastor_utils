@@ -7,6 +7,7 @@ using namespace std;
 #include "algo_interface.h"
 #include "awe_conf/env.h"
 #include "algo_section.h"
+#include "algo_sections.h"
 #include "algo_range.h"
 #include "block_request.h"
 #include "request_ref.h"

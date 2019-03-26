@@ -30,11 +30,9 @@ set(SOURCE_FILES
         data/lt_data/lt_data_t.h
         data/lt_data/json_obj.cpp
         data/lt_data/json_obj.h
-        data/lt_data/test_json.cpp
         data/lt_data/ref_obj.cpp
         data/lt_data/ref_obj.h
         data/clean.sh
-        data/CMakeLists.txt
         data/lt_data_error.h
         functions/base64/base64.cpp
         functions/base64/base64.h
@@ -74,7 +72,6 @@ set(SOURCE_FILES
         functions/lt_function/lt_safe_set.h
         functions/lt_function/utils.cpp
         functions/lt_function/utils.h
-        functions/CMakeLists.txt
         algo/algo.cpp algo/algo.h
         algo/algo_block_io_jbod.cpp algo/algo_block_io_jbod.h
         algo/algo_block_io_jbod_nosuper.cpp algo/algo_block_io_jbod_nosuper.h
@@ -90,7 +87,7 @@ set(SOURCE_FILES
         algo/test_algo_device.h algo/test_algo_device.cpp
         algo/algo_interface.h algo/algo_interface.cpp
         algo/debug.h algo/debug.cpp
-        README.md functions/lt_function/lt_safe_set.h algo/test_block_io_set.cpp algo/test_block_io_set.h)
+        README.md functions/lt_function/lt_safe_set.h algo/test_block_io_set.cpp algo/test_block_io_set.h algo/algo_sections.cpp algo/algo_sections.h algo/algo_bitmap.cpp algo/algo_bitmap.h algo/algo_bitmaps.cpp algo/algo_bitmaps.h)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(boostdir "D://tool//boost_1_68_0//boost_1_68_0//stage//lib//lib")#根据boost安装位置调整
     add_library(datastor_utils ${SOURCE_FILES})
@@ -103,7 +100,6 @@ endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_library(datastor_utils SHARED ${SOURCE_FILES})
     target_link_libraries(datastor_utils boost_system boost_thread)
-#    add_subdirectory(ut)
 endif()
 
 set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
@@ -157,6 +153,7 @@ INSTALL(FILES algo/algo.h
         algo/algo_nocopy_request_mapper.h
         algo/algo_range.h
         algo/algo_section.h
+        algo/algo_sections.h
         algo/block_request.h
         algo/request_ref.h
         algo/super_algo_device.h
@@ -231,3 +228,6 @@ set(CPACK_RPM_PACKAGE_LICENSE "AWE Licence")
 include (CPack)
 
 endif ()
+
+
+add_subdirectory(ut)

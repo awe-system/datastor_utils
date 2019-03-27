@@ -9,9 +9,6 @@
 
 class lt_stack
 {
-
-class lt_stack
-{
     void                *private_data;
     std::vector<void *> data_stack;
 public:
@@ -36,7 +33,6 @@ public:
     {
         return private_data;
     }
-};
 };
 
 

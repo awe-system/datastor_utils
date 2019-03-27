@@ -165,6 +165,7 @@ public:
 
 class block_io_set_cb_t
 {
+public:
     virtual void block_got(block_io * ,void* ctx,int err) = 0;
 };
 

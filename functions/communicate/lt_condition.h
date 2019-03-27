@@ -21,6 +21,7 @@ public:
         std::unique_lock<std::mutex> lck(lock);
         while ( is_to_wait )
             cond.wait(lck);
+        is_to_wait = true;
         return error;
     }
 

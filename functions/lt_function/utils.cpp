@@ -83,7 +83,7 @@ int buf_exec_cpp(const string &cmd, string &buf)
     FILE *fp;
     int readed = 0;
 
-    cerr << "debug buf_exec_cpp(): cmd=[" << cmd << "]" << endl;
+//    cerr << "debug buf_exec_cpp(): cmd=[" << cmd << "]" << endl;
 
     buf.clear();
     fp = popen(cmd.c_str(), "r");

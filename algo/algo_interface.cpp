@@ -176,7 +176,7 @@ void
 block_io::do_request_withcb(request_t *request, block_io_callback *cb)
 {
     assert(nullptr == io_callback);
-    request->push_private(io_callback);
+    request->push_private(cb);
     do_request(request);
 }
 

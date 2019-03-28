@@ -58,3 +58,14 @@ void ServerSan_Algo::test_block_io_set::close_all()
         it.second->close();
     }
 }
+
+int ServerSan_Algo::test_block_io_set::get_block_async(const json_obj &key,
+                                                       ServerSan_Algo::block_io_set_cb_t *cb,
+                                                       void *ctx)
+{
+    auto it = obj_map.find(key);
+    if (it == obj_map.end())
+        return -1;
+    cb->block_got(it->second, ctx, 0);
+    return 0;
+}

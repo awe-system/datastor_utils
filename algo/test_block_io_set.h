@@ -26,6 +26,9 @@ public:
     
     block_io *get_block(const json_obj & obj);
     
+    int get_block_async(const json_obj &key, block_io_set_cb_t *cb,
+                        void *ctx) override;
+    
     void put_block(block_io *io) override;
 };
 };

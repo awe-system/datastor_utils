@@ -14,7 +14,10 @@ class lt_stack
 public:
     lt_stack(){}
     
-    lt_stack(const lt_stack &other);
+    lt_stack(const lt_stack &other):
+            private_data(other.private_data),data_stack(other.data_stack)
+    {
+    }
     
     void push_private(void *new_private)
     {
@@ -38,11 +41,4 @@ public:
         return private_data;
     }
 };
-
-lt_stack::lt_stack(const lt_stack &other) :
-        private_data(other.private_data),data_stack(other.data_stack)
-{
-}
-
-
 #endif //DATASTOR_UTILS_LT_STACK_H

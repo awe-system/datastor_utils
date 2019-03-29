@@ -12,6 +12,8 @@ class lt_stack
     void                *private_data = nullptr;
     std::vector<void *> data_stack;
 public:
+    lt_stack(){}
+    
     lt_stack(const lt_stack &other);
     
     void push_private(void *new_private)

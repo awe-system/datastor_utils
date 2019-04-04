@@ -21,6 +21,8 @@ private:
 public:
     std::vector<algo_section > sections;
 public:
+    algo_sections():len(0){};
+    
     explicit algo_sections(algo_section section);
     
     algo_sections(const algo_sections &other);

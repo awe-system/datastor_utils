@@ -69,6 +69,29 @@ int case_plus_minus_intersection()
     return 0;
 }
 
+int case_plus_minus_special()
+{
+    try
+    {
+        ServerSan_Algo::algo_sections sections(4);
+        ServerSan_Algo::algo_sections sections_minus(0,1);
+        ServerSan_Algo::algo_sections sections2_2(2,2);
+        sections_minus += sections2_2;
+        assert(sections_minus.size() == 3);
+        sections -= sections_minus;
+        assert(sections.size() == 1);
+        assert(sections.alloc_point() == 1);
+        assert(sections.size() == 0);
+        dbg << "case_plus_minus_special " << color_green << "ok" << end_dbg;
+    }
+    catch (...)
+    {
+        dbg << "case_plus_minus_special " << color_red << "red" << end_dbg;
+        return -1;
+    }
+    return 0;
+}
+
 void swap(unsigned long arr[], int a, int b)
 {
     unsigned long tmp = arr[a];
@@ -299,6 +322,8 @@ int main(int argc, const char *argv[])
     assert(0 == case_plus_minus());
     
     assert(0 == case_plus_minus_intersection());
+    
+    assert(0 == case_plus_minus_special());
     
     dbg << color_yellow << "\nALL test " << color_green << "[OK]" << end_dbg;
 }

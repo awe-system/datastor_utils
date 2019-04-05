@@ -299,8 +299,19 @@ void algo_sections::intersections(const algo_sections &other,
             algo_section intersection;
             tmp_section.intersection(cur_other, intersection);
             res += intersection;
-            ++i;
-            ++j;
+            if(cur_other.start< cur_self.start)
+            {
+                ++j;
+            }
+            else if(cur_other.start > cur_self.start )
+            {
+                ++i;
+            }
+            else
+            {
+                ++i;
+                ++j;
+            }
         }
     }
 }

@@ -280,7 +280,8 @@ bool algo_sections::try_merge_right(algo_section &section, unsigned int pos)
 void algo_sections::intersections(const algo_sections &other,
                                   algo_sections &res)
 {
-    for(int i = 0, j = 0;i<other.sections.size(),j < sections.size();)
+    int i = 0, j = 0;
+    while(i<other.sections.size() && j < sections.size())
     {
         const algo_section &cur_other = other.sections[i];
         const algo_section &cur_self = sections[j];   //other的当前比 section的大

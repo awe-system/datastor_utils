@@ -40,7 +40,7 @@ public:
     //区域不重叠且other在this的左侧
     bool operator>(const algo_section& other)const;
     
-    bool is_is_point_insections(unsigned long offset);
+    bool is_point_insections(unsigned long offset);
     
     algo_section alloc(unsigned long len);
     

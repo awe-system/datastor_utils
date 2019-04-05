@@ -92,7 +92,7 @@ json_obj algo_section::to_json_obj() const
     return obj;
 }
 
-bool algo_section::is_is_point_insections(unsigned long offset)
+bool algo_section::is_point_insections(unsigned long offset)
 {
     algo_section res;
     algo_section section(offset, 1);

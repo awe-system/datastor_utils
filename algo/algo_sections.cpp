@@ -30,7 +30,7 @@ unsigned int algo_sections::find_pos(unsigned long offset, bool &is_in_vec)
     cur_pos = (start + end) / 2;
     do
     {
-        if ( sections[cur_pos].is_is_point_insections(offset) )
+        if ( sections[cur_pos].is_point_insections(offset) )
         {
             is_in_vec = true;
             return cur_pos;
@@ -52,7 +52,7 @@ unsigned int algo_sections::find_pos(unsigned long offset, bool &is_in_vec)
         {
             abort();
         }
-        cur_pos   = (start + end) / 2;
+        cur_pos = (start + end) / 2;
     } while ( 1 );
 }
 
@@ -82,7 +82,7 @@ algo_sections &algo_sections::operator-=(const algo_section &section)
     else if ( 2 == sec_parts.size() )
     {
         sections[pos] = sec_parts[0];
-        insert_at_pos(sec_parts[1],pos);
+        insert_at_pos(sec_parts[1], pos);
     }
     len -= section.len;
     return *this;
@@ -118,7 +118,9 @@ algo_sections &algo_sections::operator+=(const algo_section &section)
 
 algo_sections &algo_sections::operator-=(const algo_sections &other)
 {
-    for ( auto it : other.sections )
+    algo_sections tmp_sections;
+    intersections(other, tmp_sections);
+    for ( auto it : tmp_sections.sections )
     {//FIXME: erase 可以优化
         *this -= (it);
     }
@@ -273,6 +275,33 @@ bool algo_sections::try_merge_right(algo_section &section, unsigned int pos)
         return true;
     }
     return false;
+}
+
+void algo_sections::intersections(const algo_sections &other,
+                                  algo_sections &res)
+{
+    for(int i = 0, j = 0;i<other.sections.size(),j < sections.size();)
+    {
+        const algo_section &cur_other = other.sections[i];
+        const algo_section &cur_self = sections[j];   //other的当前比 section的大
+        if (cur_other < cur_self)
+        {
+            ++j;
+        }
+        else if (cur_other > cur_self)
+        {
+            ++i;
+        }
+        else
+        {
+            algo_section tmp_section = cur_self;
+            algo_section intersection;
+            tmp_section.intersection(cur_other, intersection);
+            res += intersection;
+            ++i;
+            ++j;
+        }
+    }
 }
 
 }

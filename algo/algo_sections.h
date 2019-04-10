@@ -77,6 +77,8 @@ public:
     bool is_empty() const;
     
     bool operator==(const algo_sections &other) const;
+    
+    bool operator!=(const algo_sections &other) const;
 };
 
 }

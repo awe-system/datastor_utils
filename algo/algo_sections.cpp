@@ -332,5 +332,10 @@ bool algo_sections::operator==(const algo_sections &other) const
     return true;
 }
 
+bool algo_sections::operator!=(const algo_sections &other) const
+{
+    return !this->operator==(other);
+}
+
 
 }

@@ -337,5 +337,13 @@ bool algo_sections::operator!=(const algo_sections &other) const
     return !this->operator==(other);
 }
 
+algo_sections &algo_sections::operator+=(unsigned long offset)
+{
+    for( auto &it : sections )
+    {
+        it.start += offset;
+    }
+}
+
 
 }

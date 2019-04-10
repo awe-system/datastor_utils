@@ -61,6 +61,8 @@ public:
     algo_sections &operator-=(const algo_sections &other);
     
     algo_sections &operator+=(const algo_sections &other);
+    
+    algo_sections &operator+=(unsigned long offset);
 
 public:
     unsigned long alloc_point();

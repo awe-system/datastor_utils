@@ -316,4 +316,21 @@ void algo_sections::intersections(const algo_sections &other,
     }
 }
 
+bool algo_sections::operator==(const algo_sections &other) const
+{
+    
+    if(len != other.len) return false;
+    if(sections.size() != other.sections.size()) return false;
+    for(int i =0 ;i < sections.size(); ++i)
+    {
+        if(sections[i] .start != other.sections[i].start ||
+           sections[i].len != other.sections[i].len)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 }

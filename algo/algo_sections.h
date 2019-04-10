@@ -75,6 +75,8 @@ public:
     unsigned long size() const;
     
     bool is_empty() const;
+    
+    bool operator==(const algo_sections &other) const;
 };
 
 }

@@ -8,7 +8,7 @@ set(CPACK_GENERATOR RPM)
 
 set(BOOST_INCLUDEDIR "/usr/local/include")
 set(BOOST_LIBRARYDIR "/usr/local/lib")
-find_package(Boost 1.68.0 REQUIRED COMPONENTS)
+find_package(Boost 1.69.0 REQUIRED COMPONENTS)
 
 endif ()
 

@@ -19,19 +19,42 @@
 //}
 
 
+static int case_neighbour_plus()
+{
+    try
+    {
+        ServerSan_Algo::algo_sections
+                                      sec1
+                (ServerSan_Algo::algo_section(2, 19220));
+        ServerSan_Algo::algo_sections sec2(ServerSan_Algo::algo_section(0, 2));
+        sec1 += sec2;
+        assert(sec1.size() == 19222);
+        assert(sec1.sections[0].start == 0);
+        assert(sec1.sections[0].len == 19222);
+        dbg << "case_neighbour_plus " << color_green << "ok" << end_dbg;
+    }
+    catch (...)
+    {
+        dbg << "case_neighbour_plus " << color_red << "red" << end_dbg;
+        return -1;
+    }
+    return 0;
+}
+
 int case_plus_minus()
 {
     try
     {
         ServerSan_Algo::algo_sections sections(50);
         sections += ServerSan_Algo::algo_section(70, 20);
-        sections += ServerSan_Algo::algo_sections(50,20);
+        sections += ServerSan_Algo::algo_sections(50, 20);
         assert(sections.sections[0].start == 0);
         assert(sections.sections[0].len == 90);
         assert(sections.size() == 90);
-        sections -= ServerSan_Algo::algo_sections(60,20);
-        sections -= ServerSan_Algo::algo_sections(ServerSan_Algo::algo_section(0,60));
-        sections -= ServerSan_Algo::algo_sections(80,10);
+        sections -= ServerSan_Algo::algo_sections(60, 20);
+        sections -= ServerSan_Algo::algo_sections(
+                ServerSan_Algo::algo_section(0, 60));
+        sections -= ServerSan_Algo::algo_sections(80, 10);
         assert(sections.size() == 0);
         assert(sections.is_empty());
         dbg << "case_plus_minus " << color_green << "ok" << end_dbg;
@@ -50,16 +73,18 @@ int case_plus_minus_intersection()
     {
         ServerSan_Algo::algo_sections sections(50);
         sections += ServerSan_Algo::algo_section(70, 20);
-        sections += ServerSan_Algo::algo_sections(50,20);
+        sections += ServerSan_Algo::algo_sections(50, 20);
         assert(sections.sections[0].start == 0);
         assert(sections.sections[0].len == 90);
         assert(sections.size() == 90);
-        sections -= ServerSan_Algo::algo_sections(60,20);
-        sections -= ServerSan_Algo::algo_sections(ServerSan_Algo::algo_section(0,70));
-        sections -= ServerSan_Algo::algo_sections(70,20);
+        sections -= ServerSan_Algo::algo_sections(60, 20);
+        sections -= ServerSan_Algo::algo_sections(
+                ServerSan_Algo::algo_section(0, 70));
+        sections -= ServerSan_Algo::algo_sections(70, 20);
         assert(sections.size() == 0);
         assert(sections.is_empty());
-        dbg << "case_plus_minus_intersection " << color_green << "ok" << end_dbg;
+        dbg << "case_plus_minus_intersection " << color_green << "ok"
+                << end_dbg;
     }
     catch (...)
     {
@@ -74,8 +99,8 @@ int case_plus_minus_special()
     try
     {
         ServerSan_Algo::algo_sections sections(4);
-        ServerSan_Algo::algo_sections sections_minus(0,1);
-        ServerSan_Algo::algo_sections sections2_2(2,2);
+        ServerSan_Algo::algo_sections sections_minus(0, 1);
+        ServerSan_Algo::algo_sections sections2_2(2, 2);
         sections_minus += sections2_2;
         assert(sections_minus.size() == 3);
         sections -= sections_minus;
@@ -126,7 +151,7 @@ int case_alloc_insert_erase()
         ServerSan_Algo::algo_sections sections(50);
         unsigned long                 points[50];
         
-        for ( int                     i = 0; i < 50; ++i )
+        for ( int i = 0; i < 50; ++i )
         {
             points[i] = sections.alloc_point();
             assert(points[i] < 50);
@@ -324,6 +349,8 @@ int main(int argc, const char *argv[])
     assert(0 == case_plus_minus_intersection());
     
     assert(0 == case_plus_minus_special());
+    
+    assert(0 == case_neighbour_plus());
     
     dbg << color_yellow << "\nALL test " << color_green << "[OK]" << end_dbg;
 }

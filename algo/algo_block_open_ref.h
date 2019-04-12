@@ -13,6 +13,8 @@ private:
 	std::mutex open_lock;
 	int ref;
 public:
+    void set_org_block(block_io *_block);
+    
 	algo_block_open_ref(block_io *_block);
 	
 	algo_block_open_ref(const algo_block_open_ref & other);

@@ -1,4 +1,6 @@
 #include "algo.h"
+#include "algo_block_open_ref.h"
+
 using namespace ServerSan_Algo;
 #include <iostream>
 using namespace std;
@@ -13,7 +15,7 @@ block_io(other)
 
 algo_block_open_ref::algo_block_open_ref(block_io *_block):org_block(_block),ref(0)
 {
-	org_block->set_io_callback((block_io_callback*)this);
+    if(org_block)	org_block->set_io_callback((block_io_callback*)this);
 }
 
 unsigned long long algo_block_open_ref::get_sector_num()const
@@ -52,6 +54,11 @@ void algo_block_open_ref::do_request(request_t *request)
 void algo_block_open_ref::request_done(request_t *request, int err)
 {
 	complete_request(request,err);
+}
+
+void algo_block_open_ref::set_org_block(block_io *_block)
+{
+    org_block = _block;
 }
 
 #ifdef TEST_ALGO_OPEN_REF

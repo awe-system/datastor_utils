@@ -50,6 +50,8 @@ public:
     int write_pool_info(const json_obj & info);
 
     json_obj read_pool_info();
+    
+    virtual ~super_algo_device(){}
 
 };//namespace
 }

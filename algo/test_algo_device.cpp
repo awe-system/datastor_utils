@@ -5,23 +5,31 @@
 using namespace std;
 
 #include <fcntl.h>
-
+#define MAX_QUE_DEPTH          10000
 using namespace ServerSan_Algo;
+
+static void dump_request(request_t * req)
+{
+    cout<<"offset:"<<req->offset<<endl;
+    cout<<"len   :"<<req->len<<endl;
+    if(req->is_read())
+        cout<<"type  :READ"<<endl;
+    else
+        cout<<"type  :WRITE"<<endl;
+}
 
 void request_worker(test_algo_device *device)
 {
     request_t *request = NULL;
-    while ( 1 )
+    while ( !device->is_stop )
     {
         assert(device != NULL );
-        if ( device->io_request_queue.empty())
+        request = device->pop_request();
+        if ( !request )
         {
             usleep(100);
             continue;
         }
-
-//        assert(device->io_callback);
-        device->io_request_queue.pop(request);
         try
         {
             unsigned int real_len = 0;
@@ -32,20 +40,32 @@ void request_worker(test_algo_device *device)
             switch ( request->type )
             {
                 case REQUEST_ASYNC_WRITE:
-//                    printf("ASYNC Write req = %p, offset = %d, len = %d, buf = %p\n", request, request->offset, request->len,request->buf);
-                    real_len = pwrite(device->fd, request->buf, request->len, request->offset * 512);
-//                    cout << "after Write real_len:" << real_len << endl;
-                    if ( real_len != request->len )
-                        throw ERROR_TYPE_DEVICE;
+                    while(real_len < request->len)
+                    {
+                        auto this_len = pwrite(device->fd, request->buf, request->len, request->offset * 512);
+                        if ( this_len <= 0 )
+                        {
+                            cout << "request_worker REQUEST_ASYNC_READ this_len:["
+                                    <<this_len<<"]"<<endl;
+                            dump_request(request);
+                            throw ERROR_TYPE_DEVICE;
+                        }
+                        
+                        real_len += this_len;
+                    }
                     break;
                 case REQUEST_ASYNC_READ:
-//                    printf("ASYNC Read req = %p, offset = %d, len = %d, buf = %p\n", request, request->offset, request->len,request->buf);
-                    real_len = pread(device->fd, request->buf, request->len, request->offset * 512);
-//                    cout << "after Read real_len:" << real_len << endl;
-                    if ( real_len != request->len )
+                    while(real_len < request->len)
                     {
-                        printf("throw 1, errno = %d\n", errno);
-                        throw ERROR_TYPE_DEVICE;
+                        auto this_len = pread(device->fd, request->buf, request->len, request->offset * 512);
+                        if ( this_len <= 0 )
+                        {
+                            cout << "request_worker REQUEST_ASYNC_READ this_len:["
+                            <<this_len<<"]"<<endl;
+                            dump_request(request);
+                            throw ERROR_TYPE_DEVICE;
+                        }
+                        real_len += this_len;
                     }
                     break;
                 default:
@@ -70,9 +90,9 @@ test_algo_device::test_algo_device(const string &serial_num,const string &path, 
         serial_num(serial_num),
         path(path),
         sector_num(sector_num),
-        io_request_queue(1280000)
+        io_request_queue(MAX_QUE_DEPTH)
 {
-    io_worker_threads.create_thread(bind(request_worker, this));
+    th = io_worker_threads.create_thread(bind(request_worker, this));
 }
 
 
@@ -83,9 +103,9 @@ test_algo_device::test_algo_device(const string &_ser, const string &_path, cons
         host_name(host),
         sector_num(_size_secs),
         _is_local(is_local),
-        io_request_queue(1280000)
+        io_request_queue(MAX_QUE_DEPTH)
 {
-    io_worker_threads.create_thread(bind(request_worker, this));
+    th = io_worker_threads.create_thread(bind(request_worker, this));
 }
 
 
@@ -96,10 +116,10 @@ test_algo_device::test_algo_device(const string& _ser, const string& _path, cons
         host_name(host),
         sector_num(sector_num),
         //        _is_local(is_local),
-        io_request_queue(1280000),
+        io_request_queue(MAX_QUE_DEPTH),
         ip(ip)
 {
-    io_worker_threads.create_thread(bind(request_worker, this));
+    th = io_worker_threads.create_thread(bind(request_worker, this));
 }
 
 unsigned long long test_algo_device::get_sector_num() const
@@ -127,6 +147,7 @@ int test_algo_device::open(void)
 {
     fd = ::open(path.c_str(), O_RDWR);
 //    printf("test_algo_device::open:fd = %d, errno = %d, path = %s\n", fd, errno, path.c_str());
+    if(fd == -1) return -1;
     return 0;
 }
 
@@ -146,7 +167,7 @@ void test_algo_device::do_request(request_t *request)
     try
     {
         unsigned int real_len = 0;
-        if ( fd < 0 )
+        if ( fd == - 1)
         {
             throw ERROR_TYPE_NOTOPEN;
         }
@@ -156,25 +177,37 @@ void test_algo_device::do_request(request_t *request)
                 is_sync = true;
               //  cout << "Write" << endl;
                 //                cout<<"fd:"<<fd<<" len:"<<request->len<<" off:"<<request->offset<<endl;
-                real_len = pwrite(fd, request->buf, request->len, request->offset * 512);
-                //                cout<<"after Write real_len:"<<real_len<<endl;
-                if ( real_len != request->len )
-                    throw ERROR_TYPE_DEVICE;
+                while(real_len < request->len)
+                {
+                    auto this_len =  pwrite(fd, request->buf, request->len, request->offset * 512);
+    
+                    //                cout<<"after Write real_len:"<<real_len<<endl;
+                    if ( this_len <= 0 )
+                        throw ERROR_TYPE_DEVICE;
+                    real_len += this_len;
+                }
                 break;
             case REQUEST_ASYNC_WRITE:
-                io_request_queue.push(request);      //异步则直接加入队列
+            {
+                std::unique_lock<std::mutex> lck(m);
+                io_request_queue.push_back(request);
+            }
                 break;
             case REQUEST_SYNC_READ:
                 is_sync = true;
-                //cout << "Read" << endl;
-                //                cout<<"fd:"<<fd<<" len:"<<request->len<<" off:"<<request->offset<<endl;
-                real_len = pread(fd, request->buf, request->len, request->offset * 512);
-                //                cout<<"after Read real_len:"<<real_len<< endl;
-                if ( real_len != request->len )
-                    throw ERROR_TYPE_DEVICE;
+                while(real_len < request->len)
+                {
+                    auto this_len =  pread(fd, request->buf, request->len, request->offset * 512);
+                    if ( this_len <= 0 )
+                        throw ERROR_TYPE_DEVICE;
+                    real_len += this_len;
+                }
                 break;
             case REQUEST_ASYNC_READ:
-                io_request_queue.push(request);        //异步则直接加入队列
+            {
+                std::unique_lock<std::mutex> lck(m);
+                io_request_queue.push_back(request);
+            }
                 break;
             default:
                 throw ERROR_TYPE_WRONGTYPE;
@@ -204,4 +237,22 @@ string test_algo_device::get_ip()
 void test_algo_device::set_ip(string &ip)
 {
     this->ip = ip;
+}
+
+test_algo_device::~test_algo_device()
+{
+    is_stop = true;
+    th->join();
+}
+
+request_t *test_algo_device::pop_request()
+{
+    std::unique_lock<std::mutex> lck(m);
+    if(io_request_queue.empty())
+    {
+        return nullptr;
+    }
+    request_t * req = io_request_queue.front();
+    io_request_queue.pop_front();
+    return req;
 }

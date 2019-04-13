@@ -21,7 +21,7 @@ private:
     void gen_super_blocks(algo_block_vec_t &_blocks);
     algo_block_io_super * add_super_block(block_io *_block);
 public:
-    ~algo_block_io_jbod();
+    virtual ~algo_block_io_jbod();
     algo_block_io_jbod(algo_block_vec_t &_blocks);
 
     int add_block(block_io *block);

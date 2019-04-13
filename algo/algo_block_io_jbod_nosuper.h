@@ -20,7 +20,7 @@ private:
     
 public:
     algo_block_io_jbod_nosuper(algo_block_vec_t &_blocks);
-    ~algo_block_io_jbod_nosuper();
+    virtual ~algo_block_io_jbod_nosuper();
 
     int add_block(block_io *block);
 

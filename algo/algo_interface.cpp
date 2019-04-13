@@ -185,6 +185,11 @@ int block_io_set::get_block_async(const json_obj &key, block_io_set_cb_t *,
 {
     return -ERROR_TYPE_NOTSUPPORT;
 }
+
+block_io *block_io_set::get_block(const json_obj &key)
+{
+    abort();
+}
 }
 
 ServerSan_Algo::algo_pool_operation *ServerSan_Algo::algo_cluster_operation::ref_pool(const string &pool_name)

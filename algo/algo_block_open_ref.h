@@ -28,6 +28,9 @@ public:
 	void do_request(request_t *request);
 
 	void request_done(request_t *request, int err);
+ 
+	~algo_block_open_ref(){}
+	
 };
 
 };

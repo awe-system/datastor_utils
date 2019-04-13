@@ -146,13 +146,15 @@ public:
     
     virtual void do_request(request_t *request) = 0;
     
-    void do_request_withcb(request_t *request, block_io_callback *cb);
+    virtual void do_request_withcb(request_t *request, block_io_callback *cb);
     
     virtual int set_io_callback(block_io_callback *_io_callback);
     
     virtual void complete_request(request_t *request, int error);
     
     virtual block_io_callback *get_io_callback();
+    
+    virtual ~block_io(){};
 };
 
 class block_event_callback
@@ -172,7 +174,7 @@ public:
 class block_io_set
 {
 public:
-    virtual block_io *get_block(const json_obj & key) = 0;
+    virtual block_io *get_block(const json_obj & key);
     
     virtual int get_block_async(const json_obj & key,block_io_set_cb_t *, void * ctx);
   

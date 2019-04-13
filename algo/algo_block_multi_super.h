@@ -19,6 +19,8 @@ public:
 
 	void read_super(json_obj &obj);//一言不合就 throw
 	void write_super(const json_obj &obj);//一言不合就 throw
+	
+	virtual ~algo_block_multi_super(){};
 };
 };
 

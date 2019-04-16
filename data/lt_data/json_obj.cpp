@@ -1,5 +1,6 @@
 #include "json_obj.h"// #include <Python.h>
 #include <stdio.h>
+#include <lt_function/utils.h>
 #include "lt_data_error.h"
 #include "boost/bind.hpp"
 #ifdef JSON_TEST
@@ -919,6 +920,27 @@ long long json_obj::get_number() const
     if(_type == json_obj_type_int)
         return (long long)i_val;
     return 0;
+}
+
+#define MAX_JSON_SIZE 51200
+
+int json_obj::loads_fromfile(const std::string &filename)
+{
+    char *buf = new char [MAX_JSON_SIZE];
+    int err = read_data_from_file(filename.c_str(), buf, MAX_JSON_SIZE);
+    if(err)
+    {
+        delete buf;
+        return err;
+    }
+    loads(buf);
+    delete buf;
+    return 0;
+}
+
+int json_obj::dumps_tofile(const std::string &filename) const
+{
+    return write_str2file(filename.c_str(), dumps().c_str());
 }
 
 

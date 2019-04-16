@@ -219,6 +219,10 @@ public:
     void traversal_dic_const(boost::function<void (const json_obj &,const json_obj &)> f) const;
 
     long long get_number() const;
+    
+    int loads_fromfile(const std::string &filename);
+    
+    int dumps_tofile(const std::string &filename) const;
 };
 
 #endif

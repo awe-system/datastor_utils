@@ -10,8 +10,10 @@ import re
 import err as Err
 from common import *
 
-# raid_dic = load_raid_dic("/opt/raid_file")
-
+# raid_dic = load_raid_dic("raid_dic_path")
+dest_path='/opt/raid/'
+raid_dic_path='/opt/raid/raid_file'
+conf_post='.json'
 
 def linkpath(name):
     return commands.getoutput("mdadm --detail --scan --verbose | grep ARRAY | awk '{print $2}' | grep " + name)
@@ -28,8 +30,8 @@ def update_raid_info_by_scan(dic):
 	res.update({key:newpath})
     return res
 
-if os.path.exists("/opt/raid_file"):
-    raid_dic = json.loads(commands.getoutput("cat /opt/raid_file"))
+if os.path.exists(raid_dic_path):
+    raid_dic = json.loads(commands.getoutput("cat " + raid_dic_path))
     raid_dic = update_raid_info_by_scan(raid_dic)
 else:
     raid_dic = {}
@@ -103,10 +105,11 @@ def raid_create(chunk,level,raid_name,devs_input):
     os.system(cmd)
     global raid_dic
     raid_dic.update({raid_name:mddev})
-    save_raid_dic("/opt/raid_file", raid_dic)
+    save_raid_dic(raid_dic_path, raid_dic)
+    save_raid_dic(dest_path + raid_name + conf_post, json.dumps(devs))
     #os.makedirs(mddev)
     return True, '创建raid %s 成功!' % raid_name 
-    
+
 class raid_attr:
     def __init__(self):
         self.Name = ''      # raid1需要特殊处理
@@ -400,7 +403,7 @@ def md_del(raid_name):
         return False,"清除磁盘信息失败，请手动清除"
 
     del(raid_dic[raid_name])
-    save_raid_dic("/opt/raid_file", raid_dic)
+    save_raid_dic(raid_dic_path, raid_dic)
     cmd = "rm -f %s" %raid_name
     os.system(cmd)
     #os.remove(mddev)
@@ -472,30 +475,48 @@ def sethotspare(raid_name,dev):
         return False,"sethostspare fail!"
     return True,"设置热备盘成功!"
 
+def regroupraid(raidname):
+    disks = json.loads(load_raid_dic(dest_path + raidname + conf_post))
+    mddev = raid_dic[raidname]
+    dev_list = " ".join(disks)
+    cmd = "mdadm -Af %s %s >/dev/null 2>&1" %(mddev, dev_list)
+    sts,out = commands.getstatusoutput(cmd)
+    if sts != 0:
+        return False,"重组%s失败!%s" % (raidname, out)
+    return True,"重组成功"
+
+def regroupraid_static(raid):
+    global raid_dic
+    #raid_name,cur_raid_name,dev,stop
+
+    for mddev in md_list_mddevs():
+        cmd = 'mdadm -D %s 2>/dev/null' % mddev
+        sts,out = commands.getstatusoutput(cmd)
+        raid_name = find_attr(out, "Name : (.*)", __name_post)
+        if raid_name == raid:
+            cur_mddev = mddev
+            break
+
+    disks = mddev_get_disks(cur_mddev)
+    sts,msg = md_stop(cur_mddev)
+    if sts != 0:
+        return False,"停止%s失败!%s" % (cur_mddev, msg)
+
+    mddev = raid_dic[raid]
+    dev_list = " ".join(disks)
+    cmd = "mdadm -Af %s %s >/dev/null 2>&1" %(mddev, dev_list)
+    sts,out = commands.getstatusoutput(cmd)
+    if sts != 0:
+        return False,"重组%s失败!%s" % (raid, out)
+    return True,"重组成功"
 
 def scan_raid():
     global raid_dic
     #raid_name,cur_raid_name,dev,stop
     for raid in raid_dic.keys():
-        for mddev in md_list_mddevs():
-            cmd = 'mdadm -D %s 2>/dev/null' % mddev
-            sts,out = commands.getstatusoutput(cmd)
-            raid_name = find_attr(out, "Name : (.*)", __name_post)
-            if raid_name == raid:
-                cur_mddev = mddev
-                break
-
-        disks = mddev_get_disks(cur_mddev)
-        sts,msg = md_stop(cur_mddev)
-        if sts != 0:
-            return False,"停止%s失败!%s" % (cur_mddev, msg)
-
-        mddev = raid_dic[raid]
-        dev_list = " ".join(disks)
-        cmd = "mdadm -Af %s %s >/dev/null 2>&1" %(mddev, dev_list)
-        sts,out = commands.getstatusoutput(cmd)
-        if sts != 0:
-            return False,"重组%s失败!%s" % (raid, msg)
+        success,msg = regroupraid_static(raid)
+        if not success:
+            return success,msg
     return True,"重组成功"
-       
+
            

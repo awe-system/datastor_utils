@@ -6,34 +6,48 @@ from raid import *
 from vg import *
 import err as Err
 
+color_red='\033[1;31;40m'
+color_green='\033[1;32;40m'
+color_yellow='\033[1;33;40m'
+color_blue='\033[1;34;40m'
+color_purple='\033[1;35;40m'
+color_cyan='\033[1;36;40m'
+color_reset='\033[0m'
+
 raid_dic = {}
 
 def help(arg):
+	print color_green
 	print "----------menu--------------------"
+	print color_yellow
 	print "help                                                            ; show this"
 	print "listdev                                                         ; list all dev info"
 	print "createraid <trunk_sec> <raid_level> <raid_name> <dev1>,...[devn]; create raid"
 	print "raidinfo <raid_name>                                            ; show raid info by raid_name"
 	print "listraid                                                        ; show all raid info"
 	print "scanraid                                                        ; scan disk and regroup all raid"
+	print color_blue
+	print "regroupraid <raid_name>                                         ; scan disk and regroup all raid"
 	print "removeraid <raid_name>                                          ; remove raid by raid name"
 	print "sethotspare <raid_name> <dev>                                   ; set disk into some raid"
 	print "createvg <vg_name> <raid1/dev1>,...<raidn/devn>                 ; create vg on raid/dev"
 	print "vginfo <vg_name>                                                ; show vg info"
 	print "listvg                                                          ; show all vg info"
+	print color_purple
 	print "removevg <vg_name>                                              ; remove vg"
 	print "createvol <vg_name> <vol_name> <vol_size>                       ; create vol on vg"
 	print "volinfo <vg_name> <vol_name>                                    ; show vol info"
 	print "listvol <vg_name>                                               ; show all vol info of one vg"
 	print "removevol <vg_name> <vol_name>                                  ; remove vol"
 	print "createfs <raid/dev/vol> <dir_name> <fs_type>                    ; create fs on raid/dev/vol"
+	print color_cyan
 	print "fsinfo <dir_name>                                               ; show fs info(dev fs_type etc.)"
 	print "listfs                                                          ; show all fs info"
 	print "removefs <dir_name>                                             ; remove fs (umount and delete dir)"
 	print "list_remain_dev                                                 ; list remain dev to create vg"
 	print "list_remain_raid                                                ; list remain raid to create vg"
 	print "listvols                                                        ; list all vols"
-
+	print color_reset
 
 def listdev_arg(arg):
 	err,output = dev_list();
@@ -61,6 +75,10 @@ def scanraid_arg(arg):
 	err,output = scan_raid()
 	return 0,json_dump(err,output)
 
+def regroupraid_arg(arg):
+	err,output = regroupraid(arg[0])
+	return 0,json_dump(err,output)
+
 def removeraid_arg(arg):
 	err,output = md_del(arg[0])
 	return 0,json_dump(err,output)
@@ -74,7 +92,7 @@ def createvg_arg(arg):
 	if len(raid_or_dev) == 0:
 		return False, "没有指定磁盘"
 	mddev_list = []
-	raid_dic = json.loads(commands.getoutput("cat /opt/raid_file"))
+	raid_dic = json.loads(commands.getoutput("cat /opt/raid/raid_file"))
 	for x in raid_or_dev:
 		if x in raid_dic.keys():
 			mddev_list.append(raid_dic[x])
@@ -149,7 +167,7 @@ def removevol_arg(arg):
 def createfs_arg(arg):
 	#<raid/dev/vol> <dir_name> <fs_type>
 	name = arg[0]
-	raid_dic = json.loads(commands.getoutput("cat /opt/raid_file"))
+	raid_dic = json.loads(commands.getoutput("cat /opt/raid/raid_file"))
 	if name in raid_dic.keys():
 		name = raid_dic[name]
 	if not os.path.exists(arg[0]):
@@ -263,6 +281,7 @@ cmd_tab = {"help":help,
 		"raidinfo":raidinfo_arg,
 		"listraid":listraid_arg,
 		"scanraid":scanraid_arg,
+		"regroupraid":regroupraid_arg,
 		"removeraid":removeraid_arg,
 		"sethotspare":sethotspare_arg,
 		"createvg":createvg_arg,                                   
@@ -288,12 +307,12 @@ if __name__ == '__main__':
 		help(argv)
 		sys.exit(0)	
 
-	# raid_dic = load_raid_dic("/opt/raid_file")
+	# raid_dic = load_raid_dic("/opt/raid/raid_file")
 	try:
 		err,output=cmd_tab.get(argv[1],help)(argv[2:])
 		if err : print Err.err_json(err)
 		else: print output	
-		# save_raid_dic("/opt/raid_file", raid_dic)
+		# save_raid_dic("/opt/raid/raid_file", raid_dic)
 	except Exception:
 		err = Err.ENVIRONMENT
 		print Err.err_json(err)

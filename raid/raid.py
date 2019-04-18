@@ -11,8 +11,26 @@ import err as Err
 from common import *
 
 # raid_dic = load_raid_dic("/opt/raid_file")
+
+
+def linkpath(name):
+    return commands.getoutput("mdadm --detail --scan --verbose | grep ARRAY | awk '{print $2}' | grep " + name)
+
+def devpath_by_name(name, orgpath):
+    lpath = linkpath(name)
+    if lpath == "" :return orgpath
+    return "/dev/" + commands.getoutput("ls -l \"" + lpath + "\" | cut -d '>' -f2 | cut -d '/' -f2")
+
+def update_raid_info_by_scan(dic):
+    res = {}
+    for key,value in dic.items():
+        newpath = devpath_by_name(key,value)
+	res.update({key:newpath})
+    return res
+
 if os.path.exists("/opt/raid_file"):
     raid_dic = json.loads(commands.getoutput("cat /opt/raid_file"))
+    raid_dic = update_raid_info_by_scan(raid_dic)
 else:
     raid_dic = {}
 

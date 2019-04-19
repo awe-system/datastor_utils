@@ -38,9 +38,9 @@ else:
 
 def disk_name(slot):
     # FIXME
-    if (slot.find("/dev/sd") == -1):
-        return None
-    return slot
+    if (slot.find("/dev/sd") != -1 or slot.find("/dev/vg") != -1):
+        return slot
+    return None
 
 def disks_from_slot(slots):
     devs = [];

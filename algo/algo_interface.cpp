@@ -135,6 +135,7 @@ json_obj request_t::to_json_obj() const
     {
         statck_obj.append(json_obj((long long) data));
     }
+    obj.merge(json_obj("stack",statck_obj));
     return obj;
 }
 

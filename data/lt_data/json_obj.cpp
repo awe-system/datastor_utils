@@ -280,6 +280,8 @@ bool json_obj::operator<(const json_obj &other) const
 
 json_obj &json_obj::operator[](const json_obj &key)
 {
+    if(_type == json_obj_type_unknown)
+        _type = json_obj_type_dic;
     if ( _type != json_obj_type_dic )
         //throw 700;
         throw (int)LT_DATA_ERROR_TYPE_DIC;
@@ -288,6 +290,8 @@ json_obj &json_obj::operator[](const json_obj &key)
 
 json_obj &json_obj::operator[](const char *key)
 {
+    if(_type == json_obj_type_unknown)
+        _type = json_obj_type_dic;
     if ( _type != json_obj_type_dic )
         //throw 700;
         throw (int)LT_DATA_ERROR_TYPE_DIC;
@@ -297,6 +301,8 @@ json_obj &json_obj::operator[](const char *key)
 
 json_obj &json_obj::operator[](const string &key)
 {
+    if(_type == json_obj_type_unknown)
+        _type = json_obj_type_dic;
     if ( _type != json_obj_type_dic )
         //throw 700;
         throw (int)LT_DATA_ERROR_TYPE_DIC;
@@ -306,6 +312,8 @@ json_obj &json_obj::operator[](const string &key)
 
 json_obj &json_obj::operator[](const int &k)
 {
+    if(_type == json_obj_type_unknown)
+        _type = json_obj_type_array;
     if ( _type != json_obj_type_array )
         //throw 800;
         throw (int)LT_DATA_ERROR_TYPE_ARRARY;
@@ -392,6 +400,9 @@ void json_obj::append(const json_obj &other)
 
 void json_obj::merge(const json_obj &other)
 {
+    if(_type == json_obj_type_unknown)
+        _type = json_obj_type_dic;
+    
     if ( !are_types_same(_type ,other.type()) )
         //throw 400;
         throw  (int)LT_DATA_ERROR_UNKNOWN;

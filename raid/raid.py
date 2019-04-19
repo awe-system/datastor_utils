@@ -101,8 +101,6 @@ def raid_create(chunk,level,raid_name,devs_input):
     if sts < 0 or out.find('started') < 0:
         return False,"创建raid失败"
 
-    cmd = ">/dev/null dd if=/dev/zero of=" + raid_name + " bs=1M count=1 oflag=direct 2>/dev/null"
-    os.system(cmd)
     global raid_dic
     raid_dic.update({raid_name:mddev})
     save_raid_dic(raid_dic_path, raid_dic)
@@ -404,7 +402,7 @@ def md_del(raid_name):
 
     del(raid_dic[raid_name])
     save_raid_dic(raid_dic_path, raid_dic)
-    cmd = "rm -f %s" %raid_name
+    cmd = "rm -f %s" % (dest_path + raid_name + conf_post)
     os.system(cmd)
     #os.remove(mddev)
     # sysmon_event('vg', 'remove', '%s,disks=%s' % (mdinfo['name'],_disk_slot_list_str(disks)), '卷组 %s 删除成功!' % mdinfo['name'])

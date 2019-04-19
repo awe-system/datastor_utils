@@ -21,13 +21,15 @@ def help(arg):
 	print "----------menu--------------------"
 	print color_yellow
 	print "help                                                            ; show this"
+	print color_green
 	print "listdev                                                         ; list all dev info"
 	print "createraid <trunk_sec> <raid_level> <raid_name> <dev1>,...[devn]; create raid"
 	print "raidinfo <raid_name>                                            ; show raid info by raid_name"
 	print "listraid                                                        ; show all raid info"
 	print "scanraid                                                        ; scan disk and regroup all raid"
+	print "regroupraid <raid_name>                                         ; regroup raid by raid name"
 	print color_blue
-	print "regroupraid <raid_name>                                         ; scan disk and regroup all raid"
+	print "stopraid <raid_name>                                            ; stop raid by raid name"
 	print "removeraid <raid_name>                                          ; remove raid by raid name"
 	print "sethotspare <raid_name> <dev>                                   ; set disk into some raid"
 	print "createvg <vg_name> <raid1/dev1>,...<raidn/devn>                 ; create vg on raid/dev"
@@ -81,6 +83,10 @@ def regroupraid_arg(arg):
 
 def removeraid_arg(arg):
 	err,output = md_del(arg[0])
+	return 0,json_dump(err,output)
+
+def stopraid_arg(arg):
+	err,output = stopraid(arg[0])
 	return 0,json_dump(err,output)
 
 def sethotspare_arg(arg):
@@ -283,6 +289,7 @@ cmd_tab = {"help":help,
 		"scanraid":scanraid_arg,
 		"regroupraid":regroupraid_arg,
 		"removeraid":removeraid_arg,
+		"stopraid":stopraid_arg,
 		"sethotspare":sethotspare_arg,
 		"createvg":createvg_arg,                                   
 		"vginfo":vginfo_arg,                                                

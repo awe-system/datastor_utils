@@ -410,6 +410,30 @@ def md_del(raid_name):
     # sysmon_event('vg', 'remove', '%s,disks=%s' % (mdinfo['name'],_disk_slot_list_str(disks)), '卷组 %s 删除成功!' % mdinfo['name'])
     return True,"删除raid成功"
 
+def stopraid(raid_name):
+    if raid_name not in raid_list():
+        return False,"raid不存在"
+
+    try:
+        mdinfo = md_info(raid_name)['raids'][0]
+        md_uuid = mdinfo['raid_uuid']
+        md_state = mdinfo['raid_state']
+    except:
+        md_uuid = ''
+        md_state = 'fail'
+
+    #FIXME if raid uesd by vol
+    #if md_state != 'fail' and __md_used(mdname):
+    # return False, '卷组 %s 存在未删除的用户数据卷，请先删除！' % mdname
+    global raid_dic
+    mddev = raid_dic[raid_name]
+    disks = mddev_get_disks(mddev)
+    sts,msg = md_stop(mddev)
+    if sts != 0:
+        return False,"停止%s失败!%s" % (raid_name, msg)
+
+    return True,"停止raid成功"
+
 def raidinfo_by_raidname(raid_name):
     remain = True
     if raid_name not in raid_list():

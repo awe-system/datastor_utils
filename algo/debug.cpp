@@ -3,21 +3,24 @@
 //
 
 #include <iostream>
+#include <chrono>
+#include<iomanip>
+#include<ctime>
 #include "debug.h"
 
 
-#define RED 	"\033[31;4m"
+#define RED 	"\033[31;0m"
 #define RESET	"\033[0m"
-#define GREEN	"\033[36;4m"
-#define YELLOW	"\033[32;4m"
-#define PURPLE	"\033[35;4m"
-#define BLUE	"\033[34;4m"
-#define BGREEN	"\033[1;36;47;4m"
-#define BRED 	"\033[1;31;47;4m"
-#define BYELLOW	"\033[1;32;47;4m"
-#define BPURPLE	"\033[1;35;47;4m"
-#define BBLUE	"\033[1;34;47;4m"
-#define NORMAL	"\033[30;4m"
+#define GREEN	"\033[36;0m"
+#define YELLOW	"\033[32;0m"
+#define PURPLE	"\033[35;0m"
+#define BLUE	"\033[34;0m"
+#define BGREEN	"\033[1;36;47;0m"
+#define BRED 	"\033[1;31;47;0m"
+#define BYELLOW	"\033[1;32;47;0m"
+#define BPURPLE	"\033[1;35;47;0m"
+#define BBLUE	"\033[1;34;47;0m"
+#define NORMAL	"\033[30;0m"
 
 
 debug &  debug::operator<<(const std::string &out)
@@ -269,7 +272,8 @@ debug &debug::operator<<(const color_type &color)
 debug &debug::operator<<(const dbg_end_type &end)
 {
     set_color(color_normal);
-    cout<<DEBUG_END;
+    
+    cout<<now_time()<<DEBUG_END;
 }
 
 debug &debug::operator<<(const debug &debug1)

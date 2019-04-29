@@ -11,24 +11,31 @@ import err as Err
 from common import *
 
 # raid_dic = load_raid_dic("raid_dic_path")
-dest_path='/opt/raid/'
-raid_dic_path='/opt/raid/raid_file'
-conf_post='.json'
+dest_path = '/opt/raid/'
+raid_dic_path = '/opt/raid/raid_file'
+conf_post = '.json'
+max_md_num = 2000
+
 
 def linkpath(name):
-    return commands.getoutput("mdadm --detail --scan --verbose | grep ARRAY | awk '{print $2}' | grep " + name)
+    return commands.getoutput(
+        "mdadm --detail --scan --verbose | grep ARRAY | awk '{print $2}' | grep " + name)
+
 
 def devpath_by_name(name, orgpath):
     lpath = linkpath(name)
-    if lpath == "" :return orgpath
-    return "/dev/" + commands.getoutput("ls -l \"" + lpath + "\" | cut -d '>' -f2 | cut -d '/' -f2")
+    if lpath == "": return orgpath
+    return "/dev/" + commands.getoutput(
+        "ls -l \"" + lpath + "\" | cut -d '>' -f2 | cut -d '/' -f2")
+
 
 def update_raid_info_by_scan(dic):
     res = {}
-    for key,value in dic.items():
-        newpath = devpath_by_name(key,value)
-	res.update({key:newpath})
+    for key, value in dic.items():
+        newpath = devpath_by_name(key, value)
+        res.update({key: newpath})
     return res
+
 
 if os.path.exists(raid_dic_path):
     raid_dic = json.loads(commands.getoutput("cat " + raid_dic_path))
@@ -36,14 +43,16 @@ if os.path.exists(raid_dic_path):
 else:
     raid_dic = {}
 
+
 def disk_name(slot):
     # FIXME
     if (slot.find("/dev/sd") != -1 or slot.find("/dev/vg") != -1):
         return slot
     return None
 
+
 def disks_from_slot(slots):
-    devs = [];
+    devs = []
     failed_slot = []
     slot_list = slots.split(",")
     for slot in slot_list:
@@ -52,18 +61,21 @@ def disks_from_slot(slots):
             devs.append(disk)
         else:
             failed_slot.append(slot)
-    return devs,failed_slot
+    return devs, failed_slot
+
 
 def md_list_mddevs():
     dev_list = []
     try:
         for dev in os.listdir('/dev'):
-            if (dev.find('md') == 0) and (len(dev.split('p')) == 1) and (len(dev)>2):
+            if (dev.find('md') == 0) and (len(dev.split('p')) == 1) and (
+                    len(dev) > 2):
                 dev_list.append('/dev/' + dev)
     except:
         pass
     finally:
         return dev_list
+
 
 def md_find_free_mddev():
     mddevs = md_list_mddevs()
@@ -73,6 +85,7 @@ def md_find_free_mddev():
             return md
     return None
 
+
 def raid_list():
     global raid_dic
     raid_list = []
@@ -80,51 +93,55 @@ def raid_list():
         raid_list.append(i)
     return raid_list
 
-def raid_create(chunk,level,raid_name,devs_input):
+
+def raid_create(chunk, level, raid_name, devs_input):
     if raid_name in raid_list():
-        return False,"raid 已存在"
+        return False, "raid 已存在"
     mddev = md_find_free_mddev()
     if mddev == None:
-        return False,"没有空闲的RAID槽位"
+        return False, "没有空闲的RAID槽位"
 
-    devs,failed = disks_from_slot(devs_input)
+    devs, failed = disks_from_slot(devs_input)
     if len(devs) == 0:
         return False, "没有可用磁盘"
     dev_list = " ".join(devs)
 
-    cmd = "mdadm -CR %s -l %s -c %s -n %u %s --metadata=1.2 --homehost=%s -f" % (mddev, level, chunk, len(devs), dev_list,raid_name)
+    cmd = "mdadm -CR %s -l %s -c %s -n %u %s --metadata=1.2 --homehost=%s -f" % (
+        mddev, level, chunk, len(devs), dev_list, raid_name)
 
     if level in ('3', '4', '5', '6', '10', '50', '60'):
         cmd += " --bitmap=internal"
-    sts,out = commands.getstatusoutput(cmd)
+    sts, out = commands.getstatusoutput(cmd)
 
     if sts < 0 or out.find('started') < 0:
-        return False,"创建raid失败"
+        return False, "创建raid失败"
 
     global raid_dic
-    raid_dic.update({raid_name:mddev})
+    raid_dic.update({raid_name: mddev})
     save_raid_dic(raid_dic_path, raid_dic)
     save_raid_dic(dest_path + raid_name + conf_post, json.dumps(devs))
-    #os.makedirs(mddev)
-    return True, '创建raid %s 成功!' % raid_name 
+    # os.makedirs(mddev)
+    return True, '创建raid %s 成功!' % raid_name
+
 
 class raid_attr:
     def __init__(self):
-        self.Name = ''      # raid1需要特殊处理
+        self.Name = ''  # raid1需要特殊处理
         self.dev = ''
         self.raid_level = ''
-        self.raid_state = ''    # raid1需要根据disk_cnt与disk_specs关系计算
-        self.raid_strip = ''    # raid1需要特殊处理
+        self.raid_state = ''  # raid1需要根据disk_cnt与disk_specs关系计算
+        self.raid_strip = ''  # raid1需要特殊处理
         self.raid_rebuild = ''
         self.capacity = 0
         self.remain = 0
-        self.disk_cnt = 0   # 当前磁盘个数, raid1需要计算实际的disk_list
-        self.disk_list = [] # 当前磁盘列表, raid1需要特殊处理
-        self.raid_uuid = '' # 供磁盘上下线检测对应RAID使用, raid1需要特殊处理
-        #self.disk_working = 0  # 考虑使用disk_cnt替代
-        self.disk_specs = 0 # raid应该包含的磁盘个数，对应mdadm -D的'Raid Devices'字段, raid1需要特殊处理
+        self.disk_cnt = 0  # 当前磁盘个数, raid1需要计算实际的disk_list
+        self.disk_list = []  # 当前磁盘列表, raid1需要特殊处理
+        self.raid_uuid = ''  # 供磁盘上下线检测对应RAID使用, raid1需要特殊处理
+        # self.disk_working = 0  # 考虑使用disk_cnt替代
+        self.disk_specs = 0  # raid应该包含的磁盘个数，对应mdadm -D的'Raid Devices'字段, raid1需要特殊处理
         self.is_parted = False  # 是否映射用户数据卷
         self.vg_name = ''
+
 
 def __get_sys_attr(dev, attr):
     if dev.find('/dev/md') >= 0:
@@ -134,14 +151,17 @@ def __get_sys_attr(dev, attr):
     sys_path = '/sys/block/' + dev_name
     return __attr_read(sys_path, attr)
 
+
 def __def_post(p):
     if len(p) == 0:
         return ""
     return p[0]
 
+
 def find_attr(output, reg, post=__def_post):
     p = re.findall(reg, output)
     return post(p)
+
 
 def __level_post(p):
     if len(p) == 0:
@@ -151,17 +171,19 @@ def __level_post(p):
         level = "JBOD"
     return level
 
+
 def __chunk_post(p):
     if len(p) == 0:
         return ""
     chunk = p[0].lower().replace("k", "")
     return chunk
 
+
 def __state_post(p):
     if len(p) == 0:
         return "Unknown"
     state = p[0]
-    if state.find("degraded") != -1 :
+    if state.find("degraded") != -1:
         if state.find("recovering") != -1:
             return "rebuild"
         return "degrade"
@@ -172,8 +194,10 @@ def __state_post(p):
     else:
         return "normal"
 
+
 def __name_post(p):
     return p[0].split(":")[0] if len(p) > 0 else 'Unknown'
+
 
 def __attr_read(path, attr):
     content = ''
@@ -186,13 +210,14 @@ def __attr_read(path, attr):
         pass
     return content
 
+
 #   def disk_slot(name):
 #       cmd = "us_cmd disk slot " + name + " 2>/dev/null"
 #       out = commands.getoutput(cmd)
 #      if (out.find(":") == -1):
 #           return None
 #       return out
- 
+
 
 def disk_post(p):
     if len(p) == 0:
@@ -203,9 +228,10 @@ def disk_post(p):
         slots.append(name)
     return slots
 
-def __md_fill_mdadm_attr(mddev, remain = True):
+
+def __md_fill_mdadm_attr(mddev, remain=True):
     cmd = 'mdadm -D %s 2>/dev/null' % mddev
-    sts,output = commands.getstatusoutput(cmd)
+    sts, output = commands.getstatusoutput(cmd)
 
     if sts != 0:
         return None
@@ -215,7 +241,8 @@ def __md_fill_mdadm_attr(mddev, remain = True):
     attr.dev = find_attr(output, "^(.*):")
     attr.raid_level = find_attr(output, "Raid Level : (.*)", __level_post)
     attr.raid_state = find_attr(output, "State : (.*)", __state_post)
-    attr.raid_strip = find_attr(output, "Chunk Size : ([0-9]+[KMG])", __chunk_post)
+    attr.raid_strip = find_attr(output, "Chunk Size : ([0-9]+[KMG])",
+                                __chunk_post)
     rebuild_per = find_attr(output, "Rebuild Status : ([0-9]+)\%")
     resync_per = find_attr(output, "Resync Status : ([0-9]+)\%")
 
@@ -228,8 +255,8 @@ def __md_fill_mdadm_attr(mddev, remain = True):
 
     attr.capacity = int(__get_sys_attr(attr.dev, "size")) * 512
     if remain:
-        attr.remain = attr.capacity   
-        #fixme  __get_remain_capacity(attr.name)
+        attr.remain = attr.capacity
+        # fixme  __get_remain_capacity(attr.name)
     attr.disk_list = find_attr(output, "([0-9]+\s*){4}.*(/dev/.+)", disk_post)
     attr.disk_cnt = len(attr.disk_list)
     attr.raid_uuid = find_attr(output, "UUID : (.*)")
@@ -237,19 +264,21 @@ def __md_fill_mdadm_attr(mddev, remain = True):
     if attr.capacity != attr.remain:
         attr.is_parted = True
 
-    cmd = "pvs |grep '%s'" %mddev
-    sts,output = commands.getstatusoutput(cmd)
+    cmd = "pvs |grep '%s'" % mddev
+    sts, output = commands.getstatusoutput(cmd)
     if sts == 0:
-        cmd = "pvs|grep '%s'|awk '{print $2}'" %mddev
+        cmd = "pvs|grep '%s'|awk '{print $2}'" % mddev
         attr.vg_name = commands.getoutput(cmd)
 
     return attr
 
+
 def __raid0_jobd_state(dspecs, dcnt):
     return 'normal' if dcnt == dspecs else 'fail'
 
+
 # 不同RAID级别在磁盘完全掉线后会导致部分信息缺失需要记录在tmpfs供查询使用
-def __md_fill_tmpfs_attr(attr = raid_attr()):
+def __md_fill_tmpfs_attr(attr=raid_attr()):
     if attr.raid_level == '6':
         if attr.raid_state == 'degrade' or attr.raid_state == 'rebuild':
             if attr.disk_cnt < attr.disk_specs:
@@ -266,7 +295,7 @@ def __md_fill_tmpfs_attr(attr = raid_attr()):
         attr.raid_strip = 'N/A'
         if attr.disk_cnt == 0:
             attr.raid_state = 'fail'
-    
+
     # raid 0,1,jobd的磁盘列表需要单独处理
     # attr.disk_list = __listdir_files('%s/disk-list' % _dir)
     # attr.disk_cnt = len(attr.disk_list)
@@ -277,11 +306,13 @@ def __md_fill_tmpfs_attr(attr = raid_attr()):
 
     return attr.__dict__
 
-def mddev_get_attr(mddev, remain = True):
+
+def mddev_get_attr(mddev, remain=True):
     attr = __md_fill_mdadm_attr(mddev, remain)
     if None == attr:
         return None
     return __md_fill_tmpfs_attr(attr)
+
 
 def list_files(path, reg):
     if not path.endswith("/"):
@@ -292,6 +323,7 @@ def list_files(path, reg):
     f = [path + x for x in names if r.match(x)]
     return f
 
+
 def md_get_mddev(raid_name):
     mddevs = list_files("/dev", "md[0-255]+")
     for md in mddevs:
@@ -299,12 +331,13 @@ def md_get_mddev(raid_name):
             continue
         # 尝试从mdadm获取信息
         cmd = 'mdadm -D %s 2>&1 | grep %s >/dev/null' % (md, raid_name)
-        sts,out = commands.getstatusoutput(cmd)
+        sts, out = commands.getstatusoutput(cmd)
         if sts == 0:
             return md
     return None
 
-def md_info_mddevs(mddevs=None, remain = True):
+
+def md_info_mddevs(mddevs=None, remain=True):
     if (mddevs == None):
         mddevs = md_list_mddevs()
     md_attrs = []
@@ -312,20 +345,23 @@ def md_info_mddevs(mddevs=None, remain = True):
         attr = mddev_get_attr(mddev, remain)
         if (attr):
             md_attrs.append(attr)
-    return True,{"total": len(md_attrs), "raids": md_attrs}
+    return True, {"total": len(md_attrs), "raids": md_attrs}
 
-def md_info(raid_name=None, remain = True):
+
+def md_info(raid_name=None, remain=True):
     if (raid_name == None):
         mddevs = None;
     else:
         mddevs = [md_get_mddev(raid_name)];
     return md_info_mddevs(mddevs, remain);
 
+
 def mddev_get_disks(mddev):
     # reg = re.compile(r"(sd[a-z]+)\[[0-9]+\]")
     reg = re.compile(r"(sd\w+)")
-    cmd = "cat /proc/mdstat |grep \'" + (os.path.basename(mddev)) + " \' 2>/dev/null" 
-    sts,out = commands.getstatusoutput(cmd)
+    cmd = "cat /proc/mdstat |grep \'" + (
+        os.path.basename(mddev)) + " \' 2>/dev/null"
+    sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
         return []
     disks = reg.findall(out)
@@ -333,20 +369,22 @@ def mddev_get_disks(mddev):
 
     return rdisks
 
+
 def md_stop(mddev):
     cmd = "mdadm -S %s 2>&1" % mddev
     sts, out = commands.getstatusoutput(cmd)
     if out.find('mdadm: stopped') < 0:
-        return -1,'设备正在被占用!'
+        return -1, '设备正在被占用!'
     cmd = "rm -f %s >/dev/null 2>&1" % mddev
-    sts,out = commands.getstatusoutput(cmd)
+    sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
-        return -1,'无法删除设备节点!'
-    return sts,''
+        return -1, '无法删除设备节点!'
+    return sts, ''
+
 
 def set_disk_free(diskname):
     cmd = "mdadm --zero-superblock %s 2>&1" % diskname
-    sts,out = commands.getstatusoutput(cmd)
+    sts, out = commands.getstatusoutput(cmd)
 
     # 修改判断清空superblock的条件
     # 常见的出错提示
@@ -358,6 +396,7 @@ def set_disk_free(diskname):
     else:
         return False
 
+
 def set_disks_free(disks):
     res = ""
     for dev in disks:
@@ -367,9 +406,10 @@ def set_disks_free(disks):
     # disk_name_update(disks)
     return res
 
+
 def md_del(raid_name):
     if raid_name not in raid_list():
-        return False,"raid不存在"
+        return False, "raid不存在"
 
     try:
         mdinfo = md_info(raid_name)['raids'][0]
@@ -379,15 +419,15 @@ def md_del(raid_name):
         md_uuid = ''
         md_state = 'fail'
 
-    #FIXME if raid uesd by vol
-    #if md_state != 'fail' and __md_used(mdname):
-        # return False, '卷组 %s 存在未删除的用户数据卷，请先删除！' % mdname
+    # FIXME if raid uesd by vol
+    # if md_state != 'fail' and __md_used(mdname):
+    # return False, '卷组 %s 存在未删除的用户数据卷，请先删除！' % mdname
     global raid_dic
     mddev = raid_dic[raid_name]
     disks = mddev_get_disks(mddev)
-    sts,msg = md_stop(mddev)
+    sts, msg = md_stop(mddev)
     if sts != 0:
-        return False,"停止%s失败!%s" % (raid_name, msg)
+        return False, "停止%s失败!%s" % (raid_name, msg)
     # 删除设备节点
     # __md_remove_devnode(raid_name)
 
@@ -398,19 +438,20 @@ def md_del(raid_name):
     #     disk_set_type(slot, 'Free')
     res = set_disks_free(disks)
     if res != "":
-        return False,"清除磁盘信息失败，请手动清除"
+        return False, "清除磁盘信息失败，请手动清除"
 
-    del(raid_dic[raid_name])
+    del (raid_dic[raid_name])
     save_raid_dic(raid_dic_path, raid_dic)
     cmd = "rm -f %s" % (dest_path + raid_name + conf_post)
     os.system(cmd)
-    #os.remove(mddev)
+    # os.remove(mddev)
     # sysmon_event('vg', 'remove', '%s,disks=%s' % (mdinfo['name'],_disk_slot_list_str(disks)), '卷组 %s 删除成功!' % mdinfo['name'])
-    return True,"删除raid成功"
+    return True, "删除raid成功"
+
 
 def stopraid(raid_name):
     if raid_name not in raid_list():
-        return False,"raid不存在"
+        return False, "raid不存在"
 
     try:
         mdinfo = md_info(raid_name)['raids'][0]
@@ -420,45 +461,50 @@ def stopraid(raid_name):
         md_uuid = ''
         md_state = 'fail'
 
-    #FIXME if raid uesd by vol
-    #if md_state != 'fail' and __md_used(mdname):
+    # FIXME if raid uesd by vol
+    # if md_state != 'fail' and __md_used(mdname):
     # return False, '卷组 %s 存在未删除的用户数据卷，请先删除！' % mdname
     global raid_dic
     mddev = raid_dic[raid_name]
     disks = mddev_get_disks(mddev)
-    sts,msg = md_stop(mddev)
+    sts, msg = md_stop(mddev)
     if sts != 0:
-        return False,"停止%s失败!%s" % (raid_name, msg)
+        return False, "停止%s失败!%s" % (raid_name, msg)
 
-    return True,"停止raid成功"
+    return True, "停止raid成功"
+
 
 def raidinfo_by_raidname(raid_name):
     remain = True
     if raid_name not in raid_list():
-        return False,"raid不存在" 
+        return False, "raid不存在"
 
     global raid_dic
     mddev = raid_dic[raid_name]
-    attr = mddev_get_attr(mddev, remain) 
-    return True,attr
+    attr = mddev_get_attr(mddev, remain)
+    return True, attr
+
 
 def is_disk_mount(dev_path):
-    status,mount_info = commands.getstatusoutput("/usr/bin/sudo /usr/bin/mount | grep " + dev_path)
-    if status != 0 :return False
+    status, mount_info = commands.getstatusoutput(
+        "/usr/bin/sudo /usr/bin/mount | grep " + dev_path)
+    if status != 0: return False
     return True
+
 
 class dev_attr:
     def __init__(self):
-        self.name = ''      
+        self.name = ''
         self.size = ''
         self.raid_state = ''
 
+
 def list_devs():
     devs = []
-    cmd = "ls /sys/block/ | grep sd 2>/dev/null" 
-    sts,out = commands.getstatusoutput(cmd)
+    cmd = "ls /sys/block/ | grep sd 2>/dev/null"
+    sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
-        return False,"devs is unavailable "
+        return False, "devs is unavailable "
 
     out = out.split("\n")
     unmount_disks = ["/dev/" + x for x in out]
@@ -467,12 +513,13 @@ def list_devs():
             devs.append(x)
     return devs
 
+
 def get_dev_attr(dev):
     attr = dev_attr()
     attr.name = dev
     attr.raid_state = "no"
     cmd = "cat /sys/block/%s/size" % dev[5:]
-    sts,out = commands.getstatusoutput(cmd)
+    sts, out = commands.getstatusoutput(cmd)
     attr.size = out
 
     md_list = md_list_mddevs()
@@ -482,38 +529,56 @@ def get_dev_attr(dev):
             break
     return attr.__dict__
 
+
 def dev_list():
     dev_attrs = []
-    for dev in list_devs():    
+    for dev in list_devs():
         dev_attrs.append(get_dev_attr(dev))
-    return  True,{"total": len(dev_attrs), "devs": dev_attrs}
+    return True, {"total": len(dev_attrs), "devs": dev_attrs}
 
-def sethotspare(raid_name,dev):
+
+def sethotspare(raid_name, dev):
     global raid_dic
     mddev = raid_dic[raid_name]
-    cmd = "mdadm %s -a %s" %(mddev,dev)
-    sts,out = commands.getstatusoutput(cmd)
-    if sts !=0:
-        return False,"sethostspare fail!"
-    return True,"设置热备盘成功!"
+    cmd = "mdadm %s -a %s" % (mddev, dev)
+    sts, out = commands.getstatusoutput(cmd)
+    if sts != 0:
+        return False, "sethostspare fail!"
+    return True, "设置热备盘成功!"
+
+def is_md_exist(path):
+    return os.path.exists(path)
+
+def mdpath(num):
+    return "/dev/md" + str(num)
+
+def find_empty_mdpath():
+    i = 0
+    while (i < max_md_num):
+        if( not is_md_exist(mdpath(i)) ):
+            return mdpath(i)
+        i = i+1
+    raise
+
 
 def regroupraid(raidname):
     disks = json.loads(load_raid_dic(dest_path + raidname + conf_post))
-    mddev = raid_dic[raidname]
+    mddev = find_empty_mdpath()
+    raid_dic[raidname] = mddev
     dev_list = " ".join(disks)
-    cmd = "mdadm -Af %s %s >/dev/null 2>&1" %(mddev, dev_list)
-    sts,out = commands.getstatusoutput(cmd)
+    cmd = "mdadm -Af %s %s >/dev/null 2>&1" % (mddev, dev_list)
+    sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
-        return False,"重组%s失败!%s" % (raidname, out)
-    return True,"重组成功"
+        return False, "重组%s失败!%s" % (raidname, out)
+    save_raid_dic(raid_dic_path, raid_dic)
+    return True, "重组成功"
+
 
 def scan_raid():
     global raid_dic
-    #raid_name,cur_raid_name,dev,stop
+    # raid_name,cur_raid_name,dev,stop
     for raid in raid_dic.keys():
-        success,msg = regroupraid(raid)
+        success, msg = regroupraid(raid)
         if not success:
-            return success,msg
-    return True,"重组成功"
-
-           
+            return success, msg
+    return True, "重组成功"

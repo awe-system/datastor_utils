@@ -21,19 +21,19 @@
 #ifdef LOG4CPP_FIX_ERROR_COLLISION
 
 namespace log4cpp {
-    static const int _tmpERRORValue = ERROR;
+    static const int _tmpERRORValue = LOG_PRIORITY_ERROR;
 }
 
-#undef ERROR
-    static const int ERROR = log4cpp::_tmpERRORValue;
-#define ERROR ERROR
+#undef LOG_PRIORITY_ERROR
+    static const int LOG_PRIORITY_ERROR = log4cpp::_tmpERRORValue;
+#define LOG_PRIORITY_ERROR LOG_PRIORITY_ERROR
 
 #else  // LOG4CPP_FIX_ERROR_COLLISION
-#error Naming collision for 'ERROR' detected. Please read the FAQ for a \
+#error Naming collision for 'LOG_PRIORITY_ERROR' detected. Please read the FAQ for a \
        workaround. 
 #endif // LOG4CPP_FIX_ERROR_COLLISION 
 
-#endif // ERROR
+#endif // LOG_PRIORITY_ERROR
 
 /*
  * Other Win32 rudeness in EDK.h

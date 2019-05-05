@@ -77,7 +77,7 @@ namespace log4cpp {
     /**
      * Convert log4cpp Priority to an EventLog type. The log4cpp package
      * supports 8 defined priorites, but the NT EventLog only knows
-     * 3 event types of interest to us: ERROR, WARNING, and INFO.
+     * 3 event types of interest to us: LOG_PRIORITY_ERROR, WARNING, and LOG_PRIORITY_INFO.
      */
     WORD NTEventLogAppender::getType(Priority::Value priority) {
 
@@ -89,14 +89,14 @@ namespace log4cpp {
 //        case Priority::FATAL:
         case Priority::ALERT:
         case Priority::CRIT:
-        case Priority::ERROR:
+        case Priority::LOG_PRIORITY_ERROR:
             ret_val = EVENTLOG_ERROR_TYPE;
             break;
-        case Priority::WARN:
+        case Priority::LOG_PRIORITY_WARN:
             ret_val = EVENTLOG_WARNING_TYPE;
             break;
         case Priority::NOTICE:
-        case Priority::INFO:
+        case Priority::LOG_PRIORITY_INFO:
         case Priority::DEBUG:
         default:
             ret_val = EVENTLOG_INFORMATION_TYPE;

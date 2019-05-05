@@ -1,4 +1,9 @@
+#include <ss_log.h>
+#include "awe_conf/env.h"
 #include "log4cpp/ss_log4cpp.h"
+
+static env log_prefix("ss_log","log_prefix");
+static string log_path_prefix = (log_prefix.get_string() == "")?("/var/log/msg"):log_prefix.get_string();
 
 ss_log4cpp &logger = ss_log4cpp::getInstance();
 
@@ -24,6 +29,7 @@ void ss_log4cpp::destroy()
     }
 }
 
+
 ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
                            error_category(log4cpp::Category::getInstance(std::string("error"))),
                            warn_category(log4cpp::Category::getInstance(std::string("warn"))),
@@ -34,7 +40,7 @@ ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
     root_layout->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
 
     log4cpp::RollingFileAppender *roll_appender_all = new log4cpp::RollingFileAppender(
-            "roll_appender", "./ss_log.log", 1024*1024*100, 3);
+            "roll_appender", log_path_prefix+ ".log", 1024*1024*100, 3);
     roll_appender_all->setLayout(root_layout);
 
 
@@ -42,7 +48,7 @@ ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
     layout_error->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
 
     log4cpp::RollingFileAppender *roll_appender_error = new log4cpp::RollingFileAppender(
-            "roll_appender_error", "./ss_log_error.log", 1024*1024*100, 3);
+            "roll_appender_error", log_path_prefix + "_error.log", 1024*1024*100, 3);
     roll_appender_error->setLayout(layout_error);
 
 
@@ -50,7 +56,7 @@ ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
     layout_warn->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
 
     log4cpp::RollingFileAppender *roll_appender_warn = new log4cpp::RollingFileAppender(
-            "roll_appender_error", "./ss_log_warn.log", 1024*1024*100, 3);
+            "roll_appender_error", log_path_prefix + "_warn.log", 1024*1024*100, 3);
     roll_appender_warn->setLayout(layout_warn);
 
 
@@ -58,14 +64,14 @@ ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
     layout_info->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
 
     log4cpp::RollingFileAppender *roll_appender_info = new log4cpp::RollingFileAppender(
-            "roll_appender_error", "./ss_log_info.log", 1024*1024*100, 3);
+            "roll_appender_error", log_path_prefix + "_info.log", 1024*1024*100, 3);
     roll_appender_info->setLayout(layout_info);
 
     log4cpp::PatternLayout *layout_debug = new log4cpp::PatternLayout();
     layout_debug->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
 
     log4cpp::RollingFileAppender *roll_appender_debug = new log4cpp::RollingFileAppender(
-            "roll_appender_error", "./ss_log_debug.log", 1024*1024*100, 3);
+            "roll_appender_error", log_path_prefix + "_debug.log", 1024*1024*100, 3);
     roll_appender_debug->setLayout(layout_debug);
 
 
@@ -92,20 +98,46 @@ ss_log4cpp::~ss_log4cpp()
 
 void ss_log4cpp::error(std::string msg)
 {
+    root_category.error(msg);
     error_category.error(msg);
 }
 
 void ss_log4cpp::warn(std::string msg)
 {
+    root_category.warn(msg);
     warn_category.warn(msg);
 }
 
 void ss_log4cpp::info(std::string msg)
 {
+    root_category.info(msg);
     info_category.info(msg);
 }
 
 void ss_log4cpp::debug(std::string msg)
 {
+    root_category.debug(msg);
     debug_category.debug(msg);
+}
+
+void ss_log4cpp::set_priority(int pri)
+{
+    switch ( pri )
+    {
+        case (LOG_PRIORITY_ERROR):
+            root_category.setPriority(log4cpp::Priority::ERROR);
+            break;
+        case (LOG_PRIORITY_WARN):
+            root_category.setPriority(log4cpp::Priority::WARN);
+            break;
+        case (LOG_PRIORITY_INFO):
+            root_category.setPriority(log4cpp::Priority::INFO);
+            break;
+        case (LOG_PRIORITY_DEBUG):
+            root_category.setPriority(log4cpp::Priority::DEBUG);
+            break;
+        default:
+            root_category.setPriority(log4cpp::Priority::DEBUG);
+            break;
+    }
 }

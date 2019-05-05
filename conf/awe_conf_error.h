@@ -6,7 +6,7 @@
 #define SS_CONF_SS_CONF_ERROR_H
 #include <iostream>
 using namespace std;
-//ERROR 800~899
+//LOG_PRIORITY_ERROR 800~899
 typedef enum
 {
     CONF_ERROR_TYPE_OK = 0,

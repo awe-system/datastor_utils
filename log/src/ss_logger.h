@@ -4,14 +4,6 @@
 #include <ss_log.h>
 #include "log4cpp/Category.hh"
 
-enum priority
-{
-    ERROR,
-    WARN,
-    INFO,
-    DEBUG
-};
-
 class ss_logger
 {
 private:

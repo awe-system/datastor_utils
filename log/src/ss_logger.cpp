@@ -28,16 +28,16 @@ void ss_logger::set_priority(priority pri)
 {
     switch ( pri )
     {
-        case (ERROR):
+        case (LOG_PRIORITY_ERROR):
             root_category.setPriority(log4cpp::Priority::ERROR);
             break;
-        case (WARN):
+        case (LOG_PRIORITY_WARN):
             root_category.setPriority(log4cpp::Priority::WARN);
             break;
-        case (INFO):
+        case (LOG_PRIORITY_INFO):
             root_category.setPriority(log4cpp::Priority::INFO);
             break;
-        case (DEBUG):
+        case (LOG_PRIORITY_DEBUG):
             root_category.setPriority(log4cpp::Priority::DEBUG);
             break;
         default:

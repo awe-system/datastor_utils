@@ -5,7 +5,7 @@
 
 namespace ServerSan_Algo
 {
-//ERROR 0 ~ 99
+//LOG_PRIORITY_ERROR 0 ~ 99
 typedef enum
 {
     ERROR_TYPE_OK = 0,

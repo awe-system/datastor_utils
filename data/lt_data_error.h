@@ -1,7 +1,7 @@
 #ifndef LT_DATA_ERROR_H
 #define LT_DATA_ERROR_H
 
-//ERROR 1100 ~ 1199
+//LOG_PRIORITY_ERROR 1100 ~ 1199
 typedef enum
 {
     LT_DATA_ERROR_TYPE_OK = 0,

@@ -15,6 +15,8 @@ endif ()
 include_directories("./data")
 include_directories("./functions")
 include_directories("conf")
+include_directories("log/include")
+include_directories("log")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 include_directories("./include")
@@ -88,9 +90,65 @@ set(SOURCE_FILES
         algo/algo_interface.h algo/algo_interface.cpp
         algo/debug.h algo/debug.cpp
         README.md functions/lt_function/lt_safe_set.h algo/test_block_io_set.cpp algo/test_block_io_set.h algo/algo_sections.cpp algo/algo_sections.h algo/algo_bitmap.cpp algo/algo_bitmap.h algo/algo_bitmaps.cpp algo/algo_bitmaps.h data/lt_data/lt_stack.h)
+
+set(LOG_FILES
+        log/src/ss_logger.h
+        log/src/ss_logger.cpp
+        log/src/ss_log.cpp
+        log/src/ss_log4cpp.cpp
+        log/src/log4cpp_src/Appender.cpp
+        log/src/log4cpp_src/AppenderSkeleton.cpp
+        log/src/log4cpp_src/AppendersFactory.cpp
+        log/src/log4cpp_src/BufferingAppender.cpp
+        log/src/log4cpp_src/FactoryParams.cpp
+        log/src/log4cpp_src/LayoutsFactory.cpp
+        log/src/log4cpp_src/LevelEvaluator.cpp
+        log/src/log4cpp_src/Localtime.cpp
+        log/src/log4cpp_src/PassThroughLayout.cpp
+        log/src/log4cpp_src/TriggeringEventEvaluatorFactory.cpp
+        log/src/log4cpp_src/LayoutAppender.cpp
+        log/src/log4cpp_src/FileAppender.cpp
+        log/src/log4cpp_src/DailyRollingFileAppender.cpp
+        log/src/log4cpp_src/RollingFileAppender.cpp
+        log/src/log4cpp_src/FixedContextCategory.cpp
+        log/src/log4cpp_src/IdsaAppender.cpp
+        log/src/log4cpp_src/OstreamAppender.cpp
+        log/src/log4cpp_src/StringQueueAppender.cpp
+        log/src/log4cpp_src/SyslogAppender.cpp
+        log/src/log4cpp_src/RemoteSyslogAppender.cpp
+        log/src/log4cpp_src/SimpleLayout.cpp
+        log/src/log4cpp_src/BasicLayout.cpp
+        log/src/log4cpp_src/PatternLayout.cpp
+        log/src/log4cpp_src/Category.cpp
+        log/src/log4cpp_src/CategoryStream.cpp
+        log/src/log4cpp_src/HierarchyMaintainer.cpp
+        log/src/log4cpp_src/Configurator.cpp
+        log/src/log4cpp_src/BasicConfigurator.cpp
+        log/src/log4cpp_src/SimpleConfigurator.cpp
+        log/src/log4cpp_src/PropertyConfigurator.cpp
+        log/src/log4cpp_src/PropertyConfiguratorImpl.cpp
+        log/src/log4cpp_src/LoggingEvent.cpp
+        log/src/log4cpp_src/Priority.cpp
+        log/src/log4cpp_src/NDC.cpp
+        log/src/log4cpp_src/Filter.cpp
+        log/src/log4cpp_src/TimeStamp.cpp
+        log/src/log4cpp_src/StringUtil.cpp
+        log/src/log4cpp_src/Properties.cpp
+        log/src/log4cpp_src/Win32DebugAppender.cpp
+        log/src/log4cpp_src/NTEventLogAppender.cpp
+        log/src/log4cpp_src/DllMain.cpp
+        log/src/log4cpp_src/DummyThreads.cpp
+        log/src/log4cpp_src/MSThreads.cpp
+        log/src/log4cpp_src/OmniThreads.cpp
+        log/src/log4cpp_src/PThreads.cpp
+        log/src/log4cpp_src/PortabilityImpl.cpp
+        log/src/log4cpp_src/AbortAppender.cpp
+        )
+
+
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(boostdir "D://tool//boost_1_68_0//boost_1_68_0//stage//lib//lib")#根据boost安装位置调整
-    add_library(datastor_utils ${SOURCE_FILES})
+    add_library(datastor_utils ${SOURCE_FILES} ${LOG_FILES})
     target_link_libraries(datastor_utils "${boostdir}boost_system-vc141-mt-gd-x64-1_68.lib")
     target_link_libraries(datastor_utils "${boostdir}boost_date_time-vc141-mt-gd-x64-1_68.lib")
     target_link_libraries(datastor_utils "${boostdir}boost_regex-vc141-mt-gd-x64-1_68.lib")
@@ -98,7 +156,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(datastor_utils "${boostdir}boost_chrono-vc141-mt-gd-x64-1_68.lib")
 endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    add_library(datastor_utils SHARED ${SOURCE_FILES})
+    add_library(datastor_utils SHARED ${SOURCE_FILES} ${LOG_FILES} )
     target_link_libraries(datastor_utils boost_system boost_thread)
 endif()
 
@@ -142,6 +200,11 @@ INSTALL(FILES data/lt_data/lt_data_t.h
         data/lt_data/lt_stack.h
         data/lt_data_error.h
         DESTINATION ${include_dir}/lt_data)
+
+
+INSTALL(FILES log/include/ss_log.h
+        log/ss_log_error.h
+        DESTINATION ${include_dir})
 
 INSTALL(FILES algo/algo.h
         algo/algo_error.h

@@ -19,6 +19,8 @@ public:
     void debug(std::string msg);
 
     void info(std::string msg);
+    
+    void set_priority(int pri);
 
 private:
     ss_log4cpp();

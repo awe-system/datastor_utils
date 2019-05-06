@@ -7,7 +7,7 @@ INCLUDE_DIRECTORIES(.)
 
 set(SOURCE_FILES src/ss_logger.h
         src/ss_logger.cpp
-        src/ss_log.cpp
+        src/awe_log.cpp
         src/ss_log4cpp.cpp
         src/log4cpp_src/Appender.cpp
         src/log4cpp_src/AppenderSkeleton.cpp
@@ -68,8 +68,8 @@ MESSAGE(STATUS "date_time : ${date_time}")
 
 INSTALL (TARGETS ss_log LIBRARY DESTINATION /usr/local/lib)
 INSTALL(FILES
-        ./include/ss_log.h
-        ss_log_error.h
+        include/awe_log.h
+        awe_log_error.h
         DESTINATION /usr/local/include/ss_log)
 
 # 以下为RPM信息的设置，包名,概述，供应者，版本, 分组等等信息，通过其变量名称可以知道意思

@@ -5,7 +5,7 @@
 #ifndef SS_METADATA_DEBUG_H
 #define SS_METADATA_DEBUG_H
 
-
+#include <mutex>
 #include <string>
 #include "lt_data/json_obj.h"
 #include "lt_data/lt_data_t.h"
@@ -41,6 +41,7 @@ std::string dbg_now_time();
 
 class debug
 {
+    std::mutex m;
     string start_str;
     string end_str;
     bool is_start;

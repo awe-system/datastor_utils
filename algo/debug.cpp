@@ -29,6 +29,7 @@
 
 debug &  debug::operator<<(const std::string &out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -41,6 +42,7 @@ debug &  debug::operator<<(const std::string &out)
 
 debug &  debug::operator<<(const int out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -53,6 +55,7 @@ debug &  debug::operator<<(const int out)
 
 debug &  debug::operator<<(const char *out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -65,6 +68,7 @@ debug &  debug::operator<<(const char *out)
 
 debug &  debug::operator<<(const json_obj &out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -77,6 +81,7 @@ debug &  debug::operator<<(const json_obj &out)
 
 debug &  debug::operator<<(const long out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -89,6 +94,7 @@ debug &  debug::operator<<(const long out)
 
 debug &debug::operator<<(const unsigned long out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -101,6 +107,7 @@ debug &debug::operator<<(const unsigned long out)
 
 debug &debug::operator<<(const unsigned int out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -113,6 +120,7 @@ debug &debug::operator<<(const unsigned int out)
 
 debug &debug::operator<<(const void *out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -125,6 +133,7 @@ debug &debug::operator<<(const void *out)
 
 debug &debug::operator<<(const char out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -194,6 +203,7 @@ debug::debug()
 
 debug &debug::operator<<(const lt_data_t &out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -248,6 +258,7 @@ void debug::stop()
 
 debug &debug::operator<<(const std::vector<void *> &stack_out)
 {
+    std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
@@ -269,12 +280,14 @@ debug &debug::operator<<(const std::vector<void *> &stack_out)
 
 debug &debug::operator<<(const color_type &color)
 {
+    std::unique_lock<std::mutex> lck(m);
     set_color(color);
     return *this;
 }
 
 debug &debug::operator<<(const dbg_end_type &end)
 {
+    std::unique_lock<std::mutex> lck(m);
     set_color(color_normal);
     
     cout<<dbg_now_time()<<DEBUG_END;
@@ -282,6 +295,7 @@ debug &debug::operator<<(const dbg_end_type &end)
 
 debug &debug::operator<<(const debug &debug1)
 {
+    std::unique_lock<std::mutex> lck(m);
     set_color(color_normal);
     cout<<DEBUG_END;
 }

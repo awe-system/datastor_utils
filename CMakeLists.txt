@@ -94,7 +94,7 @@ set(SOURCE_FILES
 set(LOG_FILES
         log/src/ss_logger.h
         log/src/ss_logger.cpp
-        log/src/ss_log.cpp
+        log/src/awe_log.cpp
         log/src/ss_log4cpp.cpp
         log/src/log4cpp_src/Appender.cpp
         log/src/log4cpp_src/AppenderSkeleton.cpp
@@ -202,8 +202,8 @@ INSTALL(FILES data/lt_data/lt_data_t.h
         DESTINATION ${include_dir}/lt_data)
 
 
-INSTALL(FILES log/include/ss_log.h
-        log/ss_log_error.h
+INSTALL(FILES log/include/awe_log.h
+        log/awe_log_error.h
         DESTINATION ${include_dir})
 
 INSTALL(FILES algo/algo.h

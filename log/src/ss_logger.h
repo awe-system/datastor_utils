@@ -1,7 +1,7 @@
 #ifndef SS_LOG_SS_LOGGER_H
 #define SS_LOG_SS_LOGGER_H
 
-#include <ss_log.h>
+#include <awe_log.h>
 #include "log4cpp/Category.hh"
 
 class ss_logger

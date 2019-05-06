@@ -111,7 +111,7 @@ public:
         {
             for ( i = 0; i < this->_length; ++i )
             {
-                if ( i % 32 == 0 )
+                if ( i % 16 == 0 )
                 {
                     char tmp[15] = {0};
                     sprintf(tmp, "%-10d ", i);
@@ -120,7 +120,7 @@ public:
                 char tmp_buf[3] = {0};
                 sprintf(tmp_buf, "%02x ", buf[i]);
                 result += std::string(tmp_buf);
-                if ( i % 32 == 31 )
+                if ( i % 16 == 15 )
                 {
                     result += "\n";
                 }
@@ -130,7 +130,7 @@ public:
         {
             for ( i = 0; i < 512; ++i )
             {
-                if ( i % 32 == 0 )
+                if ( i % 16 == 0 )
                 {
                     char tmp[15] = {0};
                     sprintf(tmp, "%-10d ", i);
@@ -139,7 +139,7 @@ public:
                 char tmp_buf[3] = {0};
                 sprintf(tmp_buf, "%02x ", buf[i]);
                 result += std::string(tmp_buf);
-                if ( i % 32 == 31 )
+                if ( i % 16 == 15 )
                 {
                     result += "\n";
                 }
@@ -154,7 +154,7 @@ public:
 
             for ( ; i < this->_length; ++i )
             {
-                if ( i % 32 == 0 )
+                if ( i % 16 == 0 )
                 {
                     char tmp[15] = {0};
                     sprintf(tmp, "%-10d ", i);
@@ -163,7 +163,7 @@ public:
                 char tmp_buf[3] = {0};
                 sprintf(tmp_buf, "%02x ", buf[i]);
                 result += std::string(tmp_buf);
-                if ( i % 32 == 31 )
+                if ( i % 16 == 15 )
                 {
                     result += "\n";
                 }

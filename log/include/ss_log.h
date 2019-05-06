@@ -15,10 +15,10 @@ enum priority
     LOG_PRIORITY_DEBUG
 };
 
-#define LOG_ERROR(msg, ...) ss_log_error(postfix(msg), ##__VA_ARGS__)
-#define LOG_WARN(msg, ...)  ss_log_warn(postfix(msg), ##__VA_ARGS__)
-#define LOG_INFO(msg, ...)  ss_log_info(postfix(msg), ##__VA_ARGS__)
-#define LOG_DEBUG(msg, ...) ss_log_debug(postfix(msg), ##__VA_ARGS__)
+#define AWE_LOG_ERROR(msg, ...) ss_log_error(postfix(msg), ##__VA_ARGS__)
+#define AWE_LOG_ERRORLOG_WARN(msg, ...)  ss_log_warn(postfix(msg), ##__VA_ARGS__)
+#define AWE_LOG_ERRORLOG_INFO(msg, ...)  ss_log_info(postfix(msg), ##__VA_ARGS__)
+#define AWE_LOG_ERRORLOG_DEBUG(msg, ...) ss_log_debug(postfix(msg), ##__VA_ARGS__)
 
 void ss_log_error(const char *msg, ...);
 

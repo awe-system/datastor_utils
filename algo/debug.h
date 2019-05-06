@@ -9,6 +9,7 @@
 #include <string>
 #include "lt_data/json_obj.h"
 #include "lt_data/lt_data_t.h"
+
 #define  DEBUG_END "\n"
 #define START_DEBUG
 
@@ -33,19 +34,10 @@ class dbg_end_type
 
 static dbg_end_type end_dbg;
 
-static inline std::string now_time()
-{
-    time_t now = time(0);
-    tm *ltm = localtime(&now);
-    char loc_date[50];
-    sprintf(loc_date, "  [%d/%02d/%02d %02d:%02d:%02d]  ",
-            1900 + ltm->tm_year, 1 + ltm->tm_mon, ltm->tm_mday,
-            ltm->tm_hour, ltm->tm_min, ltm->tm_sec);
-    return std::string(loc_date);
-}
+std::string dbg_now_time();
 
 #define end_dbgl (dbg<<color_bblue<<__FILE__<<":"<<__LINE__<<color_red<<":"\
-                    <<color_yellow<<now_time()<<color_normal<<" ")
+                    <<color_yellow<<dbg_now_time()<<color_normal<<" ")
 
 class debug
 {

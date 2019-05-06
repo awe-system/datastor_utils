@@ -157,7 +157,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_library(datastor_utils SHARED ${SOURCE_FILES} ${LOG_FILES} )
-    target_link_libraries(datastor_utils boost_system boost_thread)
+    target_link_libraries(datastor_utils boost_system boost_date_time boost_thread)
 endif()
 
 set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
@@ -230,7 +230,7 @@ INSTALL(FILES conf/awe_conf/env.h DESTINATION  ${include_dir}/awe_conf)
 INSTALL(FILES conf/awe_conf_error.h DESTINATION  ${include_dir}/awe_conf)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-target_link_libraries(test_function boost_system boost_thread pthread)
+target_link_libraries(test_function boost_system boost_date_time boost_thread pthread)
 
 INSTALL (TARGETS datastor_utils LIBRARY DESTINATION /usr/local/lib)
 

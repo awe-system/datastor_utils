@@ -8,6 +8,10 @@
 #include<ctime>
 #include "debug.h"
 
+#include <boost/date_time/time_clock.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 
 #define RED 	"\033[31;0m"
 #define RESET	"\033[0m"
@@ -273,11 +277,18 @@ debug &debug::operator<<(const dbg_end_type &end)
 {
     set_color(color_normal);
     
-    cout<<now_time()<<DEBUG_END;
+    cout<<dbg_now_time()<<DEBUG_END;
 }
 
 debug &debug::operator<<(const debug &debug1)
 {
     set_color(color_normal);
     cout<<DEBUG_END;
+}
+
+std::string dbg_now_time()
+{
+    boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+    string now_str = to_iso_extended_string(now.date()) + " " + to_simple_string(now.time_of_day());
+    return string("[") + now_str + string("]");
 }

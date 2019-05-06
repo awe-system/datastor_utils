@@ -291,6 +291,7 @@ debug &debug::operator<<(const dbg_end_type &end)
     set_color(color_normal);
     
     cout<<dbg_now_time()<<DEBUG_END;
+    return *this;
 }
 
 debug &debug::operator<<(const debug &debug1)
@@ -298,6 +299,7 @@ debug &debug::operator<<(const debug &debug1)
     std::unique_lock<std::mutex> lck(m);
     set_color(color_normal);
     cout<<DEBUG_END;
+    return *this;
 }
 
 std::string dbg_now_time()

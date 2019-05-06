@@ -93,7 +93,30 @@ public:
         std::memcpy(_buf_self_generated, &_length, sizeof(_length));
         mark_buf_self_generated();
     }
-
+    
+    std::string to_less_string()
+    {
+        std::string res= "total_cnt[" +std::to_string(this->_length) + "],buf[";
+        auto first_size = (8>this->_length)?this->_length:8;
+        auto sencod_size = (16 > this->_length)?this->_length - 16:8;
+        unsigned char *buf = this->get_buf();
+        for(int i = 0;i < first_size; ++i )
+        {
+            char tmp_buf[3] = {0};
+            sprintf(tmp_buf, "%02x ", buf[i]);
+            res += std::string(tmp_buf);
+        }
+        if(first_size < 8) return res + "]";
+        res += "... ";
+        for(int i = this->_length - sencod_size;i < this->_length; ++i )
+        {
+            char tmp_buf[3] = {0};
+            sprintf(tmp_buf, "%02x ", buf[i]);
+            res += std::string(tmp_buf);
+        }
+        return res + "]";
+    }
+    
     std::string to_string()
     {
         std::string result = "len : " + std::to_string(this->_length) + "\n";
@@ -111,7 +134,7 @@ public:
         {
             for ( i = 0; i < this->_length; ++i )
             {
-                if ( i % 16 == 0 )
+                if ( i % 32 == 0 )
                 {
                     char tmp[15] = {0};
                     sprintf(tmp, "%-10d ", i);
@@ -120,7 +143,7 @@ public:
                 char tmp_buf[3] = {0};
                 sprintf(tmp_buf, "%02x ", buf[i]);
                 result += std::string(tmp_buf);
-                if ( i % 16 == 15 )
+                if ( i % 32 == 31 )
                 {
                     result += "\n";
                 }

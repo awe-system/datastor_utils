@@ -126,10 +126,8 @@ json_obj request_t::to_json_obj() const
 {
     json_obj obj("type", (int) type);
     obj.merge(json_obj("offset", (long long) offset));
-    obj.merge(json_obj("len", (int) len));
     lt_data_t data(len, buf);
-    obj.merge(json_obj("buf", (long long) buf));
-    obj.merge(("data_buf", data.to_string()));
+    obj.merge(json_obj("data_buf", data.to_less_string()));
     obj.merge(json_obj("private_data", (long long) private_data));
     json_obj statck_obj;
     statck_obj.set_array();

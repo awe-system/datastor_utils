@@ -14,7 +14,7 @@
 #include "lt_session_dog.h"
 #include "lt_data/lt_data_t.h"
 
-#define DEFAULT_WAIT_SECONDS 10
+#define DEFAULT_WAIT_SECONDS 240
 
 class lt_session_description
 {

@@ -242,7 +242,7 @@ void test_algo_device::set_ip(string &ip)
 test_algo_device::~test_algo_device()
 {
     is_stop = true;
-    th->join();
+//    th->join();
 }
 
 request_t *test_algo_device::pop_request()

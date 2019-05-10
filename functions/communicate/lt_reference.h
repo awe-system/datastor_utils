@@ -10,6 +10,8 @@ private:
    int ref;
 public:
     explicit lt_reference();
+    
+    bool get_check_first();
 
     lt_reference* get();
 

@@ -116,7 +116,7 @@ public:
 
     void handle_event() override;
     
-  
+    virtual ~lt_session();
 
 };
 

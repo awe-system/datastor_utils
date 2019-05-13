@@ -173,6 +173,11 @@ void lt_session::handle_event()
     let_it_down();
 }
 
+lt_session::~lt_session()
+{
+    _socket.close();
+}
+
 void *lt_session_description_imp::get_session_private() const
 {
     return description_internal_pri;

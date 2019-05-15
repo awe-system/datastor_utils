@@ -31,8 +31,13 @@ public:
     {
     }
 
-    lt_data_t(const lt_data_t &other)
+    lt_data_t(const lt_data_t &other):_buf_from_outside(nullptr), _buf_self_generated(NULL),
+    _length(other._length)
     {
+        if(_length == 0)
+        {
+            return ;
+        }
         if ( other.is_buf_from_outside())
         {
             _buf_from_outside = other._buf_from_outside;
@@ -42,11 +47,8 @@ public:
         else
         {
             _length = other._length;
-            if(_length)
-            {
-                realloc_buf();
-                memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
-            }
+            realloc_buf();
+            memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
         }
     }
 
@@ -61,11 +63,10 @@ public:
         else
         {
             _length = other._length;
-            if(_length)
-            {
-                realloc_buf();
-                memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
-            }
+        
+            realloc_buf();
+            memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
+            
             mark_buf_self_generated();
         }
         return *this;

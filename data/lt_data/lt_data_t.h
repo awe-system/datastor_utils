@@ -42,8 +42,11 @@ public:
         else
         {
             _length = other._length;
-            realloc_buf();
-            memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
+            if(_length)
+            {
+                realloc_buf();
+                memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
+            }
         }
     }
 
@@ -58,8 +61,11 @@ public:
         else
         {
             _length = other._length;
-            realloc_buf();
-            memcpy(_buf_self_generated, other._buf_self_generated, sizeof(_length) + _length);
+            if(_length)
+            {
+                realloc_buf();
+                memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
+            }
             mark_buf_self_generated();
         }
         return *this;

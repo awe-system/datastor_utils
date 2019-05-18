@@ -5,5 +5,5 @@ binpath=$1
 cache_exist=$(/usr/bin/ps aux | /usr/bin/grep $binpath | /usr/bin/grep -v /usr/bin/grep | /usr/bin/grep -v $0)
 echo $cache_exist
 if [ "$cache_exist" = ""  ];then
-    nohup $binpath > /dev/null 2>&1
+    /usr/bin/nohup $binpath > /dev/null 2>&1 &
 fi

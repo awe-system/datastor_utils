@@ -10,7 +10,6 @@ lt_thread_single::lt_thread_single(boost::asio::io_service *io_service)
 
 lt_thread_single::~lt_thread_single()
 {
-    _io_service->stop();
     th->join();
     delete th;
 }
@@ -27,7 +26,7 @@ void lt_thread_single::run()
 }
 
 lt_thread_server::lt_thread_server(int thread_num) :
-        curret_cnt(0), splck(), _io_service(),_work(_io_service)
+        curret_cnt(0), _io_service(),_work(_io_service)
 {
     for ( int i = 0; i < thread_num; ++i )
     {
@@ -38,17 +37,12 @@ lt_thread_server::lt_thread_server(int thread_num) :
 
 boost::asio::io_service *lt_thread_server::get_io_service()
 {
-    boost::lock_guard<boost::detail::spinlock> lck(splck);
-    if ( threads.empty() )
-    { return nullptr; }
-    if ( ++curret_cnt == threads.size() )
-    { curret_cnt = 0; }
-    return threads[curret_cnt]->get_io_service();
+   return &_io_service;
 }
 
 lt_thread_server::~lt_thread_server()
 {
-    boost::lock_guard<boost::detail::spinlock> lck(splck);
+    _io_service.stop();
     while ( !threads.empty() )
     {
         delete threads.back();

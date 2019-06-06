@@ -117,6 +117,22 @@ bool request_t::is_read() const
     abort();
 }
 
+unsigned long request_t::checksum()
+{
+    unsigned result = 0xcc;
+    unsigned char res[sizeof(unsigned long)] = {0};
+    for(uint i = 0; i< sizeof(unsigned long); ++i)
+    {
+        res[i] = i*i - 1;
+    }
+    for(uint i =0 ; i< len; ++i)
+    {
+        res[i%sizeof(unsigned long)] ^= buf[i];
+    }
+    memcpy(&result, res, sizeof(unsigned long));
+    return result;
+}
+
 void request_t::from_json_obj(const json_obj &obj)
 {
     abort();

@@ -30,7 +30,7 @@ int system_call(const std::string &cmd, std::string &result);
 
 ///file
 int read_data_from_file(const char *file_path, char *buf, int buf_size);
-
+int write_data_to_file(const char *file_path, char *buf, int buf_size);
 //read a fullpath file's value:  return: -1 file open error, 0 ok
 //NOTE: 1. buf will return NULL terminal.  2.strip \n
 int read_str_from_file(const char *file_path, char *buf, int buf_size);

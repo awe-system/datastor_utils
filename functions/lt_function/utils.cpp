@@ -139,6 +139,19 @@ int read_data_from_file(const char *file_path, char *buf, int buf_size)
     return 0;
 }
 
+
+int write_data_to_file(const char *file_path, char *buf, int buf_size)
+{
+    ofstream ifs(file_path, ios::binary);
+    if (!ifs.is_open() )
+        return -1;
+    ifs.write(buf, buf_size);
+    ifs.close();
+    return 0;
+}
+
+
+
 int read_str_from_file(const char *file_path, char *buf, int buf_size)
 {
     memset(buf, 0, buf_size);

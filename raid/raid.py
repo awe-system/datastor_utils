@@ -16,18 +16,22 @@ raid_dic_path = '/opt/raid/raid_file'
 conf_post = '.json'
 max_md_num = 2000
 
+tmp_scan_res_path = "/tmp/md_tmp_res"
+
+def update_md_detail():
+    commands.getoutput(
+        "mdadm --detail --scan --verbose | grep ARRAY | awk '{print $2}' > " + tmp_scan_res_path)
+
+update_md_detail()
 
 def linkpath(name):
-    return commands.getoutput(
-        "mdadm --detail --scan --verbose | grep ARRAY | awk '{print $2}' | grep " + name)
-
+    return commands.getoutput("cat " + tmp_scan_res_path + " | grep " + name)
 
 def devpath_by_name(name, orgpath):
     lpath = linkpath(name)
     if lpath == "": return orgpath
     return "/dev/" + commands.getoutput(
         "ls -l \"" + lpath + "\" | cut -d '>' -f2 | cut -d '/' -f2")
-
 
 def update_raid_info_by_scan(dic):
     res = {}
@@ -546,18 +550,21 @@ def sethotspare(raid_name, dev):
         return False, "sethostspare fail!"
     return True, "设置热备盘成功!"
 
+
 def is_md_exist(path):
     return os.path.exists(path)
+
 
 def mdpath(num):
     return "/dev/md" + str(num)
 
+
 def find_empty_mdpath():
-    i = 0
+    i = 127
     while (i < max_md_num):
-        if( not is_md_exist(mdpath(i)) ):
+        if (not is_md_exist(mdpath(i))):
             return mdpath(i)
-        i = i+1
+        i = i + 1
     raise
 
 

@@ -98,7 +98,9 @@ int buf_exec_cpp(const string &cmd, string &buf)
 
         buf.append(tmp, n);
     }
-    return (pclose(fp));
+    int rv = pclose(fp);
+    
+    return WEXITSTATUS(rv);
 }
 
 #define  MAX_RESULT_LEN 101

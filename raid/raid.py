@@ -20,18 +20,16 @@ tmp_scan_res_path = "/tmp/md_tmp_res"
 
 def update_md_detail():
     commands.getoutput(
-        "mdadm --detail --scan --verbose | grep ARRAY | awk '{print $2}' > " + tmp_scan_res_path)
-
-update_md_detail()
+        "/usr/sbin/mdadm --detail --scan --verbose | /usr/bin/grep ARRAY | /usr/bin/awk '{print $2}' > " + tmp_scan_res_path)
 
 def linkpath(name):
-    return commands.getoutput("cat " + tmp_scan_res_path + " | grep " + name)
+    return commands.getoutput("/usr/bin/cat " + tmp_scan_res_path + " | /usr/bin/grep " + name)
 
 def devpath_by_name(name, orgpath):
     lpath = linkpath(name)
     if lpath == "": return orgpath
     return "/dev/" + commands.getoutput(
-        "ls -l \"" + lpath + "\" | cut -d '>' -f2 | cut -d '/' -f2")
+        "/usr/bin/ls -l \"" + lpath + "\" | /usr/bin/cut -d '>' -f2 | /usr/bin/cut -d '/' -f2")
 
 def update_raid_info_by_scan(dic):
     res = {}
@@ -42,8 +40,7 @@ def update_raid_info_by_scan(dic):
 
 
 if os.path.exists(raid_dic_path):
-    raid_dic = json.loads(commands.getoutput("cat " + raid_dic_path))
-    raid_dic = update_raid_info_by_scan(raid_dic)
+    raid_dic = json.loads(commands.getoutput("/usr/bin/cat " + raid_dic_path))
 else:
     raid_dic = {}
 
@@ -110,7 +107,7 @@ def raid_create(chunk, level, raid_name, devs_input):
         return False, "没有可用磁盘"
     dev_list = " ".join(devs)
 
-    cmd = "mdadm -CR %s -l %s -c %s -n %u %s --metadata=1.2 --homehost=%s -f" % (
+    cmd = "/usr/sbin/mdadm -CR %s -l %s -c %s -n %u %s --metadata=1.2 --homehost=%s -f" % (
         mddev, level, chunk, len(devs), dev_list, raid_name)
 
     if level in ('3', '4', '5', '6', '10', '50', '60'):
@@ -234,7 +231,7 @@ def disk_post(p):
 
 
 def __md_fill_mdadm_attr(mddev, remain=True):
-    cmd = 'mdadm -D %s 2>/dev/null' % mddev
+    cmd = '/usr/sbin/mdadm -D %s 2>/dev/null' % mddev
     sts, output = commands.getstatusoutput(cmd)
 
     if sts != 0:
@@ -268,10 +265,10 @@ def __md_fill_mdadm_attr(mddev, remain=True):
     if attr.capacity != attr.remain:
         attr.is_parted = True
 
-    cmd = "pvs |grep '%s'" % mddev
+    cmd = "pvs |/usr/bin/grep '%s'" % mddev
     sts, output = commands.getstatusoutput(cmd)
     if sts == 0:
-        cmd = "pvs|grep '%s'|awk '{print $2}'" % mddev
+        cmd = "pvs|/usr/bin/grep '%s'|/usr/bin/awk '{print $2}'" % mddev
         attr.vg_name = commands.getoutput(cmd)
 
     return attr
@@ -334,7 +331,7 @@ def md_get_mddev(raid_name):
         if md.find('p') >= 0:
             continue
         # 尝试从mdadm获取信息
-        cmd = 'mdadm -D %s 2>&1 | grep %s >/dev/null' % (md, raid_name)
+        cmd = '/usr/sbin/mdadm -D %s 2>&1 | /usr/bin/grep %s >/dev/null' % (md, raid_name)
         sts, out = commands.getstatusoutput(cmd)
         if sts == 0:
             return md
@@ -353,6 +350,9 @@ def md_info_mddevs(mddevs=None, remain=True):
 
 
 def md_info(raid_name=None, remain=True):
+    update_md_detail()
+    global raid_dic
+    raid_dic = update_raid_info_by_scan(raid_dic)
     if (raid_name == None):
         mddevs = None;
     else:
@@ -363,7 +363,7 @@ def md_info(raid_name=None, remain=True):
 def mddev_get_disks(mddev):
     # reg = re.compile(r"(sd[a-z]+)\[[0-9]+\]")
     reg = re.compile(r"(sd\w+)")
-    cmd = "cat /proc/mdstat |grep \'" + (
+    cmd = "/usr/bin/cat /proc/mdstat |/usr/bin/grep \'" + (
         os.path.basename(mddev)) + " \' 2>/dev/null"
     sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
@@ -375,7 +375,7 @@ def mddev_get_disks(mddev):
 
 
 def md_stop(mddev):
-    cmd = "mdadm -S %s 2>&1" % mddev
+    cmd = "/usr/sbin/mdadm -S %s 2>&1" % mddev
     sts, out = commands.getstatusoutput(cmd)
     if out.find('mdadm: stopped') < 0:
         return -1, '设备正在被占用!'
@@ -387,7 +387,7 @@ def md_stop(mddev):
 
 
 def set_disk_free(diskname):
-    cmd = "mdadm --zero-superblock %s 2>&1" % diskname
+    cmd = "/usr/sbin/mdadm --zero-superblock %s 2>&1" % diskname
     sts, out = commands.getstatusoutput(cmd)
 
     # 修改判断清空superblock的条件
@@ -491,7 +491,7 @@ def raidinfo_by_raidname(raid_name):
 
 def is_disk_mount(dev_path):
     status, mount_info = commands.getstatusoutput(
-        "/usr/bin/sudo /usr/bin/mount | grep " + dev_path)
+        "/usr/bin/sudo /usr/bin/mount | /usr/bin/grep " + dev_path)
     if status != 0: return False
     return True
 
@@ -505,7 +505,7 @@ class dev_attr:
 
 def list_devs():
     devs = []
-    cmd = "ls /sys/block/ | grep sd 2>/dev/null"
+    cmd = "/usr/bin/ls /sys/block/ | /usr/bin/grep sd 2>/dev/null"
     sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
         return False, "devs is unavailable "
@@ -522,7 +522,7 @@ def get_dev_attr(dev):
     attr = dev_attr()
     attr.name = dev
     attr.raid_state = "no"
-    cmd = "cat /sys/block/%s/size" % dev[5:]
+    cmd = "/usr/bin/cat /sys/block/%s/size" % dev[5:]
     sts, out = commands.getstatusoutput(cmd)
     attr.size = out
 
@@ -544,7 +544,7 @@ def dev_list():
 def sethotspare(raid_name, dev):
     global raid_dic
     mddev = raid_dic[raid_name]
-    cmd = "mdadm %s -a %s" % (mddev, dev)
+    cmd = "/usr/sbin/mdadm %s -a %s" % (mddev, dev)
     sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
         return False, "sethostspare fail!"
@@ -573,7 +573,7 @@ def regroupraid(raidname):
     mddev = find_empty_mdpath()
     raid_dic[raidname] = mddev
     dev_list = " ".join(disks)
-    cmd = "mdadm -Af %s %s >/dev/null 2>&1" % (mddev, dev_list)
+    cmd = "/usr/sbin/mdadm -Af %s %s >/dev/null 2>&1" % (mddev, dev_list)
     sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
         return False, "重组%s失败!%s" % (raidname, out)

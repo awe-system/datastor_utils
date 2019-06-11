@@ -313,7 +313,7 @@ if __name__ == '__main__':
 	if(len(argv) < 2):
 		help(argv)
 		sys.exit(0)	
-
+	err = 0
 	# raid_dic = load_raid_dic("/opt/raid/raid_file")
 	try:
 		err,output=cmd_tab.get(argv[1],help)(argv[2:])

@@ -17,6 +17,7 @@ private:
     bool on_monitor;
     std::mutex pending_m;
     std::condition_variable pending_cond;
+    bool if_handled;
 public:
     lt_watch_dog(boost::asio::io_service *_io_service);
 

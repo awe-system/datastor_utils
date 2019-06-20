@@ -6,7 +6,7 @@ lt_session_cli_set::lt_session_cli_set(boost::asio::io_service *_io_service, lt_
 
 }
 
-void lt_session_cli_set::put_session(lt_session_cli_safe *sess)
+bool lt_session_cli_set::put_session(lt_session_cli_safe *sess)
 {
     bool to_destroy = sess->put();
     if ( to_destroy )
@@ -16,6 +16,7 @@ void lt_session_cli_set::put_session(lt_session_cli_safe *sess)
         lck.unlock();
         delete sess;
     }
+    return to_destroy;
 }
 
 

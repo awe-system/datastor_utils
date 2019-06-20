@@ -25,7 +25,7 @@ public:
     
     lt_session_cli_safe *get_session(const std::string &key);
     
-    void put_session(lt_session_cli_safe *);
+    bool put_session(lt_session_cli_safe *);
 };
 
 #endif //TEST_COMMUNICATE_LT_SESSION_CLI_SET_H

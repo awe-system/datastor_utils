@@ -5,7 +5,6 @@
 lt_watch_dog::lt_watch_dog(boost::asio::io_service *_io_service) : timer(*_io_service), seconds(DEFALUT_TIMER_SECS)
 {
     on_monitor = false;
-    if_handled = false;
 }
 
 void lt_watch_dog::start_monitor()
@@ -20,12 +19,8 @@ void lt_watch_dog::stop_monitor()
     std::unique_lock<std::mutex> lock(m);
     is_monitoring = false;
     timer.cancel();
-    if(!if_handled)
-    {
-        if_handled = true;
-        handle_event();
-    }
     lock.unlock();
+    handle_event();
 }
 
 void lt_watch_dog::timer_handler(const boost::system::error_code &error)
@@ -52,12 +47,8 @@ void lt_watch_dog::timer_handler(const boost::system::error_code &error)
         lock.unlock();
 
         is_monitoring = false;
-        if(!if_handled)
-        {
-            if_handled = true;
-            handle_event();
-        }
         lck.unlock();
+        handle_event();
     }
 }
 

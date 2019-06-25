@@ -117,7 +117,6 @@ void ss_log4cpp::info(std::string msg)
 void ss_log4cpp::debug(std::string msg)
 {
     root_category.debug(msg);
-    debug_category.debug(msg);
 }
 
 void ss_log4cpp::set_priority(int pri)

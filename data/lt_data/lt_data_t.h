@@ -117,7 +117,7 @@ public:
         res += "... ";
         for(int i = this->_length - sencod_size;i < this->_length; ++i )
         {
-            char tmp_buf[3] = {0};
+            char tmp_buf[32] = {0};
             sprintf(tmp_buf, "%02x ", buf[i]);
             res += std::string(tmp_buf);
         }
@@ -143,11 +143,11 @@ public:
             {
                 if ( i % 32 == 0 )
                 {
-                    char tmp[15] = {0};
+                    char tmp[32] = {0};
                     sprintf(tmp, "%-10d ", i);
                     result += std::string(tmp);
                 }
-                char tmp_buf[3] = {0};
+                char tmp_buf[32] = {0};
                 sprintf(tmp_buf, "%02x ", buf[i]);
                 result += std::string(tmp_buf);
                 if ( i % 32 == 31 )
@@ -162,11 +162,11 @@ public:
             {
                 if ( i % 16 == 0 )
                 {
-                    char tmp[15] = {0};
+                    char tmp[32] = {0};
                     sprintf(tmp, "%-10d ", i);
                     result += std::string(tmp);
                 }
-                char tmp_buf[3] = {0};
+                char tmp_buf[32] = {0};
                 sprintf(tmp_buf, "%02x ", buf[i]);
                 result += std::string(tmp_buf);
                 if ( i % 16 == 15 )
@@ -186,11 +186,11 @@ public:
             {
                 if ( i % 16 == 0 )
                 {
-                    char tmp[15] = {0};
+                    char tmp[32] = {0};
                     sprintf(tmp, "%-10d ", i);
                     result += std::string(tmp);
                 }
-                char tmp_buf[3] = {0};
+                char tmp_buf[32] = {0};
                 sprintf(tmp_buf, "%02x ", buf[i]);
                 result += std::string(tmp_buf);
                 if ( i % 16 == 15 )

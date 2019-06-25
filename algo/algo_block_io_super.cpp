@@ -158,9 +158,10 @@ void algo_block_io_super::read_super(json_obj &obj)//一言不合就 throw
 {
 	int err = open();
 	if(err) throw  err;
-	try{
+    unsigned char * buf = nullptr;
+    try{
 		//FIXME:按照json的结构对将json序列化到固定的长度中去（最好可以处理增量）
-		unsigned char * buf = new unsigned char[super_sec<<9];
+		buf = new unsigned char[super_sec<<9];
 		unsigned int len = (unsigned int)(super_sec<<9);
 		int err = read_super(len, buf);
 		if(err) throw err;
@@ -177,6 +178,7 @@ void algo_block_io_super::read_super(json_obj &obj)//一言不合就 throw
 	}
 	catch (...)
 	{
+	    if(buf) delete buf;
 		close();
 		throw (int )-ERROR_TYPE_READ_SUPER;
 	}

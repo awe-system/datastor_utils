@@ -174,6 +174,7 @@ void algo_block_io_super::read_super(json_obj &obj)//一言不合就 throw
 			obj.clear();
 		}
 		delete buf;
+		buf = nullptr;
 		close();
 	}
 	catch (...)

@@ -1,5 +1,6 @@
 #include "lt_session_cli_safe.h"
 #include "lt_session_cli_set.h"
+#include "../log/include/awe_log.h"
 
 void lt_session_cli_safe::connect(const std::string &ip, unsigned short port)
 {
@@ -88,12 +89,16 @@ void lt_session_cli_safe::connected(lt_session *sess)
 
 void lt_session_cli_safe::rcv(lt_data_t *data)
 {
+    AWE_MODULE_DEBUG("communicate", "before rcv lt_session_cli_safe::snd sess %p", this);
     set->get_session(this);
     lt_session::rcv(data);
+    AWE_MODULE_DEBUG("communicate", "after rcv lt_session_cli_safe::snd sess %p", this);
 }
 
 void lt_session_cli_safe::snd(lt_data_t *data)
 {
+    AWE_MODULE_DEBUG("communicate", "before snd lt_session_cli_safe::snd sess %p", this);
     set->get_session(this);
     lt_session::snd(data);
+    AWE_MODULE_DEBUG("communicate", "after snd lt_session_cli_safe::snd sess %p", this);
 }

@@ -1,5 +1,6 @@
 #include "lt_session.h"
 #include "../lt_function_error.h"
+#include "../log/include/awe_log.h"
 
 lt_session::lt_session(boost::asio::io_service *_io_service, lt_session_callback *_cb) :
         lt_reference(),
@@ -23,10 +24,20 @@ void lt_session::rcv(lt_data_t *data)
 
 void lt_session::snd(lt_data_t *data)
 {
+    AWE_MODULE_DEBUG("communicate", "enter lt_session::snd sess %p", this);
     if ( is_connected())
+    {
+        AWE_MODULE_DEBUG("communicate", "before start_snd_data sess %p", this);
         start_snd_data(data);
+        AWE_MODULE_DEBUG("communicate", "after start_snd_data sess %p", this);
+    }
     else
+    {
+        AWE_MODULE_DEBUG("communicate", "before snd_done failed sess %p", this);
         cb->snd_done(this, data, -RPC_ERROR_TYPE_CONNECT_FAIL);
+        AWE_MODULE_DEBUG("communicate", "after snd_done failed sess %p", this);
+    }
+    AWE_MODULE_DEBUG("communicate", "leave lt_session::snd sess %p", this);
 }
 
 #define check_disconnect_when_done(error) \
@@ -42,37 +53,47 @@ do{\
 
 void lt_session::start_rcv(lt_data_t *data)
 {
+    AWE_MODULE_DEBUG("communicate", "--enter lt_session::start_rcv sess %p", this);
     rcv_queue.begin_to(boost::bind(&lt_session::start_rcv_head_unsafe, this, data),
                        boost::bind(&lt_session::rcv_done, this, data, boost::asio::error::network_down));
+    AWE_MODULE_DEBUG("communicate", "--leave lt_session::start_rcv sess %p", this);
 }
 
 void lt_session::rcv_done(lt_data_t *data, const boost::system::error_code &error)
 {
+    AWE_MODULE_DEBUG("communicate", "--enter lt_session::rcv_done sess %p", this);
     check_disconnect_when_done(error);
     cb->rcv_done(this, data, RPC_ERROR_TYPE_OK);
     mark_received();
+    AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_done sess %p", this);
 }
 
 void lt_session::start_rcv_head_unsafe(lt_data_t *data)
 {
+    AWE_MODULE_DEBUG("communicate", "--enter lt_session::start_rcv_head_unsafe sess %p", this);
     boost::asio::async_read(_socket,
                             boost::asio::buffer(&(data->_length), sizeof(data->_length)),
                             boost::bind(&lt_session::rcv_head_done_unsafe, this,
                                         data, boost::asio::placeholders::error));
+    AWE_MODULE_DEBUG("communicate", "--leave lt_session::start_rcv_head_unsafe sess %p", this);
 }
 
 void lt_session::rcv_head_done_unsafe(lt_data_t *data, const boost::system::error_code &error)
 {
+    AWE_MODULE_DEBUG("communicate", "--enter lt_session::rcv_head_done_unsafe sess %p", this);
     int err = boost_err_translate(error);
     if ( err )
     {
         rcv_queue.continue_to();
         rcv_done(data, boost::asio::error::network_down);
+        AWE_MODULE_DEBUG("communicate", "--Err leave lt_session::start_rcv_head_unsafe sess %p", this);
         return;
     }
 
     data->realloc_buf();
     start_rcv_data_unsafe(data);
+    AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_head_done_unsafe sess %p", this);
+    
 }
 
 void lt_session::start_rcv_data_unsafe(lt_data_t *data)
@@ -139,8 +160,11 @@ void lt_session::start_snd_data_unsafe(lt_data_t *data)
 
 void lt_session::snd_data_done_unsafe(lt_data_t *data, const boost::system::error_code &error)
 {
+    AWE_MODULE_DEBUG("communicate", "--enter lt_session::snd_data_done_unsafe sess %p", this);
     queue.continue_to();  //FIXME 不立即调done，有可能引发超时
     snd_data_done(data, error);
+    AWE_MODULE_DEBUG("communicate", "--leave lt_session::snd_data_done_unsafe sess %p", this);
+    
 }
 
 void lt_session::state_changed(const bool &is_con)

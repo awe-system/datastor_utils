@@ -14,7 +14,7 @@ namespace ServerSan_Algo
  *
  * **/
 
-class algo_sections: algo_obj
+class algo_sections: public algo_obj
 {
 private:
     unsigned long len;
@@ -30,7 +30,11 @@ public:
     explicit algo_sections(unsigned long len);
     
     explicit algo_sections(unsigned long offset, unsigned long len);
-
+    
+    void from_json_obj(const json_obj &obj) override;
+    
+    json_obj to_json_obj() const override;
+    
 private:
     algo_section &  last_section();
     
@@ -47,10 +51,6 @@ private:
     
     void intersections(const algo_sections &other, algo_sections &res);
     
-    void from_json_obj(const json_obj &obj) override;
-    
-    json_obj to_json_obj() const override;
-
 public:
     bool is_point_insections(unsigned long offset);
     

@@ -345,5 +345,31 @@ algo_sections &algo_sections::operator+=(unsigned long offset)
     }
 }
 
+void algo_sections::from_json_obj(const json_obj &obj)
+{
+    len = 0;
+    sections.clear();
+    for (auto& sec_obj : obj["sections"].array_val)
+    {
+        algo_section section;
+        section.from_json_obj(sec_obj);
+        *this += section;
+    }
+    assert(obj["len"].get_number() == len);
+}
+
+json_obj algo_sections::to_json_obj() const
+{
+   json_obj obj;
+   obj["len"] = (long long)len;
+   json_obj obj_secs;
+   for(auto & sec: sections)
+   {
+       obj_secs.append(sec.to_json_obj());
+   }
+   obj["sections"] = obj_secs;
+   return obj;
+}
+
 
 }

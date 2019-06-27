@@ -1,5 +1,6 @@
 #include "lt_session_cli.h"
 #include "../lt_function_error.h"
+#include "../log/include/awe_log.h"
 
 lt_session_cli::lt_session_cli(boost::asio::io_service *_io_service, lt_session_callback *cb) :
         lt_session(_io_service, cb)
@@ -28,6 +29,8 @@ void lt_session_cli::connected()
 
 void lt_session_cli::disconnect()
 {
+    AWE_MODULE_DEBUG("communicate", "--enter lt_session_cli::disconnect sess %p", this);
     let_it_down();
+    AWE_MODULE_DEBUG("communicate", "--leave lt_session_cli::disconnect sess %p", this);
 }
 

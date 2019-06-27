@@ -117,7 +117,9 @@ void lt_session::let_it_up()
 
 void lt_session::let_it_down()
 {
+    AWE_MODULE_DEBUG("communicate", "--enter lt_session::let_it_down sess %p", this);
     _connect.set(false);
+    AWE_MODULE_DEBUG("communicate", "--leave lt_session::let_it_down sess %p", this);
 }
 
 void lt_session::connected()
@@ -129,11 +131,16 @@ void lt_session::connected()
 
 void lt_session::disconnected()
 {
+    AWE_MODULE_DEBUG("communicate", "--enter lt_session::disconnected sess %p", this);
     //FIXME:加入flag控制 使得在断开后不会出现新的 rcv
     _socket.close();
+    AWE_MODULE_DEBUG("communicate", "after _socket.close(); sess %p", this);
     cb->disconnected(this);
+    AWE_MODULE_DEBUG("communicate", "after cb->disconnected(this); sess %p", this);
     queue.clear();
+    AWE_MODULE_DEBUG("communicate", "after queue.clear(); sess %p", this);
     stop_monitor();
+    AWE_MODULE_DEBUG("communicate", "--leave lt_session::disconnected sess %p", this);
 }
 
 void lt_session::start_snd_data(lt_data_t *data)
@@ -169,10 +176,13 @@ void lt_session::snd_data_done_unsafe(lt_data_t *data, const boost::system::erro
 
 void lt_session::state_changed(const bool &is_con)
 {
+    AWE_MODULE_DEBUG("communicate", "--enter lt_session::state_changed sess %p", this);
     if ( !is_con )
         disconnected();
     else
         connected();
+    AWE_MODULE_DEBUG("communicate", "--leave lt_session::state_changed sess %p", this);
+    
 }
 
 bool lt_session::is_connected() const

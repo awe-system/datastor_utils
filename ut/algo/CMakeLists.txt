@@ -42,7 +42,7 @@ set(algo_src
         ../../functions/communicate/lt_thread_server.h
         ../../functions/communicate/lt_watch_dog.cpp
         ../../functions/communicate/lt_watch_dog.h
-        ../../functions/thread_pool/thread_pool.hpp
+        ../../functions/lt_function/thread_pool.hpp
         ../../functions/lt_function_error.h
         ../../functions/lt_function/stronger_cond.h
         ../../functions/lt_function/lt_safe_set.h

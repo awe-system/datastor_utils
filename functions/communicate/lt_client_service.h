@@ -1,14 +1,17 @@
 #ifndef TEST_COMMUNICATE_LT_CLIENT_SERVICE_H
 #define TEST_COMMUNICATE_LT_CLIENT_SERVICE_H
 
+#include "lt_function/thread_pool.hpp"
 #include "lt_session_cli_safe.h"
 #include "lt_thread_server.h"
 #include "lt_function/lt_safe_set.h"
 
 class lt_client_service : public lt_session_callback
 {
+    std::mutex m;
     boost::asio::io_service *io_service;
     lt_safe_set<lt_data_t *> rcvdata_set;
+    data_channel::thread_pool pool;
 public:
     lt_client_service(boost::asio::io_service *_io_service,
                       unsigned short port);
@@ -20,7 +23,13 @@ public:
 
 private:
     void
+    rcv_done_nolock(lt_session *sess, lt_data_t *received_data, int error);
+    
+    void
     rcv_done(lt_session *sess, lt_data_t *received_data, int error) override;
+    
+    void
+    rcv_done_inthread(lt_session *sess, lt_data_t *received_data, int error);
     
     void snd_done(lt_session *sess, lt_data_t *sent_data, int error) override;
 

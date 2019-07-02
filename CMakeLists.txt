@@ -14,6 +14,7 @@ endif ()
 
 include_directories("./data")
 include_directories("./functions")
+include_directories("functions/thread_pool")
 include_directories("conf")
 include_directories("log/include")
 include_directories("log")
@@ -68,7 +69,7 @@ set(SOURCE_FILES
         functions/communicate/lt_thread_server.h
         functions/communicate/lt_watch_dog.cpp
         functions/communicate/lt_watch_dog.h
-        functions/thread_pool/thread_pool.hpp
+        functions/lt_function/thread_pool.hpp
         functions/lt_function_error.h
         functions/lt_function/stronger_cond.h
         functions/lt_function/lt_safe_set.h
@@ -170,7 +171,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(include_dir "/usr/local/include")
 endif ()
 
-INSTALL(FILES functions/thread_pool/thread_pool.hpp
+INSTALL(FILES functions/lt_function/thread_pool.hpp
         functions/communicate/action_stub.h
         functions/communicate/lt_async_2safe_async.h
         functions/communicate/lt_bidirectional_map.hpp

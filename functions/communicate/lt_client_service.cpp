@@ -50,7 +50,10 @@ void lt_client_service::rcv_done_nolock(lt_session *sess, lt_data_t *received_da
 
 void lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
 {
-   
+    AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<lt_client_service::snd_done before lock sess [%p] snddone no err sent_data %p", sess, sent_data);
+    std::unique_lock<std::mutex> lck(m);
+    AWE_MODULE_DEBUG("communicate", ">>>>>>>>>>lt_client_service::snd_done after lock sess [%p] snddone no err sent_data %p", sess, sent_data);
+    
     if ( error )
     {
         AWE_MODULE_DEBUG("communicate", "before snd_done handler_by_input sess [%p] error %d sent_data %p", sess, error,sent_data);
@@ -65,11 +68,16 @@ void lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int err
 
     lt_session_cli_safe *session = (lt_session_cli_safe *) sess;
     
-    AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<lt_client_service::snd_done before lock sess [%p] snddone no err received_data %p", sess, received_data);
-    std::unique_lock<std::mutex> lck(m);
-    AWE_MODULE_DEBUG("communicate", ">>>>>>>>>>lt_client_service::snd_done after lock sess [%p] snddone no err received_data %p", sess,received_data);
-    assert(rcvdata_set.insert(received_data));
-    session->rcv(received_data);
+    if ( rcvdata_set.insert(received_data))
+    {
+        AWE_MODULE_DEBUG("communicate", "before rcv lt_client_service::snd_done sess [%p] snddone no err received_data [%p]", sess, received_data);
+        session->rcv(received_data);
+        AWE_MODULE_DEBUG("communicate", "after rcv lt_client_service::snd_done sess [%p] snddone no err received_data [%p]", sess, received_data);
+    }
+    else
+    {
+        AWE_MODULE_DEBUG("communicate", "!!!!!!!!!!!same received data in set lt_client_service::snd_done sess [%p] snddone no err received_data [%p]", sess, received_data);
+    }
     
     AWE_MODULE_DEBUG("communicate", "leave lt_client_service::snd_done sess [%p] snddone no err received_data [%p]", sess, received_data);
 }

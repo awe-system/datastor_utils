@@ -1,5 +1,6 @@
 #include <src/log4cpp_src/StringUtil.hh>
 #include <awe_log.h>
+#include <thread>
 
 #include "log4cpp/ss_log4cpp.h"
 
@@ -52,4 +53,16 @@ void awe_log_set_priority(enum priority pri)
 #ifdef USE_LOG
     logger.set_priority(pri);
 #endif
+}
+#include <unistd.h>
+#include <stdio.h>
+
+#include <sys/syscall.h>
+#define gettid() syscall(__NR_gettid)
+
+
+std::string tid_str()
+{
+    auto id = gettid();
+    return std::to_string(id);
 }

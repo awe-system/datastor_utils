@@ -1,11 +1,11 @@
 #ifndef SS_METADATA_LOG_HEAD_H
 #define SS_METADATA_LOG_HEAD_H
 
-
-#define postfix(msg)  std::string(msg).append(" ##[")\
+#include <sys/syscall.h>
+#define postfix(msg)  std::string(msg).append(" [")\
     .append(__FILE__).append(":").append(__func__)\
     .append(":").append(std::to_string(__LINE__))\
-    .append("]##").c_str()
+    .append("] [").append(std::to_string( syscall(__NR_gettid))).append("]").c_str()
     
 enum priority
 {

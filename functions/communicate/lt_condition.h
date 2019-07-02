@@ -33,15 +33,18 @@ public:
             _data = data;
         }
         std::unique_lock<std::mutex> lck(lock);
+        if(is_to_wait)
+            cond.notify_one();
         is_to_wait = false;
-        cond.notify_one();
     }
     
     void notify()
     {
         std::unique_lock<std::mutex> lck(lock);
+        if(is_to_wait)
+            cond.notify_one();
         is_to_wait = false;
-        cond.notify_one();
+        
     }
 
     const lt_data_t &get_data() const

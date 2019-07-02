@@ -32,6 +32,7 @@ public:
       
         if(stat == lt_condition_stat_notstart)
         {
+            stat = lt_condition_stat_waiting;
             AWE_MODULE_DEBUG("cond", "+-+-+-is_to_wait before wait this %p", this);
             cond.wait(lck);
             AWE_MODULE_DEBUG("cond", "+-+-+-is_to_wait after wait this %p", this);

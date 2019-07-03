@@ -96,7 +96,9 @@ public:
     {
         assert(!is_buf_from_outside());
         free_buf();
-        _buf_self_generated = new unsigned char[_length + sizeof(_length)];
+        _buf_self_generated =
+                static_cast<unsigned char *>(malloc(_length + sizeof(_length)));
+        assert(_buf_self_generated);
         std::memcpy(_buf_self_generated, &_length, sizeof(_length));
         mark_buf_self_generated();
     }
@@ -240,7 +242,8 @@ private:
     {
         if ( _buf_self_generated )
         {
-            delete _buf_self_generated;
+            free(_buf_self_generated);
+            _buf_self_generated = nullptr;
         }
     }
 

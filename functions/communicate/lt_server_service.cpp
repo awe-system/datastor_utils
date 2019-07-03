@@ -33,6 +33,7 @@ int lt_server_service::snd(lt_session_serv *sess, boost::function<int(lt_data_t 
         if ( err )
             throw err;
         get_session(sess)->snd(data);
+        return RPC_ERROR_TYPE_OK;
 
     } catch (...)
     {

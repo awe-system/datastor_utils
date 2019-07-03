@@ -111,7 +111,7 @@ public:
         unsigned char *buf = this->get_buf();
         for(int i = 0;i < first_size; ++i )
         {
-            char tmp_buf[3] = {0};
+            char tmp_buf[32] = {0};
             sprintf(tmp_buf, "%02x ", buf[i]);
             res += std::string(tmp_buf);
         }

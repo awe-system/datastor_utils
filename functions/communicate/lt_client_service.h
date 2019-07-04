@@ -31,6 +31,8 @@ private:
     void
     rcv_done_inthread(lt_session *sess, lt_data_t *received_data, int error);
     
+    void snd_done_inthread(lt_session *sess, lt_data_t *sent_data, int error);
+    
     void snd_done(lt_session *sess, lt_data_t *sent_data, int error) override;
 
 protected:

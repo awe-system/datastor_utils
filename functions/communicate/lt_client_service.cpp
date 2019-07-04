@@ -18,7 +18,6 @@ void lt_client_service::rcv_done(lt_session *sess, lt_data_t *received_data,
     AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done before post sess [%p] snddone no err received_data %p", sess, received_data);
     pool.submit_task(boost::bind(&lt_client_service::rcv_done_inthread, this, sess, received_data,error));
     AWE_MODULE_DEBUG("communicate", ">>>>>>>>>>>>>>>>>>>>>>>>lt_client_service::rcv_done after post sess [%p] snddone no err received_data %p", sess,received_data);
-    
 }
 
 
@@ -48,38 +47,46 @@ void lt_client_service::rcv_done_nolock(lt_session *sess, lt_data_t *received_da
     delete received_data;
 }
 
-void lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
+void
+lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
+                                     int error)
 {
-    AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<lt_client_service::snd_done before lock sess [%p] snddone no err sent_data %p", sess, sent_data);
+    AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<lt_client_service::snd_done_inthread before lock sess [%p] snddone no err sent_data %p", sess, sent_data);
     std::unique_lock<std::mutex> lck(m);
-    AWE_MODULE_DEBUG("communicate", ">>>>>>>>>>lt_client_service::snd_done after lock sess [%p] snddone no err sent_data %p", sess, sent_data);
+    AWE_MODULE_DEBUG("communicate", ">>>>>>>>>>lt_client_service::snd_done_inthread after lock sess [%p] snddone no err sent_data %p", sess, sent_data);
     
     if ( error )
     {
-        AWE_MODULE_DEBUG("communicate", "before snd_done handler_by_input sess [%p] error %d sent_data %p", sess, error,sent_data);
+        AWE_MODULE_DEBUG("communicate", "before snd_done_inthread handler_by_input sess [%p] error %d sent_data %p", sess, error,sent_data);
         handler_by_input(sent_data, error);
-        AWE_MODULE_DEBUG("communicate", "after snd_done handler_by_input sess [%p] error %d sent_data %p", sess, error,sent_data);
+        AWE_MODULE_DEBUG("communicate", "after snd_done_inthread handler_by_input sess [%p] error %d sent_data %p", sess, error,sent_data);
         delete sent_data;
         return;
     }
-    AWE_MODULE_DEBUG("communicate", "enter lt_client_service::snd_done sess [%p] snddone no err", sess);
+    AWE_MODULE_DEBUG("communicate", "enter lt_client_service::snd_done_inthread sess [%p] snddone no err", sess);
     lt_data_t *received_data = new lt_data_t();
     received_data->push_private(sent_data);
-
+    
     lt_session_cli_safe *session = (lt_session_cli_safe *) sess;
     
     if ( rcvdata_set.insert(received_data))
     {
-        AWE_MODULE_DEBUG("communicate", "before rcv lt_client_service::snd_done sess [%p] snddone no err received_data [%p]", sess, received_data);
+        AWE_MODULE_DEBUG("communicate", "before rcv lt_client_service::snd_done_inthread sess [%p] snddone no err received_data [%p]", sess, received_data);
         session->rcv(received_data);
-        AWE_MODULE_DEBUG("communicate", "after rcv lt_client_service::snd_done sess [%p] snddone no err received_data [%p]", sess, received_data);
+        AWE_MODULE_DEBUG("communicate", "after rcv lt_client_service::snd_done_inthread sess [%p] snddone no err received_data [%p]", sess, received_data);
     }
     else
     {
         AWE_MODULE_DEBUG("communicate", "!!!!!!!!!!!same received data in set lt_client_service::snd_done sess [%p] snddone no err received_data [%p]", sess, received_data);
     }
     
-    AWE_MODULE_DEBUG("communicate", "leave lt_client_service::snd_done sess [%p] snddone no err received_data [%p]", sess, received_data);
+    AWE_MODULE_DEBUG("communicate", "leave lt_client_service::snd_done_inthread sess [%p] snddone no err received_data [%p]", sess, received_data);
+}
+
+void lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
+{
+    AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<lt_client_service::snd_done before post sess [%p] snddone no err sent_data %p", sess, sent_data);
+    pool.submit_task(boost::bind(&lt_client_service::snd_done_inthread, this, sess, sent_data,error));
 }
 
 void lt_client_service::disconnected(lt_session *sess)
@@ -130,3 +137,4 @@ void lt_client_service::set_ioservice(boost::asio::io_service *_io_service)
 {
     io_service = _io_service;
 }
+

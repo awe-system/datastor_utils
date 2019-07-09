@@ -6,6 +6,7 @@ void lt_server_service::connected(lt_session *sess)
 {
     lt_session_serv *session = (lt_session_serv *) sess;
     lt_data_t *data = new lt_data_t();
+    get_session(session);
     session->rcv(data);
 }
 

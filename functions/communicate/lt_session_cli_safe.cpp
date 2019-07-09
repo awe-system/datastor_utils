@@ -37,6 +37,7 @@ lt_session_cli_safe::lt_session_cli_safe(lt_session_cli_set *_set,
         lt_session_cli(_io_service, (lt_session_callback *) this),
         is_down_connected(false), cb(_cb), set(_set)
 {
+    AWE_MODULE_DEBUG("communicate", "lt_session_cli_safe::lt_session_cli_safe %p", this);
     out_connect_ref.store(0);
 }
 
@@ -89,16 +90,23 @@ void lt_session_cli_safe::connected(lt_session *sess)
 
 void lt_session_cli_safe::rcv(lt_data_t *data)
 {
-    AWE_MODULE_DEBUG("communicate", "before rcv lt_session_cli_safe::snd sess %p", this);
+    AWE_MODULE_DEBUG("communicate", "before rcv lt_session_cli_safe::snd sess %p data %p", this, data);
     set->get_session(this);
+    AWE_MODULE_DEBUG("communicate", "after getsess lt_session_cli_safe::snd sess %p data %p", this, data);
     lt_session::rcv(data);
-    AWE_MODULE_DEBUG("communicate", "after rcv lt_session_cli_safe::snd sess %p", this);
+    AWE_MODULE_DEBUG("communicate", "after rcv lt_session_cli_safe::snd sess %p data %p", this,data);
 }
 
 void lt_session_cli_safe::snd(lt_data_t *data)
 {
-    AWE_MODULE_DEBUG("communicate", "before snd lt_session_cli_safe::snd sess %p", this);
+    AWE_MODULE_DEBUG("communicate", "before snd lt_session_cli_safe::snd sess %p data %p", this, data);
     set->get_session(this);
+    AWE_MODULE_DEBUG("communicate", "before lt_session::snd lt_session_cli_safe::snd sess %p data %p", this, data);
     lt_session::snd(data);
-    AWE_MODULE_DEBUG("communicate", "after snd lt_session_cli_safe::snd sess %p", this);
+    AWE_MODULE_DEBUG("communicate", "after snd lt_session_cli_safe::snd sess %p data %p", this, data);
+}
+
+lt_session_cli_safe::~lt_session_cli_safe()
+{
+    AWE_MODULE_DEBUG("communicate", "lt_session_cli_safe::~lt_session_cli_safe %p", this);
 }

@@ -149,7 +149,7 @@ set(LOG_FILES
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(boostdir "D://tool//boost_1_68_0//boost_1_68_0//stage//lib//lib")#根据boost安装位置调整
-    add_library(datastor_utils ${SOURCE_FILES} ${LOG_FILES})
+    add_library(datastor_utils ${LOG_FILES} ${SOURCE_FILES} )
     target_link_libraries(datastor_utils "${boostdir}boost_system-vc141-mt-gd-x64-1_68.lib")
     target_link_libraries(datastor_utils "${boostdir}boost_date_time-vc141-mt-gd-x64-1_68.lib")
     target_link_libraries(datastor_utils "${boostdir}boost_regex-vc141-mt-gd-x64-1_68.lib")

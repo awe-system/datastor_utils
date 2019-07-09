@@ -36,6 +36,8 @@ public:
     void *get_session_private() const;
     
     virtual bool is_connected() const = 0;
+    lt_session_description_imp();
+    virtual ~lt_session_description_imp();
 };
 
 class lt_session;

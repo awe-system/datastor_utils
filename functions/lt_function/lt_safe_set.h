@@ -12,13 +12,13 @@
 template <class T>
 class lt_safe_set
 {
-    boost::detail::spinlock splck;
+    boost::mutex splck;
     std::set<T> set;
 public:
     bool insert(T item)
     {
         AWE_MODULE_DEBUG("lt_safe_set", "IIIIIIIIIIIIIIIIIII enter insert  this %p item %p", this, item);
-        boost::unique_lock<boost::detail::spinlock> lck(splck);
+        boost::unique_lock<boost::mutex> lck(splck);
         AWE_MODULE_DEBUG("lt_safe_set", "IIIIIIIIIIIIIIII after lock this %p item %p", this, item);
         auto it = set.find(item);
         AWE_MODULE_DEBUG("lt_safe_set", "IIIIIIIIIIIIIIII after find this %p item %p", this, item);
@@ -37,7 +37,7 @@ public:
     bool erase(T & item)
     {
         AWE_MODULE_DEBUG("cond", "EEEEEEEEEEEEEEEEEEEE enter erase  this %p item %p", this, item);
-        boost::unique_lock<boost::detail::spinlock> lck(splck);
+        boost::unique_lock<boost::mutex> lck(splck);
         AWE_MODULE_DEBUG("cond", "EEEEEEEEEEEEEEEEEEEE erase after lock this %p item %p", this, item);
         auto it = set.find(item);
         AWE_MODULE_DEBUG("cond", "EEEEEEEEEEEEEEEEEEEE erase after find this %p item %p", this, item);
@@ -49,14 +49,14 @@ public:
         
         item = *it;
         set.erase(it);
-        AWE_MODULE_DEBUG("cond", "EEEEEEEEEEEEEEEEEEEE erase not erese this %p item %p", this, item);
+        AWE_MODULE_DEBUG("cond", "EEEEEEEEEEEEEEEEEEEE erase success this %p item %p", this, item);
         return true;
     }
     
     bool first(T & item)
     {
         AWE_MODULE_DEBUG("cond", "FFFFFFFFFFFFFFFFFFFFF enter first this %p ", this);
-        boost::unique_lock<boost::detail::spinlock> lck(splck);
+        boost::unique_lock<boost::mutex> lck(splck);
         AWE_MODULE_DEBUG("cond", "FFFFFFFFFFFFFFFFFFFFF first after lock this %p ", this);
         if(set.empty())
         {

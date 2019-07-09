@@ -22,6 +22,7 @@ class lt_condition
 public:
     lt_condition() : error(0)
     {
+        AWE_MODULE_DEBUG("cond", "OOOOOOOOOOOOOOOO    lt_condition   OOOOOOOOOOOOOOO this %p", this);
     }
 
     int wait()
@@ -57,7 +58,7 @@ public:
         {
             _data = data;
         }
-        AWE_MODULE_DEBUG("cond", "***************************notify before lock");
+        AWE_MODULE_DEBUG("cond", "***************************notify before lock this %p", this);
         std::unique_lock<std::mutex> lck(lock);
         AWE_MODULE_DEBUG("cond", "***************************notify after lock this %p", this);
         if(stat == lt_condition_stat_waiting)

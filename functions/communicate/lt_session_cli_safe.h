@@ -37,6 +37,7 @@ public:
 public:
     lt_session_cli_safe(lt_session_cli_set *_set, boost::asio::io_service *_io_service, lt_session_callback *_cb);
 
+    virtual ~lt_session_cli_safe();
     void connect(const std::string &ip, unsigned short port) override;
 
     void disconnect() override;

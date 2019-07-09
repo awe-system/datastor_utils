@@ -1,14 +1,19 @@
+
 #include <ctime>
+
 #include "action_stub.h"
 
 action_stub::action_stub() : snd_num(0), rcv_num(0)
 {
+//    AWE_MODULE_DEBUG("communicate", "action_stub::action_stub this %p", this);
+    
     last_snd_timestamp.store(time(0));
     last_rcv_timestamp.store(time(0));
 }
 
 action_stub::action_stub(const action_stub &other)
 {
+//    AWE_MODULE_DEBUG("communicate", "action_stub::action_stub copy this %p", this);
     last_snd_timestamp.store(other.last_snd_timestamp);
     last_rcv_timestamp.store(other.last_rcv_timestamp);
     snd_num.store(other.snd_num);
@@ -53,4 +58,9 @@ void action_stub::reset()
     last_rcv_timestamp.store((unsigned long) time(0));
     snd_num.store(0);
     rcv_num.store(0);
+}
+
+action_stub::~action_stub()
+{
+//    AWE_MODULE_DEBUG("communicate", "action_stub::~action_stub this %p", this);
 }

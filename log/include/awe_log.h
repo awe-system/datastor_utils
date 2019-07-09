@@ -1,7 +1,10 @@
 #ifndef SS_METADATA_LOG_HEAD_H
 #define SS_METADATA_LOG_HEAD_H
 
+#include <sys/types.h>
 #include <sys/syscall.h>
+#include<iostream>
+#include <unistd.h>
 #define postfix(msg)  std::string(msg).append(" [")\
     .append(__FILE__).append(":").append(__func__)\
     .append(":").append(std::to_string(__LINE__))\

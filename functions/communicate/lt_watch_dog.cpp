@@ -1,9 +1,11 @@
 #include "lt_watch_dog.h"
+#include "../log/include/awe_log.h"
 
 #define DEFALUT_TIMER_SECS 5
 
 lt_watch_dog::lt_watch_dog(boost::asio::io_service *_io_service) : timer(*_io_service), seconds(DEFALUT_TIMER_SECS)
 {
+    AWE_MODULE_DEBUG("communicate", "lt_watch_dog::lt_watch_dog() this %p", this);
     on_monitor = false;
 }
 
@@ -68,6 +70,7 @@ void lt_watch_dog::start_timer()
 
 lt_watch_dog::~lt_watch_dog()
 {
+    AWE_MODULE_DEBUG("communicate", "lt_watch_dog::~lt_watch_dog() this %p", this);
     std::unique_lock<std::mutex> lock(pending_m);
     while ( on_monitor )
     {

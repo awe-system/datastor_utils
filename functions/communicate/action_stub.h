@@ -12,6 +12,8 @@ private:
 public:
     action_stub();
 
+    virtual ~action_stub();
+    
     action_stub(const action_stub &other);
 
     void mark_sent();

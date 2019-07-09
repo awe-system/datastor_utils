@@ -8,6 +8,8 @@ class lt_session_cli : public lt_session
 public:
     lt_session_cli(boost::asio::io_service *_io_service, lt_session_callback *cb);
 
+    virtual ~lt_session_cli();
+    
     virtual void connect(const std::string &ip, unsigned short port);
 
     virtual void disconnect();

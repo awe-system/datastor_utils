@@ -91,6 +91,7 @@ void lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int err
 
 void lt_client_service::disconnected(lt_session *sess)
 {
+    abort();
     AWE_MODULE_DEBUG("communicate", "<====================       enter lt_client_service::disconnected sess [%p]", sess);
     std::unique_lock<std::mutex> lck(m);
     AWE_MODULE_DEBUG("communicate", "lt_client_service::disconnected after lock sess [%p] ", sess);

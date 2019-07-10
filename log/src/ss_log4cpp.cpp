@@ -2,9 +2,10 @@
 #include "awe_conf/env.h"
 #include "log4cpp/ss_log4cpp.h"
 
-static env log_prefix("ss_log","log_prefix");
+static env log_prefix("awe_log","log_prefix");
+static env log_level("awe_log","log_level");
 static string log_path_prefix = (log_prefix.get_string() == "")?("/var/log/msg"):log_prefix.get_string();
-
+static string loglevel = (log_level.get_string() == "")?("info"):log_level.get_string();
 ss_log4cpp &logger = ss_log4cpp::getInstance();
 
 ss_log4cpp *ss_log4cpp::ss_log_ = NULL;
@@ -28,7 +29,6 @@ void ss_log4cpp::destroy()
         delete ss_log_;
     }
 }
-
 
 ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
                            error_category(log4cpp::Category::getInstance(std::string("error"))),
@@ -73,22 +73,24 @@ ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
     log4cpp::RollingFileAppender *roll_appender_debug = new log4cpp::RollingFileAppender(
             "roll_appender_error", log_path_prefix + "_debug.log", 1024*1024*100, 3);
     roll_appender_debug->setLayout(layout_debug);
-
-
-    root_category.setPriority(log4cpp::Priority::DEBUG);
+    
+    if(loglevel == "error")
+    {
+        root_category.setPriority(log4cpp::Priority::ERROR);
+    }
+    else if(loglevel == "debug")
+    {
+        root_category.setPriority(log4cpp::Priority::DEBUG);
+    }
+    else if(loglevel == "warning")
+    {
+        root_category.setPriority(log4cpp::Priority::WARN);
+    }
+    else
+    {
+        root_category.setPriority(log4cpp::Priority::INFO);
+    }
     root_category.addAppender(roll_appender_all);
-
-    error_category.setPriority(log4cpp::Priority::ERROR);
-    error_category.setAppender(roll_appender_error);
-
-    warn_category.setPriority(log4cpp::Priority::WARN);
-    warn_category.setAppender(roll_appender_warn);
-
-    info_category.setPriority(log4cpp::Priority::INFO);
-    info_category.setAppender(roll_appender_info);
-
-    debug_category.setPriority(log4cpp::Priority::DEBUG);
-    debug_category.setAppender(roll_appender_debug);
 }
 
 ss_log4cpp::~ss_log4cpp()
@@ -99,19 +101,16 @@ ss_log4cpp::~ss_log4cpp()
 void ss_log4cpp::error(std::string msg)
 {
     root_category.error(msg);
-    error_category.error(msg);
 }
 
 void ss_log4cpp::warn(std::string msg)
 {
     root_category.warn(msg);
-    warn_category.warn(msg);
 }
 
 void ss_log4cpp::info(std::string msg)
 {
     root_category.info(msg);
-    info_category.info(msg);
 }
 
 void ss_log4cpp::debug(std::string msg)

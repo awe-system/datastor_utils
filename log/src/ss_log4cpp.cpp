@@ -1,11 +1,9 @@
+#include <src/log4cpp_src/StringUtil.hh>
 #include "awe_log.h"
 #include "awe_conf/env.h"
 #include "log4cpp/ss_log4cpp.h"
 
-static env log_prefix("awe_log","log_prefix");
-static env log_level("awe_log","log_level");
-static string log_path_prefix = (log_prefix.get_string() == "")?("/var/log/msg"):log_prefix.get_string();
-static string loglevel = (log_level.get_string() == "")?("info"):log_level.get_string();
+
 ss_log4cpp &logger = ss_log4cpp::getInstance();
 
 ss_log4cpp *ss_log4cpp::ss_log_ = NULL;
@@ -36,6 +34,11 @@ ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
                            info_category(log4cpp::Category::getInstance(std::string("info"))),
                            debug_category(log4cpp::Category::getInstance(std::string("debug")))
 {
+    static env log_prefix("awe_log","log_prefix");
+    static env log_level("awe_log","log_level");
+    static string log_path_prefix = (log4cpp::StringUtil::trim(log_prefix.get_string()) == "")?("/var/log/msg"):log4cpp::StringUtil::trim(log_prefix.get_string());
+    static string loglevel = (log4cpp::StringUtil::trim(log_level.get_string()) == "")?("info"):log4cpp::StringUtil::trim(log_level.get_string());
+    
     log4cpp::PatternLayout *root_layout = new log4cpp::PatternLayout();
     root_layout->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
 

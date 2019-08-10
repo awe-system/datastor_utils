@@ -138,6 +138,13 @@ void request_t::from_json_obj(const json_obj &obj)
     abort();
 }
 
+static string dump_void(void *p)
+{
+    char tmp_buf[100] = {0};
+    sprintf(tmp_buf,"%p",p);
+    return string(tmp_buf);
+}
+
 json_obj request_t::to_json_obj() const
 {
     json_obj obj("type", (int) type);
@@ -145,15 +152,20 @@ json_obj request_t::to_json_obj() const
     lt_data_t data(len, buf);
     obj.merge(json_obj("data_buf", data.to_less_string()));
     obj.merge(json_obj("private_data", (long long) private_data));
+    obj.merge(json_obj("private_data_str", dump_void(private_data)));
     json_obj statck_obj;
     statck_obj.set_array();
+    json_obj statck_str_obj;
     for ( void *data : data_stack )
     {
         statck_obj.append(json_obj((long long) data));
+        statck_str_obj.append(json_obj(dump_void(data)));
     }
     obj.merge(json_obj("stack",statck_obj));
+    obj.merge(json_obj("stack_str",statck_str_obj));
     return obj;
 }
+
 
 block_io::block_io()
 {

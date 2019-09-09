@@ -324,8 +324,21 @@ def list_files(path, reg):
     f = [path + x for x in names if r.match(x)]
     return f
 
+def update_raidfile():
+    global raid_dic
+    mddevs = list_files("/dev", "md[0-255]+")
+    for md in mddevs:
+        if md.find('p') >= 0:
+            continue
+        cmd = "/usr/sbin/mdadm -D /dev/md83 2>&1 | /usr/bin/grep 'Name :' | /usr/bin/awk '{print $3}' |  /usr/bin/cut -d ':' -f1" % (md)
+        sts, raidname = commands.getstatusoutput(cmd)
+        if(sts != 0):
+            continue
+        if raidname in raid_dic.keys():
+            raid_dic[raidname] = md
+    save_raid_dic(raid_dic_path, raid_dic)
 
-def md_get_mddev(raid_name):
+def md_get_mddev_raw(raid_name):
     mddevs = list_files("/dev", "md[0-255]+")
     for md in mddevs:
         if md.find('p') >= 0:
@@ -337,6 +350,19 @@ def md_get_mddev(raid_name):
             return md
     return None
 
+def is_md_raid_legal(raid_name, mddev):
+    cmd = '/usr/sbin/mdadm -D %s 2>&1 | /usr/bin/grep %s >/dev/null' % (mddev, raid_name)
+    sts, out = commands.getstatusoutput(cmd)
+    if(sts == 0):
+        return True
+    return False
+
+def md_get_mddev(raid_name):
+    md = md_get_mddev_raw(raid_name)
+    if(md == None):
+        update_raidfile()
+        return md_get_mddev_raw(raid_name)
+    return md
 
 def md_info_mddevs(mddevs=None, remain=True):
     if (mddevs == None):
@@ -354,7 +380,7 @@ def md_info(raid_name=None, remain=True):
     global raid_dic
     raid_dic = update_raid_info_by_scan(raid_dic)
     if (raid_name == None):
-        mddevs = None;
+        mddevs = None
     else:
         mddevs = [md_get_mddev(raid_name)];
     return md_info_mddevs(mddevs, remain);
@@ -477,7 +503,6 @@ def stopraid(raid_name):
 
     return True, "停止raid成功"
 
-
 def raidinfo_by_raidname(raid_name):
     remain = True
     if raid_name not in raid_list():
@@ -485,7 +510,12 @@ def raidinfo_by_raidname(raid_name):
 
     global raid_dic
     mddev = raid_dic[raid_name]
+    if(not is_md_raid_legal(raid_name, mddev)):
+        mddev = md_get_mddev(raid_name)
+    if(not is_md_raid_legal(raid_name, mddev)):
+        return False,None
     attr = mddev_get_attr(mddev, remain)
+
     return True, attr
 
 

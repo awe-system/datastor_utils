@@ -19,10 +19,10 @@ namespace log4cpp {
 			"FATAL",
 			"ALERT",
 			"CRIT",
-			"LOG_PRIORITY_ERROR",
-			"LOG_PRIORITY_WARN",
+			"ERROR",
+			"WARN",
 			"NOTICE",
-			"LOG_PRIORITY_INFO",
+			"INFO",
 			"DEBUG",
 			"NOTSET",
 			"UNKNOWN" 

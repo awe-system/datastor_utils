@@ -584,20 +584,20 @@ void dump_range_list(algo_ranges_list_t ranges)
     int cnt = 0;
     if(ranges.empty())
     {
-        cout<<PURPLE;
+        cout<<AWE_PURPLE;
         cout<<"The range list is empty"<<endl;
-        cout<<RESET;
+        cout<<AWE_RESET;
     }
     for(algo_ranges_it_t it = ranges.begin();
         it != ranges.end();
         ++it)
     {
         cout<<"["<<setw(4)<<cnt<<"] ";
-        if(++cnt%3 == 0) cout<<RED;
-        else if(cnt%3 == 1)cout<<YELLOW;
-        else cout<<GREEN;
+        if(++cnt%3 == 0) cout<<AWE_RED;
+        else if(cnt%3 == 1)cout<<AWE_YELLOW;
+        else cout<<AWE_GREEN;
         it->dump();
-        cout<<RESET;
+        cout<<AWE_RESET;
     }
 
 }
@@ -638,9 +638,9 @@ int main(int argc, char const *argv[])
         }
         else if(boost::starts_with(input, "de"))
         {
-            cout<<PURPLE;
+            cout<<AWE_PURPLE;
             range_pool.dump();
-            cout<<RESET<<endl;
+            cout<<AWE_RESET<<endl;
         }
         else if(boost::starts_with(input, "a"))
         {
@@ -703,9 +703,9 @@ int main(int argc, char const *argv[])
             algo_section section(start,len);
             algo_section_vec_t sections;
             ranges_list[num].map_section(section,sections);
-            cout<<GREEN;
+            cout<<AWE_GREEN;
             dump_algo_sections(sections);
-            cout<<RESET;
+            cout<<AWE_RESET;
         }
         else
         {

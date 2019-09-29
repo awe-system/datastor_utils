@@ -54,6 +54,14 @@ void awe_log_set_priority(enum priority pri)
     logger.set_priority(pri);
 #endif
 }
+
+void awe_log_set_module_priority(const char *module, enum priority pri)
+{
+#ifdef USE_LOG
+    logger.set_module_priority(module_string(module), pri);
+#endif
+}
+
 #include <unistd.h>
 #include <stdio.h>
 

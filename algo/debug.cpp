@@ -13,18 +13,18 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
-#define RED 	"\033[31;0m"
-#define RESET	"\033[0m"
-#define GREEN	"\033[36;0m"
-#define YELLOW	"\033[32;0m"
-#define PURPLE	"\033[35;0m"
-#define BLUE	"\033[34;0m"
+#define AWE_RED 	"\033[31;0m"
+#define AWE_RESET	"\033[0m"
+#define AWE_GREEN	"\033[36;0m"
+#define AWE_YELLOW	"\033[32;0m"
+#define AWE_PURPLE	"\033[35;0m"
+#define AWE_BLUE	"\033[34;0m"
 #define BGREEN	"\033[1;36;47;0m"
 #define BRED 	"\033[1;31;47;0m"
 #define BYELLOW	"\033[1;32;47;0m"
 #define BPURPLE	"\033[1;35;47;0m"
 #define BBLUE	"\033[1;34;47;0m"
-#define NORMAL	"\033[30;0m"
+#define AWE_NORMAL	"\033[30;0m"
 
 
 debug &  debug::operator<<(const std::string &out)
@@ -152,33 +152,33 @@ debug::debug(color_type color)
 
 void debug::set_color(color_type color)
 {
-    end_str = RESET;
+    end_str = AWE_RESET;
     switch (color)
     {
         case color_normal:
-            start_str=NORMAL;
+            start_str=AWE_NORMAL;
             end_str = string("");
             break;
         case color_blue:
-            start_str = BLUE;
+            start_str = AWE_BLUE;
             break;
         case color_red:
-            start_str = RED;
+            start_str = AWE_RED;
             break;
         case color_green:
-            start_str = GREEN;
+            start_str = AWE_GREEN;
             break;
         case color_purple:
-            start_str = PURPLE;
+            start_str = AWE_PURPLE;
             break;
         case color_yellow:
-            start_str = YELLOW;
+            start_str = AWE_YELLOW;
             break;
         case color_bgreen:
             start_str = BGREEN;
             break;
         case color_bblue:
-            start_str = BLUE;
+            start_str = AWE_BLUE;
             break;
         case color_bred:
             start_str = BRED;

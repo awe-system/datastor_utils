@@ -17,7 +17,5 @@ bool lt_reference::put()
 
 bool lt_reference::get_check_first()
 {
-    if( 0 == __sync_fetch_and_add(&ref, 1) )
-        return true;
-    return false;
+    return __sync_fetch_and_add(&ref, 1) == 0;
 }

@@ -271,6 +271,11 @@ bool json_obj::operator<(const json_obj &other) const
             if ( ll_val < other.get_number() )
                 return true;
             break;
+        case json_obj_type_array:
+        case json_obj_type_dic:
+            if (dumps().compare(other.dumps()) < 0)
+                return true;
+            break;
         default:
             //throw 600;
             throw (int)LT_DATA_ERROR_UNKNOWN;

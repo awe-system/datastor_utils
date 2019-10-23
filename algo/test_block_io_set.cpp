@@ -4,6 +4,7 @@
 #include "algo_interface.h"
 #include "test_block_io_set.h"
 #include "test_algo_device.h"
+#include "algo_block_open_ref.h"
 
 ServerSan_Algo::block_io *
 ServerSan_Algo::test_block_io_set::get_block(const json_obj& key)
@@ -29,8 +30,9 @@ ServerSan_Algo::test_block_io_set::test_block_io_set(std::string _file_dir,
         test_algo_device *device = new test_algo_device(to_string(i),
                                                         _file_dir +
                                                         to_string(i),_size_secs);
+        algo_block_open_ref * block = new algo_block_open_ref(device);
         json_obj obj( i );
-        obj_map.insert(make_pair(obj,device));
+        obj_map.insert(make_pair(obj,block));
     }
 }
 

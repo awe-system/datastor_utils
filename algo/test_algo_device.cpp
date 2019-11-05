@@ -286,10 +286,10 @@ test_algo_device::~test_algo_device()
                      this);
     is_stop = true;
     
-//    AWE_MODULE_DEBUG("algo", "~test_algo_device before join this %p", this);
-//    th->join();
-//
-//    AWE_MODULE_DEBUG("algo", "~test_algo_device after join this %p", this);
+    AWE_MODULE_DEBUG("algo", "~test_algo_device before join this %p", this);
+    th->join();
+
+    AWE_MODULE_DEBUG("algo", "~test_algo_device after join this %p", this);
 }
 
 request_t *test_algo_device::pop_request()

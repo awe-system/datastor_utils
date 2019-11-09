@@ -106,7 +106,7 @@ public:
     void                *private_data;
     std::vector<void *> data_stack;
 public:
-    unsigned long checksum();
+    unsigned long checksum() const;
     
     void from_json_obj(const json_obj &obj) override;
     

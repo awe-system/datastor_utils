@@ -4,7 +4,7 @@
 #include "algo.h"
 #include "debug.h"
 #include "algo_interface.h"
-
+static env checksum_on("awe_log", "checksum_on");
 
 namespace ServerSan_Algo
 {
@@ -117,7 +117,7 @@ bool request_t::is_read() const
     abort();
 }
 
-unsigned long request_t::checksum()
+unsigned long request_t::checksum() const
 {
     unsigned result = 0xcc;
     unsigned char res[sizeof(unsigned long)] = {0};
@@ -153,6 +153,11 @@ json_obj request_t::to_json_obj() const
     obj.merge(json_obj("data_buf", data.to_less_string()));
     obj.merge(json_obj("private_data", (long long) private_data));
     obj.merge(json_obj("private_data_str", dump_void(private_data)));
+    if(checksum_on.get_string() == string("yes"))
+    {
+        long long checksum_val = checksum();
+        obj.merge(json_obj("checksum", (long long)checksum_val));
+    }
     json_obj statck_obj;
     statck_obj.set_array();
     json_obj statck_str_obj;

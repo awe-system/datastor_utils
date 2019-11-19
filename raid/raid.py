@@ -38,12 +38,10 @@ def update_raid_info_by_scan(dic):
         res.update({key: newpath})
     return res
 
-
 if os.path.exists(raid_dic_path):
     raid_dic = json.loads(commands.getoutput("/usr/bin/cat " + raid_dic_path))
 else:
     raid_dic = {}
-
 
 def disk_name(slot):
     # FIXME
@@ -330,7 +328,7 @@ def update_raidfile():
     for md in mddevs:
         if md.find('p') >= 0:
             continue
-        cmd = "/usr/sbin/mdadm -D /dev/md83 2>&1 | /usr/bin/grep 'Name :' | /usr/bin/awk '{print $3}' |  /usr/bin/cut -d ':' -f1" % (md)
+        cmd = "/usr/sbin/mdadm -D %s 2>&1 | /usr/bin/grep 'Name :' | /usr/bin/awk '{print $3}' |  /usr/bin/cut -d ':' -f1" % (md)
         sts, raidname = commands.getstatusoutput(cmd)
         if(sts != 0):
             continue

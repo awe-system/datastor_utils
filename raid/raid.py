@@ -403,11 +403,11 @@ def md_stop(mddev):
     sts, out = commands.getstatusoutput(cmd)
     if out.find('mdadm: stopped') < 0:
         return -1, '设备正在被占用!'
-    cmd = "rm -f %s >/dev/null 2>&1" % mddev
+    cmd = "rm -f %s 2>&1" % mddev
     sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
-        return -1, '无法删除设备节点!'
-    return sts, ''
+        return -1, '无法删除设备节点! %s' %(out)
+    return sts, '%s' % (out)
 
 
 def set_disk_free(diskname):
@@ -601,12 +601,12 @@ def regroupraid(raidname):
     mddev = find_empty_mdpath()
     raid_dic[raidname] = mddev
     dev_list = " ".join(disks)
-    cmd = "/usr/sbin/mdadm -Af %s %s >/dev/null 2>&1" % (mddev, dev_list)
+    cmd = "/usr/sbin/mdadm -Af %s %s 2>&1" % (mddev, dev_list)
     sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
         return False, "重组%s失败!%s" % (raidname, out)
     save_raid_dic(raid_dic_path, raid_dic)
-    return True, "重组成功"
+    return True, "重组成功, %s" % (out)
 
 
 def scan_raid():

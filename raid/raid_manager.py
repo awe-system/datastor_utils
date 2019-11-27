@@ -66,7 +66,12 @@ def createraid_arg(arg):
 def raidinfo_arg(arg):
 	err,output = raidinfo_by_raidname(arg[0]);
 	out = json_dump(err,output)
-	return 0,json.dumps(json.loads(out), ensure_ascii=False, sort_keys=True, indent = 4)
+	try:
+		if(json.loads(out)["msg"]["Name"] == arg[0]):
+			return 0,json.dumps(json.loads(out), ensure_ascii=False, sort_keys=True, indent = 4)
+		return Err.WRONG_RAID,json.dumps("")
+	except Exception:
+		return Err.WRONG_RAID,json.dumps("")
 
 def listraid_arg(arg):
 	err,output = md_info()

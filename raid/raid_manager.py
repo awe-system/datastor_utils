@@ -322,11 +322,11 @@ if __name__ == '__main__':
 	# raid_dic = load_raid_dic("/opt/raid/raid_file")
 	try:
 		err,output=cmd_tab.get(argv[1],help)(argv[2:])
-		if err : print Err.err_json(err)
+		if err : print Err.err_json(err, output)
 		else: print output	
 		# save_raid_dic("/opt/raid/raid_file", raid_dic)
 	except Exception:
 		err = Err.ENVIRONMENT
-		print Err.err_json(err)
+		print Err.err_json(err,"")
 	finally:
 		exit(err);	

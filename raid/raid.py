@@ -95,14 +95,14 @@ def raid_list():
 
 def raid_create(chunk, level, raid_name, devs_input):
     if raid_name in raid_list():
-        return False, "raid 已存在"
+        return False, "raid exist"
     mddev = md_find_free_mddev()
     if mddev == None:
-        return False, "没有空闲的RAID槽位"
+        return False, "No rais Slot"
 
     devs, failed = disks_from_slot(devs_input)
     if len(devs) == 0:
-        return False, "没有可用磁盘"
+        return False, "No disks"
     dev_list = " ".join(devs)
 
     cmd = "/usr/sbin/mdadm -CR %s -l %s -c %s -n %u %s --metadata=1.2 --homehost=%s -f" % (
@@ -113,14 +113,14 @@ def raid_create(chunk, level, raid_name, devs_input):
     sts, out = commands.getstatusoutput(cmd)
 
     if sts < 0 or out.find('started') < 0:
-        return False, "创建raid失败"
+        return False, "Create raid Failed"
 
     global raid_dic
     raid_dic.update({raid_name: mddev})
     save_raid_dic(raid_dic_path, raid_dic)
     save_raid_dic(dest_path + raid_name + conf_post, json.dumps(devs))
     # os.makedirs(mddev)
-    return True, '创建raid %s 成功!' % raid_name
+    return True, 'Create raid %s success!' % raid_name
 
 
 class raid_attr:
@@ -402,11 +402,11 @@ def md_stop(mddev):
     cmd = "/usr/sbin/mdadm -S %s 2>&1" % mddev
     sts, out = commands.getstatusoutput(cmd)
     if out.find('mdadm: stopped') < 0:
-        return -1, '设备正在被占用!'
+        return -1, 'Device is busy!'
     cmd = "rm -f %s 2>&1" % mddev
     sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
-        return -1, '无法删除设备节点! %s' %(out)
+        return -1, 'Cannot remove device! %s' %(out)
     return sts, '%s' % (out)
 
 
@@ -437,7 +437,7 @@ def set_disks_free(disks):
 
 def md_del(raid_name):
     if raid_name not in raid_list():
-        return False, "raid不存在"
+        return False, "raid not exist"
 
     try:
         mdinfo = md_info(raid_name)['raids'][0]
@@ -455,7 +455,7 @@ def md_del(raid_name):
     disks = mddev_get_disks(mddev)
     sts, msg = md_stop(mddev)
     if sts != 0:
-        return False, "停止%s失败!%s" % (raid_name, msg)
+        return False, "Stop %s failed!%s" % (raid_name, msg)
     # 删除设备节点
     # __md_remove_devnode(raid_name)
 
@@ -466,7 +466,7 @@ def md_del(raid_name):
     #     disk_set_type(slot, 'Free')
     res = set_disks_free(disks)
     if res != "":
-        return False, "清除磁盘信息失败，请手动清除"
+        return False, "Clear disk info failed. Please try it manually"
 
     del (raid_dic[raid_name])
     save_raid_dic(raid_dic_path, raid_dic)
@@ -474,12 +474,12 @@ def md_del(raid_name):
     os.system(cmd)
     # os.remove(mddev)
     # sysmon_event('vg', 'remove', '%s,disks=%s' % (mdinfo['name'],_disk_slot_list_str(disks)), '卷组 %s 删除成功!' % mdinfo['name'])
-    return True, "删除raid成功"
+    return True, "delete raid success"
 
 
 def stopraid(raid_name):
     if raid_name not in raid_list():
-        return False, "raid不存在"
+        return False, "Raid not exist"
 
     try:
         mdinfo = md_info(raid_name)['raids'][0]
@@ -497,14 +497,14 @@ def stopraid(raid_name):
     disks = mddev_get_disks(mddev)
     sts, msg = md_stop(mddev)
     if sts != 0:
-        return False, "停止%s失败!%s" % (raid_name, msg)
+        return False, "Stop %s failed!%s" % (raid_name, msg)
 
-    return True, "停止raid成功"
+    return True, "Stop raid success"
 
 def raidinfo_by_raidname(raid_name):
     remain = True
     if raid_name not in raid_list():
-        return False, "raid不存在"
+        return False, "raid not exist"
 
     global raid_dic
     mddev = raid_dic[raid_name]
@@ -576,7 +576,7 @@ def sethotspare(raid_name, dev):
     sts, out = commands.getstatusoutput(cmd)
     if sts != 0:
         return False, "sethostspare fail!"
-    return True, "设置热备盘成功!"
+    return True, "Set hotspare success!"
 
 
 def is_md_exist(path):
@@ -597,17 +597,26 @@ def find_empty_mdpath():
 
 
 def regroupraid(raidname):
-    disks = json.loads(load_raid_dic(dest_path + raidname + conf_post))
-    mddev = find_empty_mdpath()
-    raid_dic[raidname] = mddev
-    dev_list = " ".join(disks)
-    cmd = "/usr/sbin/mdadm -Af %s %s 2>&1" % (mddev, dev_list)
-    sts, out = commands.getstatusoutput(cmd)
-    if sts != 0:
-        return False, "重组%s失败!%s" % (raidname, out)
-    save_raid_dic(raid_dic_path, raid_dic)
-    return True, "重组成功, %s" % (out)
-
+    output=""
+    try:
+        output += "regroupraid start************"
+        disks = json.loads(load_raid_dic(dest_path + raidname + conf_post))
+        output += "before find_empty_mdpath*********"
+        mddev = find_empty_mdpath()
+        output += mddev + "************"
+        raid_dic[raidname] = mddev
+        dev_list = " ".join(disks)
+        output += "cmd:**********"
+        cmd = "/usr/sbin/mdadm -Af %s %s 2>&1" % (mddev, dev_list)
+        output += cmd + "************"
+        sts, out = commands.getstatusoutput(cmd)
+        output += out + "************"
+        if sts != 0:
+            raise
+        save_raid_dic(raid_dic_path, raid_dic)
+        return True, "Regroup success"
+    except:
+        return False,output
 
 def scan_raid():
     global raid_dic
@@ -616,4 +625,4 @@ def scan_raid():
         success, msg = regroupraid(raid)
         if not success:
             return success, msg
-    return True, "重组成功"
+    return True, "Regroup success"

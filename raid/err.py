@@ -17,12 +17,13 @@ err_tab = {
 }
 
 
-def err_json(err):
+def err_json(err,output):
 	dic = {}
 	if err:
 		dic.update({"status":False})
 	else:
 		dic.update({"status":True})
-	dic.update({"msg":err_tab.get(err,err_tab[UNKNOWN])});
+	dic.update({"msg":err_tab.get(err,err_tab[UNKNOWN])})
+	dic.update({"error_info":output})
 	return json.dumps(dic)
 

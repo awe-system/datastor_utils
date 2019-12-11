@@ -1,13 +1,30 @@
 #include "lt_client_service.h"
 #include "../lt_function_error.h"
 #include "../log/include/awe_log.h"
+
 //NOTE: 前提是disconect被调用后不会出现新的rcv_done
 void lt_client_service::rcv_done_inthread(lt_session *sess, lt_data_t *received_data, int error)
 {
-    AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done_inthread before lock sess [%p] snddone no err received_data %p", sess, received_data);
+    AWE_MODULE_DEBUG("communicate",
+                     "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done_inthread before lock sess [%p] snddone no err received_data %p",
+                     sess, received_data);
     std::unique_lock<std::mutex> lck(m);
-    AWE_MODULE_DEBUG("communicate", ">>>>>>>>>>>>>>>>>>>>>>>>lt_client_service::rcv_done_inthread after lock sess [%p] snddone no err received_data %p", sess,received_data);
-    rcv_done_nolock(sess, received_data, error);
+    AWE_MODULE_DEBUG("communicate",
+                     ">>>>>>>>>>>>>>>>>>>>>>>>lt_client_service::rcv_done_inthread after lock sess [%p] snddone no err received_data %p",
+                     sess, received_data);
+    //if ( is_connect ){
+    /*
+    if (!is_connect) {
+        error = - RPC_ERROR_TYPE_NET_BROKEN;
+    }
+     */
+        rcv_done_nolock(sess, received_data, error);
+    //}
+    //else {
+        // because of revdata_set has been cleaned up when executed the disconnected function
+        // do nothing
+    //}
+    //std::cout << __FUNCTION__ << "error : " << error << std::endl;
     AWE_MODULE_DEBUG("communicate", ">>>>>>>>>>>>>>>>>>>>>>>>lt_client_service::rcv_done_inthread after rcv_done_nolock sess [%p] snddone no err", sess);
 }
 
@@ -24,13 +41,15 @@ void lt_client_service::rcv_done(lt_session *sess, lt_data_t *received_data,
 void lt_client_service::rcv_done_nolock(lt_session *sess, lt_data_t *received_data, int error)
 {
     AWE_MODULE_DEBUG("communicate", "enter lt_client_service::rcv_done %p error %d received_data %p", sess, error, received_data);
+    /*
     if( !rcvdata_set.erase(received_data))
     {
         AWE_MODULE_DEBUG("communicate", "leave lt_client_service::rcv_done %p error no received_data %p", sess, received_data);
         return;
     }
+     */
     lt_data_t *sent_data = (lt_data_t *) received_data->pop_private();
-    
+    //std::cout << "sent_data address" << sent_data << std::endl;
     if ( error )
     {
         AWE_MODULE_DEBUG("communicate", "before handler_by_input %p error %d sent_data %p received_data %p", sess, error, sent_data, received_data);
@@ -51,6 +70,7 @@ void
 lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
                                      int error)
 {
+    
     AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<lt_client_service::snd_done_inthread before lock sess [%p] snddone no err sent_data %p", sess, sent_data);
     std::unique_lock<std::mutex> lck(m);
     AWE_MODULE_DEBUG("communicate", ">>>>>>>>>>lt_client_service::snd_done_inthread after lock sess [%p] snddone no err sent_data %p", sess, sent_data);
@@ -63,12 +83,22 @@ lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
         delete sent_data;
         return;
     }
+    
+    if (!is_connect) {
+        handler_by_input(sent_data, -RPC_ERROR_TYPE_NET_BROKEN);
+        delete sent_data;
+        return;
+    }
+    
     AWE_MODULE_DEBUG("communicate", "enter lt_client_service::snd_done_inthread sess [%p] snddone no err", sess);
     lt_data_t *received_data = new lt_data_t();
     received_data->push_private(sent_data);
     
     lt_session_cli_safe *session = (lt_session_cli_safe *) sess;
     
+    session->rcv(received_data);
+    
+   /*
     if ( rcvdata_set.insert(received_data))
     {
         AWE_MODULE_DEBUG("communicate", "before rcv lt_client_service::snd_done_inthread sess [%p] snddone no err received_data [%p]", sess, received_data);
@@ -81,6 +111,7 @@ lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
     }
     
     AWE_MODULE_DEBUG("communicate", "leave lt_client_service::snd_done_inthread sess [%p] snddone no err received_data [%p]", sess, received_data);
+    */
 }
 
 void lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
@@ -91,9 +122,12 @@ void lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int err
 
 void lt_client_service::disconnected(lt_session *sess)
 {
+    std::unique_lock<std::mutex> lck(m);
+    is_connect = false;
+    /*
     abort();
     AWE_MODULE_DEBUG("communicate", "<====================       enter lt_client_service::disconnected sess [%p]", sess);
-    std::unique_lock<std::mutex> lck(m);
+    is_connect = false;
     AWE_MODULE_DEBUG("communicate", "lt_client_service::disconnected after lock sess [%p] ", sess);
     lt_data_t * rcv_data;
     while(rcvdata_set.first(rcv_data))
@@ -102,15 +136,18 @@ void lt_client_service::disconnected(lt_session *sess)
         rcv_done_nolock(sess, rcv_data, -RPC_ERROR_TYPE_NET_BROKEN);
         AWE_MODULE_DEBUG("communicate", "after rcv_done %p rcv_data %p", sess, rcv_data);
     }
+     */
     
     AWE_MODULE_DEBUG("communicate", "=================>      lt_client_service::disconnected sess [%p]", sess);
 }
 
 void lt_client_service::connected(lt_session *sess)
 {//NOTE:do nothing
+    is_connect = true;
 }
 
-lt_client_service::lt_client_service(boost::asio::io_service *_io_service, unsigned short port):pool(1)
+lt_client_service::lt_client_service(boost::asio::io_service *_io_service, unsigned short port):
+    pool(1),is_connect(false)
 {
 }
 

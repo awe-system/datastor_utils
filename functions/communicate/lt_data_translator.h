@@ -32,7 +32,7 @@ public:
         return res;
     }
 
-    static const char *to_char_p(unsigned char *&buf)
+    static char *to_char_p(unsigned char *&buf)
     {
         char *res = (char *) buf;
         size_t len = std::strlen(res);

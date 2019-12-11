@@ -1,5 +1,7 @@
+#include <lt_function/thread_pool.hpp>
 #include "lt_server_service.h"
 #include "../lt_function_error.h"
+#include "lt_session_cli_safe.h"
 
 
 void lt_server_service::connected(lt_session *sess)
@@ -81,11 +83,18 @@ lt_server_service::lt_server_service(int thread_num, unsigned short _port, lt_se
 {
 }
 
+static data_channel::thread_pool ser_delete_pool(1);
+
+void ser_delete_func(lt_session_serv *sess)
+{
+    delete sess;
+}
+
 void lt_server_service::put_session(lt_session_serv *sess)
 {
     if ( sess->put())
     {
-        delete sess;
+        ser_delete_pool.submit_task(boost::bind(&ser_delete_func, sess));
     }
 }
 

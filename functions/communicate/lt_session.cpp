@@ -76,12 +76,13 @@ void lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error
     AWE_MODULE_DEBUG("communicate", "--enter lt_session::rcv_done sess %p", this);
     //check_disconnect_when_done(error);
     unsigned err = 0;
-    if (error) {
+    if (error || (!is_connected())) {
         err = -RPC_ERROR_TYPE_NET_BROKEN;
         let_it_down();
     } else {
         mark_received();
     }
+    
     cb->rcv_done(this, data, err);
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_done sess %p", this);
 }
@@ -103,7 +104,8 @@ void lt_session::rcv_head_done_unsafe(lt_data_t *data, const boost::system::erro
     int err = boost_err_translate(error);
     if ( err )
     {
-        rcv_queue.continue_to();
+        //rcv_queue.continue_to();
+        rcv_queue.clear();
         rcv_done(data, boost::asio::error::network_down);
         AWE_MODULE_DEBUG("communicate", "--Err leave lt_session::start_rcv_head_unsafe sess %p", this);
         return;
@@ -129,9 +131,10 @@ void lt_session::start_rcv_data_unsafe(lt_data_t *data)
 void lt_session::rcv_data_done_unsafe(lt_data_t *data, const boost::system::error_code error)
 {
     //std::cout << "****" << __LINE__ << "  " <<  __FILE__ << " " << this << "--------------------------------------error : -" << error <<"  data : " << data->to_string() << std::endl;
-    boost::system::error_code err;
+    boost::system::error_code err = error ;
     if (!is_connected()) {
         err = boost::asio::error::network_down;
+        rcv_queue.clear();
     }
     rcv_queue.continue_to();
     /*
@@ -171,7 +174,7 @@ void lt_session::disconnected()
     // shutdown function will close the socket graceful and cause of program crash.
     //_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
   
-    _socket.close(ec);
+    //_socket.close(ec);
     if (ec) {
     
     }
@@ -204,12 +207,13 @@ void lt_session::start_snd_data(lt_data_t *data)
 void lt_session::snd_data_done(lt_data_t *data, const boost::system::error_code &error)
 {
     int err = 0;
-    if (error.value()) {
+    if (error || (!is_connected())) {
         let_it_down();
         err = -RPC_ERROR_TYPE_NET_BROKEN;
     } else {
         mark_sent();
     }
+    
     //check_disconnect_when_done(error);
     //std::string tmp = data->to_string();
     cb->snd_done(this, data, err);
@@ -227,8 +231,9 @@ void lt_session::snd_data_done_unsafe(lt_data_t *data, const boost::system::erro
 {
     AWE_MODULE_DEBUG("communicate", "--enter lt_session::snd_data_done_unsafe sess %p", this);
     //std::cout << "****" << __LINE__ << "  " <<  __FILE__ << " " << this << "--------------------------------------error : -" << error <<"  data : " << data->to_string() << std::endl;
-    boost::system::error_code err;
+    boost::system::error_code err = error;
     if (!is_connected()) {
+        queue.clear();
         err = boost::asio::error::network_down;
     }
     

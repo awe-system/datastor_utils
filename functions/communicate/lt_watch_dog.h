@@ -14,7 +14,7 @@ private:
     bool is_monitoring;
     boost::asio::deadline_timer timer;
 
-    bool on_monitor;
+    std::atomic_bool on_monitor;
     std::mutex pending_m;
     std::condition_variable pending_cond;
 public:

@@ -71,6 +71,10 @@ request_t::request_t(const request_t &other)
     {
         data_stack.push_back(*it);
     }
+    for ( std::vector<std::string>::const_iterator it = other.string_stack.begin(); it != other.string_stack.end(); ++it )
+    {
+        string_stack.push_back(*it);
+    }
 }
 
 void request_t::push_private(void *new_private)
@@ -161,14 +165,32 @@ json_obj request_t::to_json_obj() const
     json_obj statck_obj;
     statck_obj.set_array();
     json_obj statck_str_obj;
+    json_obj string_stack_obj;
     for ( void *data : data_stack )
     {
         statck_obj.append(json_obj((long long) data));
         statck_str_obj.append(json_obj(dump_void(data)));
     }
+    for ( auto str : string_stack )
+    {
+        string_stack_obj.append(json_obj(str));
+    }
     obj.merge(json_obj("stack",statck_obj));
     obj.merge(json_obj("stack_str",statck_str_obj));
+    obj.merge(json_obj("string_stack",string_stack_obj));
     return obj;
+}
+
+void request_t::push_string(const std::string & str)
+{
+    string_stack.push_back(str);
+}
+
+std::string request_t::pop_string()
+{
+    auto str = string_stack.front();
+    string_stack.pop_back();
+    return str;
 }
 
 

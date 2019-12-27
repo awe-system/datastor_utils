@@ -105,6 +105,7 @@ public:
     unsigned int        len;
     void                *private_data;
     std::vector<void *> data_stack;
+    std::vector<std::string> string_stack;
 public:
     unsigned long checksum() const;
     
@@ -123,6 +124,10 @@ public:
     void push_private(void *new_private);
     
     void *pop_private();
+    
+    void push_string(const std::string& str);
+    
+    std::string pop_string();
     
     void push_callback(block_io_callback *cb);
     

@@ -4,6 +4,7 @@
 #include "algo.h"
 #include "debug.h"
 #include "algo_interface.h"
+
 static env checksum_on("awe_log", "checksum_on");
 
 namespace ServerSan_Algo
@@ -23,14 +24,18 @@ block_event::block_event()
 int block_event::offline()
 {
     if ( !event )
+    {
         return 0;
+    }
     return event->handle_offline(this);
 }
 
 int block_event::online()
 {
     if ( !event )
+    {
         return 0;
+    }
     return event->handle_online(this);
 }
 
@@ -50,28 +55,32 @@ int block_event_callback::handle_online(block_event *block)
 }
 
 
-request_t::request_t() : type(REQUEST_UNKNOWN), offset(0), buf(NULL), len(0), private_data(NULL)
+request_t::request_t() : type(REQUEST_UNKNOWN), offset(0), buf(NULL), len(0),
+                         private_data(NULL), trace_info("")
 {
 }
 
-request_t::request_t(unsigned int _len, unsigned char *_buf) : type(REQUEST_UNKNOWN), offset(0), buf(_buf), len(_len),
-                                                               private_data(NULL)
+request_t::request_t(unsigned int _len, unsigned char *_buf) :
+        type(REQUEST_UNKNOWN), offset(0), buf(_buf), len(_len),
+        private_data(NULL), trace_info("")
 {
 }
 
-request_t::request_t(const request_t &other)
+request_t::request_t(const request_t &other):trace_info(other.get_trace())
 {
-    type = other.type;
-    offset = other.offset;
-    buf = other.buf;
-    len = other.len;
+    type         = other.type;
+    offset       = other.offset;
+    buf          = other.buf;
+    len          = other.len;
     private_data = other.private_data;
-
-    for ( std::vector<void *>::const_iterator it = other.data_stack.begin(); it != other.data_stack.end(); ++it )
+    
+    for ( std::vector<void *>::const_iterator      it = other.data_stack
+            .begin(); it != other.data_stack.end(); ++it )
     {
         data_stack.push_back(*it);
     }
-    for ( std::vector<std::string>::const_iterator it = other.string_stack.begin(); it != other.string_stack.end(); ++it )
+    for ( std::vector<std::string>::const_iterator it = other.string_stack
+            .begin(); it != other.string_stack.end(); ++it )
     {
         string_stack.push_back(*it);
     }
@@ -123,15 +132,16 @@ bool request_t::is_read() const
 
 unsigned long request_t::checksum() const
 {
-    unsigned result = 0xcc;
+    unsigned      result                     = 0xcc;
     unsigned char res[sizeof(unsigned long)] = {0};
-    for(uint i = 0; i< sizeof(unsigned long); ++i)
+    for ( uint    i                          = 0; i < sizeof(unsigned long);
+          ++i )
     {
-        res[i] = i*i - 1;
+        res[i] = i * i - 1;
     }
-    for(uint i =0 ; i< len; ++i)
+    for ( uint    i                          = 0; i < len; ++i )
     {
-        res[i%sizeof(unsigned long)] ^= buf[i];
+        res[i % sizeof(unsigned long)] ^= buf[i];
     }
     memcpy(&result, res, sizeof(unsigned long));
     return result;
@@ -145,7 +155,7 @@ void request_t::from_json_obj(const json_obj &obj)
 static string dump_void(void *p)
 {
     char tmp_buf[100] = {0};
-    sprintf(tmp_buf,"%p",p);
+    sprintf(tmp_buf, "%p", p);
     return string(tmp_buf);
 }
 
@@ -157,15 +167,15 @@ json_obj request_t::to_json_obj() const
     obj.merge(json_obj("data_buf", data.to_less_string()));
     obj.merge(json_obj("private_data", (long long) private_data));
     obj.merge(json_obj("private_data_str", dump_void(private_data)));
-    if(checksum_on.get_string() == string("yes"))
+    if ( checksum_on.get_string() == string("yes") )
     {
         long long checksum_val = checksum();
-        obj.merge(json_obj("checksum", (long long)checksum_val));
+        obj.merge(json_obj("checksum", (long long) checksum_val));
     }
-    json_obj statck_obj;
+    json_obj  statck_obj;
     statck_obj.set_array();
-    json_obj statck_str_obj;
-    json_obj string_stack_obj;
+    json_obj   statck_str_obj;
+    json_obj   string_stack_obj;
     for ( void *data : data_stack )
     {
         statck_obj.append(json_obj((long long) data));
@@ -175,13 +185,13 @@ json_obj request_t::to_json_obj() const
     {
         string_stack_obj.append(json_obj(str));
     }
-    obj.merge(json_obj("stack",statck_obj));
-    obj.merge(json_obj("stack_str",statck_str_obj));
-    obj.merge(json_obj("string_stack",string_stack_obj));
+    obj.merge(json_obj("stack", statck_obj));
+    obj.merge(json_obj("stack_str", statck_str_obj));
+    obj.merge(json_obj("string_stack", string_stack_obj));
     return obj;
 }
 
-void request_t::push_string(const std::string & str)
+void request_t::push_string(const std::string &str)
 {
     string_stack.push_back(str);
 }
@@ -191,6 +201,16 @@ std::string request_t::pop_string()
     auto str = string_stack.front();
     string_stack.pop_back();
     return str;
+}
+
+void request_t::set_trace(const std::string &trace)
+{
+    trace_info = trace;
+}
+
+std::string request_t::get_trace() const
+{
+    return  trace_info;
 }
 
 
@@ -248,56 +268,68 @@ block_io *block_io_set::get_block(const json_obj &key)
 }
 }
 
-ServerSan_Algo::algo_pool_operation *ServerSan_Algo::algo_cluster_operation::ref_pool(const string &pool_name)
+ServerSan_Algo::algo_pool_operation *
+ServerSan_Algo::algo_cluster_operation::ref_pool(const string &pool_name)
 {
     //NOTE:不使用锁 由于业务保证 在remove时 必须不能继续有从0到1的ref增加
     algo_pool_operation *pool = get_pool(pool_name);
-    if(pool)pool->get();
+    if ( pool )
+    { pool->get(); }
     return pool;
 }
 
-void ServerSan_Algo::algo_cluster_operation::unref_pool(ServerSan_Algo::algo_pool_operation *pool)
+void ServerSan_Algo::algo_cluster_operation::unref_pool(
+        ServerSan_Algo::algo_pool_operation *pool)
 {
     //NOTE:不使用锁 由于业务保证 在remove时 必须不能继续有从0到1的ref增加
     pool->put();
 }
 
-bool ServerSan_Algo::algo_cluster_operation::is_pool_ref(const string &pool_name)
+bool
+ServerSan_Algo::algo_cluster_operation::is_pool_ref(const string &pool_name)
 {
     //NOTE:不使用锁 由于业务保证 在remove时 必须不能继续有从0到1的ref增加
     algo_pool_operation *pool = get_pool(pool_name);
-    if(!pool)
+    if ( !pool )
+    {
         return false;
+    }
     return pool->is_ref();
 }
 
-std::list<ServerSan_Algo::algo_pool_operation *> ServerSan_Algo::algo_cluster_operation::list_pool()
+std::list<ServerSan_Algo::algo_pool_operation *>
+ServerSan_Algo::algo_cluster_operation::list_pool()
 {
     list<ServerSan_Algo::algo_pool_operation *> pool_list;
-    for(pool_map_it it = pool_map.begin();it != pool_map.end();++it)
+    for ( pool_map_it                           it = pool_map.begin();
+          it != pool_map.end(); ++it )
     {
         pool_list.push_back(it->second);
     }
     return pool_list;
 }
 
-void ServerSan_Algo::algo_cluster_operation::get_pool_list(std::list<std::string> &pool_list)
+void ServerSan_Algo::algo_cluster_operation::get_pool_list(
+        std::list<std::string> &pool_list)
 {
-    for(pool_map_it it = pool_map.begin();it != pool_map.end();++it)
+    for ( pool_map_it it = pool_map.begin(); it != pool_map.end(); ++it )
     {
         pool_list.push_back(it->first);
     }
 }
 
-ServerSan_Algo::algo_vol_operation *ServerSan_Algo::algo_pool_operation::ref_vol(const string &vol_name)
+ServerSan_Algo::algo_vol_operation *
+ServerSan_Algo::algo_pool_operation::ref_vol(const string &vol_name)
 {
     //NOTE:不使用锁 由于业务保证 在remove时 必须不能继续有从0到1的ref增加
     algo_vol_operation *vol = get_vol(vol_name);
-    if(vol)vol->get();
+    if ( vol )
+    { vol->get(); }
     return vol;
 }
 
-void ServerSan_Algo::algo_pool_operation::unref_vol(ServerSan_Algo::algo_vol_operation *vol)
+void ServerSan_Algo::algo_pool_operation::unref_vol(
+        ServerSan_Algo::algo_vol_operation *vol)
 {
     //NOTE:不使用锁 由于业务保证 在remove时 必须不能继续有从0到1的ref增加
     vol->put();
@@ -308,8 +340,10 @@ bool ServerSan_Algo::algo_pool_operation::is_vol_ref(const string &vol_name)
 {
     //NOTE:不使用锁 由于业务保证 在remove时 必须不能继续有从0到1的ref增加
     algo_vol_operation *vol = get_vol(vol_name);
-    if(!vol)
+    if ( !vol )
+    {
         return false;
+    }
     return vol->is_ref();
 }
 
@@ -317,61 +351,68 @@ bool ServerSan_Algo::algo_pool_operation::is_vol_ref(const string &vol_name)
 void ServerSan_Algo::algo_pool_operation::read_super(json_obj &obj)
 {//FIXME:此处暂时无并发处理
     algo_block_io_super *super = NULL;
-    if(!interval_super)
+    if ( !interval_super )
     {
         create_interval_super();
     }
-    super = (algo_block_io_super *)interval_super;
-
+    super = (algo_block_io_super *) interval_super;
+    
     super->read_super(obj);
 }
 
 void ServerSan_Algo::algo_pool_operation::write_super(const json_obj &obj)
 {//FIXME:此处暂时无并发处理
     algo_block_io_super *super = NULL;
-    if(!interval_super)
+    if ( !interval_super )
     {
         create_interval_super();
     }
-    super = (algo_block_io_super *)interval_super;
+    super = (algo_block_io_super *) interval_super;
     super->write_super(obj);
 }
 
-ServerSan_Algo::algo_pool_operation::algo_pool_operation():interval_super(NULL)
+ServerSan_Algo::algo_pool_operation::algo_pool_operation() : interval_super(
+        NULL)
 {
 }
 
 void ServerSan_Algo::algo_pool_operation::create_interval_super()
 {
-    unsigned long long vol_sec = (unsigned long long)ServerSan_Algo::pool_vols_sec.get_int();
-    string interval_name = "*";
-    algo_vol_operation *vol = get_vol(interval_name);
-    if(!vol)
+    unsigned long long vol_sec       =
+                               (unsigned long long) ServerSan_Algo::pool_vols_sec
+                                       .get_int();
+    string             interval_name = "*";
+    algo_vol_operation *vol          = get_vol(interval_name);
+    if ( !vol )
     {
-        int err = create_vol(interval_name,vol_sec,NULL);
-        if(err) throw err;
+        int err = create_vol(interval_name, vol_sec, NULL);
+        if ( err )
+        { throw err; }
     }
     vol = get_vol(interval_name);
-    if(!vol) throw (int)-ERROR_TYPE_NOVOL;
-
+    if ( !vol )
+    { throw (int) -ERROR_TYPE_NOVOL; }
+    
     try
     {
-        algo_block_io_super *super = new algo_block_io_super(vol,vol_sec);
-        interval_super = (block_io *)super;
+        algo_block_io_super *super = new algo_block_io_super(vol, vol_sec);
+        interval_super = (block_io *) super;
     }
     catch (...)
     {
-        throw (int)-ServerSan_Algo::ERROR_TYPE_MEMORY;
+        throw (int) -ServerSan_Algo::ERROR_TYPE_MEMORY;
     }
-
+    
 }
 
-std::list<ServerSan_Algo::algo_vol_operation *> ServerSan_Algo::algo_pool_operation::list_vol()
+std::list<ServerSan_Algo::algo_vol_operation *>
+ServerSan_Algo::algo_pool_operation::list_vol()
 {
     list<ServerSan_Algo::algo_vol_operation *> vol_list;
-    for(vol_map_it it = _vol_map.begin();it != _vol_map.end();++it)
+    for ( vol_map_it                           it = _vol_map.begin();
+          it != _vol_map.end(); ++it )
     {
-        if(it->first != "*")
+        if ( it->first != "*" )
         {
             vol_list.push_back(it->second);
         }
@@ -379,24 +420,27 @@ std::list<ServerSan_Algo::algo_vol_operation *> ServerSan_Algo::algo_pool_operat
     return vol_list;
 }
 
-void ServerSan_Algo::algo_pool_operation::get_vol_list(std::list<std::string> &vol_list)
+void ServerSan_Algo::algo_pool_operation::get_vol_list(
+        std::list<std::string> &vol_list)
 {
-    for(vol_map_it it = _vol_map.begin();it != _vol_map.end();++it)
+    for ( vol_map_it it = _vol_map.begin(); it != _vol_map.end(); ++it )
     {
-        if(it->first != "*")
+        if ( it->first != "*" )
         {
             vol_list.push_back(it->first);
         }
     }
 }
 
-void ServerSan_Algo::algo_pool_operation::split_super(const json_obj &whole_info, json_obj &memory_info,
-                                                      json_obj &storage_info)
+void
+ServerSan_Algo::algo_pool_operation::split_super(const json_obj &whole_info,
+                                                 json_obj &memory_info,
+                                                 json_obj &storage_info)
 {
     try
     {
         storage_info = whole_info["storage"];
-        memory_info = whole_info["memory"];
+        memory_info  = whole_info["memory"];
     }
     catch (...)
     {
@@ -412,18 +456,19 @@ void ServerSan_Algo::algo_pool_operation::save_super()
 //    json_obj read_storage;
 }
 
-void ServerSan_Algo::algo_pool_operation::load_super(const json_obj &memory_info)
+void
+ServerSan_Algo::algo_pool_operation::load_super(const json_obj &memory_info)
 {
-    json_obj whole("memory",memory_info);
+    json_obj whole("memory", memory_info);
     json_obj storage;
     load(storage);
     //LOG_INFO("\n[in load_super] load_super: %s\n", storage.dumps().c_str());
-    whole.merge(json_obj("storage",storage));
+    whole.merge(json_obj("storage", storage));
     from_json_obj(whole);
 }
 
 ServerSan_Algo::algo_pool_operation::~algo_pool_operation()
 {
-    algo_block_io_super *super = (algo_block_io_super *)interval_super;
+    algo_block_io_super *super = (algo_block_io_super *) interval_super;
     delete super;
 }

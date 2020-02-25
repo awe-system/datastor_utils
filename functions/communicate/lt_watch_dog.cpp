@@ -21,7 +21,7 @@ void lt_watch_dog::stop_monitor()
     is_monitoring = false;
     timer.cancel();
     
-    //lock.unlock();
+    lock.unlock();
     handle_event();
 }
 
@@ -51,7 +51,7 @@ void lt_watch_dog::timer_handler(const boost::system::error_code &error)
         lock.unlock();
 
         is_monitoring = false;
-     //   lck.unlock();
+        lck.unlock();
         handle_event();
     }
 }

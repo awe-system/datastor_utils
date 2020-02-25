@@ -27,7 +27,10 @@ void lt_watch_dog::stop_monitor()
 
 void lt_watch_dog::timer_handler(const boost::system::error_code &error)
 {
-    if ( error == boost::asio::error::operation_aborted)
+
+    std::unique_lock<std::mutex> lck(m);
+
+    if ( error == boost::asio::error::operation_aborted || (is_monitoring == false) )
     {
         std::unique_lock<std::mutex> lock(pending_m);
         on_monitor = false;
@@ -36,10 +39,8 @@ void lt_watch_dog::timer_handler(const boost::system::error_code &error)
     }
 
     bool to_feed = is_to_feed();
-    std::unique_lock<std::mutex> lck(m);
     if ( to_feed )
     {
-//        std::cout << "--------------on_monitor-------------------" << std::endl;
         start_timer();
     }
     else
@@ -64,8 +65,7 @@ void lt_watch_dog::start_timer()
 {
     std::unique_lock<std::mutex> lock(pending_m);
     on_monitor = true;
- //   std::cout << __LINE__ << "  on_monitor : " << on_monitor << std::endl;
-    
+
     lock.unlock();
     //std::cout << "on_monitor :  seconds : " << seconds << std::endl;
     timer.expires_from_now(boost::posix_time::seconds(seconds));

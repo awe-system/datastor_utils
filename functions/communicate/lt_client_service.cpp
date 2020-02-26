@@ -84,11 +84,13 @@ lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
         return;
     }
     
+    /*
     if (!is_connect) {
         handler_by_input(sent_data, -RPC_ERROR_TYPE_NET_BROKEN);
         delete sent_data;
         return;
     }
+     */
     
     AWE_MODULE_DEBUG("communicate", "enter lt_client_service::snd_done_inthread sess [%p] snddone no err", sess);
     lt_data_t *received_data = new lt_data_t();
@@ -122,8 +124,8 @@ void lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int err
 
 void lt_client_service::disconnected(lt_session *sess)
 {
-    std::unique_lock<std::mutex> lck(m);
-    is_connect = false;
+    //   std::unique_lock<std::mutex> lck(m);
+//    is_connect = false;
     /*
     abort();
     AWE_MODULE_DEBUG("communicate", "<====================       enter lt_client_service::disconnected sess [%p]", sess);
@@ -143,11 +145,12 @@ void lt_client_service::disconnected(lt_session *sess)
 
 void lt_client_service::connected(lt_session *sess)
 {//NOTE:do nothing
-    is_connect = true;
+    //is_connect = true;
 }
 
 lt_client_service::lt_client_service(boost::asio::io_service *_io_service, unsigned short port):
-    pool(1),is_connect(false)
+    // pool(1),is_connect(false)
+    pool(1)
 {
 }
 

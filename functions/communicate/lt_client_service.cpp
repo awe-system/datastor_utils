@@ -154,23 +154,9 @@ lt_client_service::lt_client_service(boost::asio::io_service *_io_service, unsig
 {
 }
 
-int lt_client_service::snd(lt_session_cli_safe *sess, boost::function<int(lt_data_t *)> gendata_f)
+int lt_client_service::snd(lt_session_cli_safe *sess, lt_data_t *data)
 {
-    lt_data_t *data = NULL;
-    try
-    {
-        lt_data_t *data = new lt_data_t;
-        int err = gendata_f(data);
-        if ( err )
-            throw err;
-        sess->snd(data);
-    }
-    catch (...)
-    {
-        AWE_MODULE_ERROR("communicate", "lt_client_service::snd sess %p", sess);
-        delete data;
-        return -RPC_ERROR_TYPE_MEMORY;
-    }
+    sess->snd(data);
     return 0;
 }
 

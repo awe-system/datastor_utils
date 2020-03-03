@@ -24,24 +24,10 @@ void lt_server_service::rcv_done(lt_session *sess, lt_data_t *received_data, int
     sess->rcv(received_data);
 }
 
-
-int lt_server_service::snd(lt_session_serv *sess, boost::function<int(lt_data_t *)> gendata_f)
+int lt_server_service::snd(lt_session_serv *sess, lt_data_t *data)
 {
-    lt_data_t *data = NULL;
-    try
-    {
-        data = new lt_data_t();
-        int err = gendata_f(data);
-        if ( err )
-            throw err;
-        get_session(sess)->snd(data);
-        return RPC_ERROR_TYPE_OK;
-
-    } catch (...)
-    {
-        delete data;
-        return -RPC_ERROR_TYPE_MEMORY;
-    }
+    get_session(sess)->snd(data);
+    return RPC_ERROR_TYPE_OK;
 }
 
 void lt_server_service::snd_done(lt_session *sess, lt_data_t *sent_data, int error)

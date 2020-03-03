@@ -19,8 +19,7 @@ public:
     
     void set_ioservice(boost::asio::io_service *_io_service);
     
-    int
-    snd(lt_session_cli_safe *sess, boost::function<int(lt_data_t *)> gendata_f);
+    int snd(lt_session_cli_safe *sess, lt_data_t *data);
 
 private:
     void

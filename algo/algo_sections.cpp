@@ -381,7 +381,10 @@ json_obj algo_sections::to_json_obj() const
    json_obj obj_secs;
    for(auto & sec: sections)
    {
-       obj_secs.append(sec.to_json_obj());
+       if(sec.len != 0)
+       {
+           obj_secs.append(sec.to_json_obj());
+       }
    }
    obj["sections"] = obj_secs;
    return obj;

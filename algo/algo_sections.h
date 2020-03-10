@@ -49,8 +49,13 @@ private:
     //成功返回pos 在范围内 则is_in_vec=true 没找到则返回
     unsigned int find_pos(unsigned long offset, bool &is_in_vec);
     
+    void add_section(const algo_section &section, unsigned int pos);
+    
 public:
     void intersections(const algo_sections &other, algo_sections &res);
+    
+    //字节在other中的补集
+    void supplesections(const algo_sections &other, algo_sections &res);
     
     bool is_section_insections(const algo_section & section);
     

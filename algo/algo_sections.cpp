@@ -85,14 +85,12 @@ algo_sections &algo_sections::operator-=(const algo_section &section)
         insert_at_pos(sec_parts[1], pos);
     }
     len -= section.len;
-    return *this;
 }
 
-algo_sections &algo_sections::operator+=(const algo_section &section)
+
+void algo_sections::add_section(const algo_section &section, unsigned int pos)
 {
     bool         is_in_vec;
-    unsigned int pos = find_pos(section.start, is_in_vec);
-    assert(!is_in_vec);
     algo_section tmp_section = section;
     int          merge_num   = 0;
     
@@ -114,6 +112,24 @@ algo_sections &algo_sections::operator+=(const algo_section &section)
         erase_at_pos(pos);
     }
     len += section.len;
+}
+
+algo_sections &algo_sections::operator+=(const algo_section &section)
+{
+    bool         is_in_vec;
+    unsigned int pos = find_pos(section.start, is_in_vec);
+    if ( is_in_vec )
+    {
+        algo_sections sup_sections;
+        supplesections(ServerSan_Algo::algo_sections(section),sup_sections);
+        *this += sup_sections;
+    }
+    else
+    {
+        add_section(section, pos);
+    }
+    
+    return *this;
 }
 
 algo_sections &algo_sections::operator-=(const algo_sections &other)
@@ -381,6 +397,17 @@ bool algo_sections::is_section_insections(const algo_section & section)
         return true;
     }
     return false;
+}
+
+void algo_sections::supplesections(const algo_sections &other,algo_sections &res)
+{
+    res = other;
+    algo_sections inters;
+    intersections(other,inters);
+    if(!inters.is_empty())
+    {
+        res -= inters;
+    }
 }
 
 

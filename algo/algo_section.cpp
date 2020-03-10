@@ -6,8 +6,8 @@
 
 namespace ServerSan_Algo
 {
-#define MIN(a, b) (a<b)?a:b
-#define MAX(a, b) (a>b)?a:b
+#define MIN(a, b) (((a)<(b))?(a):(b))
+#define MAX(a, b) (((a)>(b))?(a):(b))
 
 algo_section::algo_section() : start(0), len(0)
 {

@@ -371,5 +371,17 @@ json_obj algo_sections::to_json_obj() const
    return obj;
 }
 
+bool algo_sections::is_section_insections(const algo_section & section)
+{
+    algo_sections org(section);
+    algo_sections res;
+    intersections(org,res);
+    if(org == res )
+    {
+        return true;
+    }
+    return false;
+}
+
 
 }

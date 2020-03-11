@@ -28,6 +28,9 @@ int safe_system_cpp(const string &cmd);
 int buf_exec_cpp(const string &cmd, string &buf);
 int system_call(const std::string &cmd, std::string &result);
 
+
+std::string time_to_str(const time_t &t);
+
 ///file
 int read_data_from_file(const char *file_path, char *buf, int buf_size);
 int write_data_to_file(const char *file_path, char *buf, int buf_size);

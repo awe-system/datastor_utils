@@ -11,7 +11,7 @@ namespace ServerSan_Algo
 {
 
 
-unsigned int algo_sections::find_pos(unsigned long offset, bool &is_in_vec)
+unsigned int algo_sections::find_pos(unsigned long offset, bool &is_in_vec) const
 {//NOTE:大数在前小数在后
     unsigned int cur_pos = 0;
     if ( 0 == sections.size() )
@@ -56,7 +56,7 @@ unsigned int algo_sections::find_pos(unsigned long offset, bool &is_in_vec)
     } while ( 1 );
 }
 
-bool algo_sections::is_point_insections(unsigned long offset)
+bool algo_sections::is_point_insections(unsigned long offset)const
 {
     bool         is_in_vec;
     unsigned int pos = find_pos(offset, is_in_vec);
@@ -294,7 +294,7 @@ bool algo_sections::try_merge_right(algo_section &section, unsigned int pos)
 }
 
 void algo_sections::intersections(const algo_sections &other,
-                                  algo_sections &res)
+                                  algo_sections &res) const
 {
     int i = 0, j = 0;
     while(i<other.sections.size() && j < sections.size())
@@ -390,7 +390,7 @@ json_obj algo_sections::to_json_obj() const
    return obj;
 }
 
-bool algo_sections::is_section_insections(const algo_section & section)
+bool algo_sections::is_section_insections(const algo_section & section) const
 {
     algo_sections org(section);
     algo_sections res;

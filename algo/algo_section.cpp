@@ -51,7 +51,7 @@ void algo_section::split(const algo_section &small_sec,
     }
 }
 
-void algo_section::intersection(const algo_section &other, algo_section &res)
+void algo_section::intersection(const algo_section &other, algo_section &res)const
 {
     res.start = 0;
     res.len   = 0;
@@ -92,7 +92,7 @@ json_obj algo_section::to_json_obj() const
     return obj;
 }
 
-bool algo_section::is_point_insections(unsigned long offset)
+bool algo_section::is_point_insections(unsigned long offset) const
 {
     algo_section res;
     algo_section section(offset, 1);

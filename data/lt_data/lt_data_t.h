@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "../log/include/awe_log.h"
+//#include "../log/include/awe_log.h"
 class lt_data_t
 {
 public:
@@ -95,20 +95,26 @@ public:
 
     void realloc_buf()
     {
+        /*
         if (is_buf_from_outside()) {
             AWE_MODULE_INFO("lt_data_t--", "_buf_self_generated %u,  "
                                            "_buf_form_outside %u, ", _buf_self_generated, _buf_from_outside);
         }
+         */
         assert(!is_buf_from_outside());
         free_buf();
+        /*
         if(_length > 1024 * 1024){
             AWE_MODULE_INFO("lt_data_t--", "length : %u", _length);
         }
+         */
         _buf_self_generated =
                 static_cast<unsigned char *>(malloc(_length + sizeof(_length)));
+        /*
         if (!_buf_self_generated) {
             AWE_MODULE_INFO("lt_data_t--", "length : %u", _length);
         }
+         */
         assert(_buf_self_generated);
         std::memcpy(_buf_self_generated, &_length, sizeof(_length));
         mark_buf_self_generated();

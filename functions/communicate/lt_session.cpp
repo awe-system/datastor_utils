@@ -231,6 +231,8 @@ void lt_session::handle_event()
 lt_session::~lt_session()
 {
     std::cout << "session : this : " << __FUNCTION__ << this << std::endl;
+    queue.clear();
+    rcv_queue.clear();
     _socket.close();
 }
 

@@ -23,9 +23,9 @@ void lt_async_2safe_async::begin_to(boost::function<void()> f, boost::function<v
     else
     {
         is_doing = true;
+        f();
         lock.unlock();
     }
-    f();
 }
 
 void lt_async_2safe_async::continue_to()
@@ -41,8 +41,8 @@ void lt_async_2safe_async::continue_to()
         func_pair funcs = func_list.front();
         func_list.pop_front();
         is_doing = true;
-        lock.unlock();
         funcs.f();
+        lock.unlock();
     }
 }
 

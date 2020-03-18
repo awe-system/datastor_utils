@@ -11,6 +11,7 @@ lt_session::lt_session(boost::asio::io_service *_io_service, lt_session_callback
         _socket(*_io_service),
         _connect(false, boost::bind(&lt_session::state_changed, this, _1))
 {
+    AWE_MODULE_INFO("comunicate","struct lt_session %p", this);
     std::cout << "session : this : " << __FUNCTION__ << this << std::endl;
 }
 
@@ -19,7 +20,11 @@ void lt_session::rcv(lt_data_t *data)
     if ( is_connected())
         start_rcv(data);
     else
+    {
+        AWE_MODULE_ERROR("comunicate","lt_session::rcv_done %p err [%d]", this, -RPC_ERROR_TYPE_CONNECT_FAIL);
         cb->rcv_done(this, data, -RPC_ERROR_TYPE_CONNECT_FAIL);
+    }
+    
 }
 
 void lt_session::snd(lt_data_t *data)
@@ -44,6 +49,7 @@ void lt_session::start_rcv(lt_data_t *data)
                            boost::bind(&lt_session::rcv_done, this, data, boost::asio::error::network_down));
     }
     else {
+        AWE_MODULE_INFO("communicate", "rcv_done sess %p error network_down", this);
         rcv_done(data, boost::asio::error::network_down);
     }
 }
@@ -60,6 +66,10 @@ void lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error
         mark_received();
     }
     
+    if(error)
+    {
+        AWE_MODULE_ERROR("comunicate","lt_session::rcv_done %p err [%d]", this, err);
+    }
     cb->rcv_done(this, data, err);
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_done sess %p", this);
 }
@@ -81,6 +91,7 @@ void lt_session::rcv_head_done_unsafe(lt_data_t *data, const boost::system::erro
     if ( err )
     {
         rcv_queue.clear();
+        AWE_MODULE_INFO("communicate", "rcv_done sess %p error network_down", this);
         rcv_done(data, boost::asio::error::network_down);
         return;
     }
@@ -107,6 +118,9 @@ void lt_session::rcv_data_done_unsafe(lt_data_t *data, const boost::system::erro
         rcv_queue.clear();
     }
     rcv_queue.continue_to();
+    if(error){
+        AWE_MODULE_INFO("communicate", "rcv_done sess %p err [%d]", this, err);
+    }
     rcv_done(data, err);
 }
 
@@ -133,13 +147,13 @@ void lt_session::disconnected()
 {
     AWE_MODULE_DEBUG("communicate", "--enter lt_session::disconnected sess %p", this);
     //FIXME:加入flag控制 使得在断开后不会出现新的 rcv
-    boost::system::error_code ec;
+//    boost::system::error_code ec;
     
     //graceful closed socket in multithread will crash
     //_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
     //_socket.close(ec);
     
-    AWE_MODULE_DEBUG("communicate", "after _socket.close(); sess %p", this);
+    AWE_MODULE_ERROR("communicate", "after _socket.close(); sess %p", this);
     cb->disconnected(this);
     queue.clear();
     rcv_queue.clear();
@@ -230,6 +244,7 @@ void lt_session::handle_event()
 
 lt_session::~lt_session()
 {
+    AWE_MODULE_INFO("comunicate","~lt_session %p", this);
     std::cout << "session : this : " << __FUNCTION__ << this << std::endl;
     _socket.close();
 }

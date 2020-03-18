@@ -130,6 +130,20 @@ int system_call(const std::string &cmd, std::string &result)
     return 0;
 }
 
+std::string time_to_str(const time_t &t)
+{
+    struct tm *p;
+    p=gmtime(&t); /*变量t的值转换为实际日期时间的表示格式*/
+    string res= to_string(1900+p->tm_year) + "/";
+    res += to_string(1+p->tm_mon) + "/";
+    res += to_string(p->tm_mday) + " ";
+    res += to_string(p->tm_hour + 8) + ":";
+    res += to_string(p->tm_min) + ":";
+    res += to_string(p->tm_sec);
+    return res;
+}
+
+
 int read_data_from_file(const char *file_path, char *buf, int buf_size)
 {
     memset(buf, 0, buf_size);

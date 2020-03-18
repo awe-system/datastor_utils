@@ -11,7 +11,7 @@ namespace ServerSan_Algo
 {
 
 
-unsigned int algo_sections::find_pos(unsigned long offset, bool &is_in_vec)
+unsigned int algo_sections::find_pos(unsigned long offset, bool &is_in_vec) const
 {//NOTE:大数在前小数在后
     unsigned int cur_pos = 0;
     if ( 0 == sections.size() )
@@ -56,7 +56,7 @@ unsigned int algo_sections::find_pos(unsigned long offset, bool &is_in_vec)
     } while ( 1 );
 }
 
-bool algo_sections::is_point_insections(unsigned long offset)
+bool algo_sections::is_point_insections(unsigned long offset)const
 {
     bool         is_in_vec;
     unsigned int pos = find_pos(offset, is_in_vec);
@@ -85,14 +85,12 @@ algo_sections &algo_sections::operator-=(const algo_section &section)
         insert_at_pos(sec_parts[1], pos);
     }
     len -= section.len;
-    return *this;
 }
 
-algo_sections &algo_sections::operator+=(const algo_section &section)
+
+void algo_sections::add_section(const algo_section &section, unsigned int pos)
 {
     bool         is_in_vec;
-    unsigned int pos = find_pos(section.start, is_in_vec);
-    assert(!is_in_vec);
     algo_section tmp_section = section;
     int          merge_num   = 0;
     
@@ -114,6 +112,24 @@ algo_sections &algo_sections::operator+=(const algo_section &section)
         erase_at_pos(pos);
     }
     len += section.len;
+}
+
+algo_sections &algo_sections::operator+=(const algo_section &section)
+{
+    bool         is_in_vec;
+    unsigned int pos = find_pos(section.start, is_in_vec);
+    if ( is_in_vec )
+    {
+        algo_sections sup_sections;
+        supplesections(ServerSan_Algo::algo_sections(section),sup_sections);
+        *this += sup_sections;
+    }
+    else
+    {
+        add_section(section, pos);
+    }
+    
+    return *this;
 }
 
 algo_sections &algo_sections::operator-=(const algo_sections &other)
@@ -278,7 +294,7 @@ bool algo_sections::try_merge_right(algo_section &section, unsigned int pos)
 }
 
 void algo_sections::intersections(const algo_sections &other,
-                                  algo_sections &res)
+                                  algo_sections &res) const
 {
     int i = 0, j = 0;
     while(i<other.sections.size() && j < sections.size())
@@ -365,10 +381,36 @@ json_obj algo_sections::to_json_obj() const
    json_obj obj_secs;
    for(auto & sec: sections)
    {
-       obj_secs.append(sec.to_json_obj());
+       if(sec.len != 0)
+       {
+           obj_secs.append(sec.to_json_obj());
+       }
    }
    obj["sections"] = obj_secs;
    return obj;
+}
+
+bool algo_sections::is_section_insections(const algo_section & section) const
+{
+    algo_sections org(section);
+    algo_sections res;
+    intersections(org,res);
+    if(org == res )
+    {
+        return true;
+    }
+    return false;
+}
+
+void algo_sections::supplesections(const algo_sections &other,algo_sections &res)
+{
+    res = other;
+    algo_sections inters;
+    intersections(other,inters);
+    if(!inters.is_empty())
+    {
+        res -= inters;
+    }
 }
 
 

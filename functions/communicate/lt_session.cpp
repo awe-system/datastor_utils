@@ -117,11 +117,12 @@ void lt_session::rcv_data_done_unsafe(lt_data_t *data, const boost::system::erro
         err = boost::asio::error::network_down;
         rcv_queue.clear();
     }
-    rcv_queue.continue_to();
+
     if(error){
         AWE_MODULE_INFO("communicate", "rcv_done sess %p err [%d]", this, err);
     }
     rcv_done(data, err);
+    rcv_queue.continue_to();
 }
 
 void lt_session::let_it_up()
@@ -201,11 +202,12 @@ void lt_session::snd_data_done_unsafe(lt_data_t *data, const boost::system::erro
     if (!is_connected()) {
         queue.clear();
         err = boost::asio::error::network_down;
-    } else {
-        queue.continue_to();  //FIXME 不立即调done，有可能引发超时
     }
     
+    
     snd_data_done(data, err);
+    queue.continue_to();  //FIXME 不立即调done，有可能引发超时
+    
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::snd_data_done_unsafe sess %p", this);
 }
 
@@ -246,6 +248,8 @@ lt_session::~lt_session()
 {
     AWE_MODULE_INFO("comunicate","~lt_session %p", this);
     std::cout << "session : this : " << __FUNCTION__ << this << std::endl;
+    queue.clear();
+    rcv_queue.clear();
     _socket.close();
 }
 

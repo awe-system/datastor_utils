@@ -6,7 +6,7 @@
 
 void lt_server_service::connected(lt_session *sess)
 {
-    lt_session_serv *session = (lt_session_serv *) sess;
+    lt_session_serv *session = dynamic_cast<lt_session_serv*>(sess);
     lt_data_t *data = new lt_data_t();
     session->rcv(data);
 }
@@ -20,13 +20,20 @@ void lt_server_service::rcv_done(lt_session *sess, lt_data_t *received_data, int
         delete received_data;
         return;
     }
+    get_session(session);
     cb->do_func(received_data, session);
     sess->rcv(received_data);
 }
 
 int lt_server_service::snd(lt_session_serv *sess, lt_data_t *data)
 {
-    get_session(sess)->snd(data);
+    if ( !(sess->is_connected()) )
+    {
+        put_session(sess);
+        return RPC_ERROR_TYPE_NET_BROKEN;
+    }
+    
+    sess->snd(data);
     return RPC_ERROR_TYPE_OK;
 }
 

@@ -47,12 +47,19 @@ private:
     bool try_merge_right(algo_section &section, unsigned int pos);
  
     //成功返回pos 在范围内 则is_in_vec=true 没找到则返回
-    unsigned int find_pos(unsigned long offset, bool &is_in_vec);
+    unsigned int find_pos(unsigned long offset, bool &is_in_vec) const;
     
-    void intersections(const algo_sections &other, algo_sections &res);
+    void add_section(const algo_section &section, unsigned int pos);
     
 public:
-    bool is_point_insections(unsigned long offset);
+    void intersections(const algo_sections &other, algo_sections &res)const;
+    
+    //字节在other中的补集
+    void supplesections(const algo_sections &other, algo_sections &res);
+    
+    bool is_section_insections(const algo_section & section) const;
+    
+    bool is_point_insections(unsigned long offset) const;
     
     void insert_point(unsigned long offset);
     

@@ -40,12 +40,12 @@ public:
     //区域不重叠且other在this的左侧
     bool operator>(const algo_section& other)const;
     
-    bool is_point_insections(unsigned long offset);
+    bool is_point_insections(unsigned long offset) const;
     
     algo_section alloc(unsigned long len);
     
     //交集
-    void intersection(const algo_section& other, algo_section &res);
+    void intersection(const algo_section& other, algo_section &res) const;
     //从small的把section分割开来
     void split(const algo_section& small_sec, algo_section_vec_t & sections) const;
 };

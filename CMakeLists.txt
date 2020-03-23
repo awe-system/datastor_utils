@@ -92,7 +92,9 @@ set(SOURCE_FILES
         algo/test_algo_device.h algo/test_algo_device.cpp
         algo/algo_interface.h algo/algo_interface.cpp
         algo/debug.h algo/debug.cpp
-        README.md functions/lt_function/lt_safe_set.h algo/test_block_io_set.cpp algo/test_block_io_set.h algo/algo_sections.cpp algo/algo_sections.h algo/algo_bitmap.cpp algo/algo_bitmap.h algo/algo_bitmaps.cpp algo/algo_bitmaps.h data/lt_data/lt_stack.h)
+        README.md functions/lt_function/lt_safe_set.h algo/test_block_io_set.cpp algo/test_block_io_set.h algo/algo_sections.cpp algo/algo_sections.h algo/algo_bitmap.cpp algo/algo_bitmap.h algo/algo_bitmaps.cpp algo/algo_bitmaps.h
+        data/lt_data/lt_stack.h
+        data/lt_data/lt_mempool.h)
 
 set(LOG_FILES
         log/src/ss_logger.h
@@ -146,6 +148,8 @@ set(LOG_FILES
         log/src/log4cpp_src/PThreads.cpp
         log/src/log4cpp_src/PortabilityImpl.cpp
         log/src/log4cpp_src/AbortAppender.cpp
+
+        data/lt_data/lt_mempool.h
         functions/checksum/MD5.cpp functions/checksum/MD5.h)
 
 
@@ -202,6 +206,7 @@ INSTALL(FILES data/lt_data/lt_data_t.h
         data/lt_data/json_obj.h
         data/lt_data/ref_obj.h
         data/lt_data/lt_stack.h
+        data/lt_data/lt_mempool.h
         data/lt_data_error.h
         DESTINATION ${include_dir}/lt_data)
 

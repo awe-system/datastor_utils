@@ -99,13 +99,19 @@ public:
 class request_t : public algo_obj
 {
 public:
-    request_type        type;
-    unsigned long       offset;
-    unsigned char       *buf;
-    unsigned int        len;
-    void                *private_data;
-    std::vector<void *> data_stack;
+    request_type             type;
+    unsigned long            offset;
+    unsigned char            *buf;
+    unsigned int             len;
+    void                     *private_data;
+    std::vector<void *>      data_stack;
+    std::vector<std::string> string_stack;
+    std::string              trace_info;
 public:
+    void set_trace(const std::string &trace);
+    
+    std::string get_trace() const;
+    
     unsigned long checksum() const;
     
     void from_json_obj(const json_obj &obj) override;
@@ -123,6 +129,10 @@ public:
     void push_private(void *new_private);
     
     void *pop_private();
+    
+    void push_string(const std::string &str);
+    
+    std::string pop_string();
     
     void push_callback(block_io_callback *cb);
     
@@ -156,7 +166,9 @@ public:
     
     virtual block_io_callback *get_io_callback();
     
-    virtual ~block_io(){};
+    virtual ~block_io()
+    {
+    };
 };
 
 class block_event_callback
@@ -170,18 +182,20 @@ public:
 class block_io_set_cb_t
 {
 public:
-    virtual void block_got(block_io * ,void* ctx,int err) = 0;
+    virtual void block_got(block_io *, void *ctx, int err) = 0;
 };
 
 class block_io_set
 {
 public:
-    virtual block_io *get_block(const json_obj & key);
+    virtual block_io *get_block(const json_obj &key);
     
-    virtual int get_block_async(const json_obj & key,block_io_set_cb_t *, void * ctx);
-  
+    virtual int
+    get_block_async(const json_obj &key, block_io_set_cb_t *, void *ctx);
+    
     virtual void put_block(block_io *) = 0;
 };
+
 //
 class block_event
 {

@@ -39,6 +39,8 @@ set(SOURCE_FILES
         data/lt_data_error.h
         functions/base64/base64.cpp
         functions/base64/base64.h
+        functions/checksum/data_checksum.cpp
+        functions/checksum/data_checksum.h
         functions/communicate/action_stub.cpp
         functions/communicate/action_stub.h
         functions/communicate/lt_async_2safe_async.cpp
@@ -146,7 +148,9 @@ set(LOG_FILES
         log/src/log4cpp_src/PThreads.cpp
         log/src/log4cpp_src/PortabilityImpl.cpp
         log/src/log4cpp_src/AbortAppender.cpp
-        data/lt_data/lt_mempool.h)
+
+        data/lt_data/lt_mempool.h
+        functions/checksum/MD5.cpp functions/checksum/MD5.h)
 
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -196,6 +200,7 @@ INSTALL(FILES functions/lt_function/thread_pool.hpp
         functions/lt_function/utils.h
         functions/base64/base64.h
         functions/lt_function_error.h
+        functions/checksum/data_checksum.h
         DESTINATION ${include_dir}/lt_function)
 INSTALL(FILES data/lt_data/lt_data_t.h
         data/lt_data/json_obj.h

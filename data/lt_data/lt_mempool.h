@@ -7,7 +7,6 @@
 //lib tool memory pool
 #include "assert.h"
 #include "lt_stack.h"
-#include "../../algo/debug.h"
 
 class lt_mempool
 {

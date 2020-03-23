@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<funcs>
+    <port content="9999"/>
+    <project content="test_sync"/>
+
+    <client type="C++" namespace="testsyncclient" classname="test_sync_client" filename="test_sync_client" withping="true"/>
+    <server type="C++" namespace="testsyncserver" classname="test_sync_client" filename="test_sync_server"/>
+
+    <func name="test" type="sync">
+        <param name="input_int" value="uint" type="in"/>
+        <param name="output_int" value="uint" type="out"/>
+    </func>
+
+    <func name="test_string" type="sync">
+        <param name="input_string" value="string" type="in"/>
+        <param name="output_string" value="string" type="out"/>
+    </func>
+
+    <func name="test_char_p" type="sync">
+        <param name="input_char_p" value="char_p" type="in"/>
+        <param name="output_char_p" value="char_p" type="out"/>
+    </func>
+
+    <func name="test_ulong" type="sync">
+        <param name="input_ulong" value="ulong" type="in"/>
+        <param name="output_ulong" value="ulong" type="out"/>
+    </func>
+
+    <func name="test_bool" type="sync">
+        <param name="input_bool" value="bool" type="in"/>
+        <param name="output_bool" value="bool" type="out"/>
+    </func>
+
+    <func name="test_data" type="sync">
+        <param name="input_data" value="data" type="in"/>
+        <param name="output_data" value="data" type="out"/>
+    </func>
+
+    <func name="test_void_p" type="sync">
+        <param name="input_void_p" value="void_p" type="in"/>
+        <param name="output_void_p" value="void_p" type="out"/>
+    </func>
+
+    <func name="test_no_arg" type="sync">
+    </func>
+
+    <func name="test_all1" type="sync">
+        <param name="input_string" value="string" type="in"/>
+        <param name="output_string" value="string" type="out"/>
+        <param name="input_char_p" value="char_p" type="in"/>
+        <param name="output_char_p" value="char_p" type="out"/>
+        <param name="input_ulong" value="ulong" type="in"/>
+        <param name="output_ulong" value="ulong" type="out"/>
+        <param name="input_uint" value="uint" type="in"/>
+        <param name="output_uint" value="uint" type="out"/>
+    </func>
+
+    <func name="test_all2" type="sync">
+        <param name="input_bool" value="bool" type="in"/>
+        <param name="output_bool" value="bool" type="out"/>
+        <param name="input_data" value="data" type="in"/>
+        <param name="output_data" value="data" type="out"/>
+        <param name="input_void_p" value="void_p" type="in"/>
+        <param name="output_void_p" value="void_p" type="out"/>
+    </func>
+
+</funcs>

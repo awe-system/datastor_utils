@@ -299,4 +299,4 @@ include (CPack)
 endif ()
 
 
-#add_subdirectory(ut)
+add_subdirectory(ut)

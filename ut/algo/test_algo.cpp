@@ -23,6 +23,8 @@ static int case_neighbour_plus()
 {
     try
     {
+//       [2020-03-24 21:41:13.218 - DEBUG] :   ***[ldisk]*** newsection [[1507328,10260]]   [/opt/docker/workspace/tmp/iceberg/src/cache/ldisks/ldisk.cpp:do_write_request_memory:212]    [654]
+//[2020-03-24 21:41:13.218 - DEBUG] :   ***[ldisk]*** sections [{"len":134162452,"sections":[[65536,134152192],[0,10260]]}]   [/opt/docker/workspace/tmp/iceberg/src/cache/ldisks/ldisk.cpp:do_write_request_memory:214]
         ServerSan_Algo::algo_sections
                                       sec1
                 (ServerSan_Algo::algo_section(2, 19220));

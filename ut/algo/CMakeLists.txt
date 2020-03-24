@@ -1,90 +1,4 @@
-set(algo_src
-        ../../conf/awe_conf/env.cpp
-        ../../conf/awe_conf/env.h
-        ../../conf/awe_conf_error.h
-        ../../conf/awe_env.conf
-        ../../data/lt_data/lt_data_t.h
-        ../../data/lt_data/json_obj.cpp
-        ../../data/lt_data/json_obj.h
-        ../../data/lt_data/ref_obj.cpp
-        ../../data/lt_data/ref_obj.h
-        ../../data/clean.sh
-        ../../data/lt_data_error.h
-        ../../functions/base64/base64.cpp
-        ../../functions/base64/base64.h
-        ../../functions/communicate/action_stub.cpp
-        ../../functions/communicate/action_stub.h
-        ../../functions/communicate/lt_async_2safe_async.cpp
-        ../../functions/communicate/lt_async_2safe_async.h
-        ../../functions/communicate/lt_bidirectional_map.hpp
-        ../../functions/communicate/lt_client_service.cpp
-        ../../functions/communicate/lt_client_service.h
-        ../../functions/communicate/lt_condition.h
-        ../../functions/communicate/lt_data_translator.h
-        ../../functions/communicate/lt_reference.cpp
-        ../../functions/communicate/lt_reference.h
-        ../../functions/communicate/lt_safe_state.hpp
-        ../../functions/communicate/lt_server_service.cpp
-        ../../functions/communicate/lt_server_service.h
-        ../../functions/communicate/lt_session.cpp
-        ../../functions/communicate/lt_session.h
-        ../../functions/communicate/lt_session_cli.cpp
-        ../../functions/communicate/lt_session_cli.h
-        ../../functions/communicate/lt_session_cli_safe.cpp
-        ../../functions/communicate/lt_session_cli_safe.h
-        ../../functions/communicate/lt_session_cli_set.cpp
-        ../../functions/communicate/lt_session_cli_set.h
-        ../../functions/communicate/lt_session_dog.cpp
-        ../../functions/communicate/lt_session_dog.h
-        ../../functions/communicate/lt_session_serv.cpp
-        ../../functions/communicate/lt_session_serv.h
-        ../../functions/communicate/lt_thread_server.cpp
-        ../../functions/communicate/lt_thread_server.h
-        ../../functions/communicate/lt_watch_dog.cpp
-        ../../functions/communicate/lt_watch_dog.h
-        ../../functions/lt_function/thread_pool.hpp
-        ../../functions/lt_function_error.h
-        ../../functions/lt_function/stronger_cond.h
-        ../../functions/lt_function/lt_safe_set.h
-        ../../functions/lt_function/utils.cpp
-        ../../functions/lt_function/utils.h
-        ../../algo/algo.cpp
-        ../../algo/algo.h
-        ../../algo/algo_block_io_jbod.cpp
-        ../../algo/algo_block_io_jbod.h
-        ../../algo/algo_block_io_jbod_nosuper.cpp
-        ../../algo/algo_block_io_jbod_nosuper.h
-        ../../algo/algo_block_io_super.cpp
-        ../../algo/algo_block_io_super.h
-        ../../algo/algo_block_multi_super.cpp
-        ../../algo/algo_block_multi_super.h
-        ../../algo/algo_block_open_ref.cpp
-        ../../algo/algo_block_open_ref.h
-        ../../algo/block_request.h
-        ../../algo/block_request.cpp
-        ../../algo/algo_nocopy_request_mapper.cpp
-        ../../algo/algo_nocopy_request_mapper.h
-        ../../algo/algo_range.cpp
-        ../../algo/algo_range.h
-        ../../algo/algo_section.cpp
-        ../../algo/algo_section.h
-        ../../algo/request_ref.h
-        ../../algo/request_ref.cpp
-        ../../algo/super_algo_device.cpp
-        ../../algo/super_algo_device.h
-        ../../algo/test_algo_device.h
-        ../../algo/test_algo_device.cpp
-        ../../algo/algo_interface.h
-        ../../algo/algo_interface.cpp
-        ../../algo/debug.h
-        ../../algo/debug.cpp
-        ../../functions/lt_function/lt_safe_set.h
-        ../../algo/test_block_io_set.cpp
-        ../../algo/test_block_io_set.h
-        ../../algo/algo_section.h
-        ../../algo/algo_section.cpp
-        ../../algo/algo_sections.cpp
-        ../../algo/algo_sections.h)
+set(algo_src )
 
 add_compile_options("-fprofile-arcs")
 add_compile_options("-ftest-coverage")
@@ -93,4 +7,4 @@ add_executable(test_algo test_algo.cpp ${algo_src})
 include_directories(/usr/local/include)
 include_directories(/usr/local/include/lt_data)
 include_directories(/usr/local/include/lt_function)
-target_link_libraries(test_algo gcov boost_system boost_thread pthread)
+target_link_libraries(test_algo datastor_utils gcov boost_system boost_date_time boost_thread pthread)

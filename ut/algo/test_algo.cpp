@@ -25,14 +25,23 @@ static int case_neighbour_plus()
     {
 //       [2020-03-24 21:41:13.218 - DEBUG] :   ***[ldisk]*** newsection [[1507328,10260]]   [/opt/docker/workspace/tmp/iceberg/src/cache/ldisks/ldisk.cpp:do_write_request_memory:212]    [654]
 //[2020-03-24 21:41:13.218 - DEBUG] :   ***[ldisk]*** sections [{"len":134162452,"sections":[[65536,134152192],[0,10260]]}]   [/opt/docker/workspace/tmp/iceberg/src/cache/ldisks/ldisk.cpp:do_write_request_memory:214]
-        ServerSan_Algo::algo_sections
-                                      sec1
-                (ServerSan_Algo::algo_section(2, 19220));
-        ServerSan_Algo::algo_sections sec2(ServerSan_Algo::algo_section(0, 2));
-        sec1 += sec2;
-        assert(sec1.size() == 19222);
-        assert(sec1.sections[0].start == 0);
-        assert(sec1.sections[0].len == 19222);
+        ServerSan_Algo::algo_sections sec;
+    
+        sec += ServerSan_Algo::algo_section(60751872,7350292);
+        sec += ServerSan_Algo::algo_section(60620800,66580);
+        sec += ServerSan_Algo::algo_section(60489728,65556);
+        sec += ServerSan_Algo::algo_section(60424192,64532);
+        sec += ServerSan_Algo::algo_section(60358656,30740);
+        sec += ServerSan_Algo::algo_section(60293120,20500);
+        sec += ServerSan_Algo::algo_section(60227584,20500);
+        sec += ServerSan_Algo::algo_section(60096512,65556);
+        sec += ServerSan_Algo::algo_section(60030976,64532);
+        sec += ServerSan_Algo::algo_section(524288,60227584);
+    
+//        sec += ServerSan_Algo::algo_section(524288,60227584);
+    
+        sec += ServerSan_Algo::algo_section(59244544,1048576);
+        
         dbg << "case_neighbour_plus " << color_green << "ok" << end_dbg;
     }
     catch (...)

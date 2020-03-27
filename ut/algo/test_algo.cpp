@@ -38,7 +38,7 @@ static int case_neighbour_plus()
         sec += ServerSan_Algo::algo_section(60030976,64532);
         sec += ServerSan_Algo::algo_section(524288,60227584);
     
-//        sec += ServerSan_Algo::algo_section(524288,60227584);
+        sec += ServerSan_Algo::algo_section(524288,60227584);
     
         sec += ServerSan_Algo::algo_section(59244544,1048576);
         
@@ -346,19 +346,19 @@ int main(int argc, const char *argv[])
 {
     sleep(1);
     assert(0 == case_empty());
-    
+
     assert(0 == case_size());
-    
+
     assert(0 == case_alloc_free());
-    
+
     assert(0 == case_alloc_free_point());
-    
+
     assert(0 == case_alloc_insert_erase());
-    
+
     assert(0 == case_plus_minus());
-    
+
     assert(0 == case_plus_minus_intersection());
-    
+
     assert(0 == case_plus_minus_special());
     
     assert(0 == case_neighbour_plus());

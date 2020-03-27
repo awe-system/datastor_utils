@@ -80,9 +80,17 @@ static inline unsigned long sec_to_k64(unsigned long k64)
     return k64 >> 7;
 }
 
+#define MAGIC_STACK_SIZE 8
 class algo_obj
 {
+    unsigned char magic_stack[MAGIC_STACK_SIZE];
 public:
+    algo_obj();
+    
+    virtual ~algo_obj();
+    
+    void assert_legal();
+    
     virtual void from_json_obj(const json_obj &obj) = 0;
     
     virtual json_obj to_json_obj() const = 0;

@@ -114,21 +114,25 @@ void algo_sections::add_section(const algo_section &section, unsigned int pos)
     len += section.len;
 }
 
-algo_sections &algo_sections::operator+=(const algo_section &section)
+void algo_sections::plus_section(const algo_section &section)
 {
     bool         is_in_vec;
     unsigned int pos = find_pos(section.start, is_in_vec);
-    if ( is_in_vec )
+    assert(!is_in_vec);
+
+    add_section(section, pos);
+
+    check_sections();
+}
+
+algo_sections &algo_sections::operator+=(const algo_section &section)
+{
+    ServerSan_Algo::algo_sections sup;
+    supplesections(ServerSan_Algo::algo_sections(section),sup);
+    for(auto sec : sup.sections)
     {
-        algo_sections sup_sections;
-        supplesections(ServerSan_Algo::algo_sections(section),sup_sections);
-        *this += sup_sections;
+        plus_section(sec);
     }
-    else
-    {
-        add_section(section, pos);
-    }
-    
     return *this;
 }
 
@@ -140,15 +144,19 @@ algo_sections &algo_sections::operator-=(const algo_sections &other)
     {//FIXME: erase 可以优化
         *this -= (it);
     }
+    check_sections();
     return *this;
 }
 
 algo_sections &algo_sections::operator+=(const algo_sections &other)
 {
-    for ( auto it : other.sections )
+    ServerSan_Algo::algo_sections sup;
+    supplesections(other,sup);
+    for(auto sec : sup.sections)
     {
-        *this += (it);
+        plus_section(sec);
     }
+    check_sections();
     return *this;
 }
 
@@ -170,7 +178,7 @@ algo_sections algo_sections::alloc(unsigned long _len)
         {
             sections.pop_back();
         }
-        new_sections += cur_section;
+        new_sections.plus_section(cur_section);
         cur_len += this_len;
         len -= this_len;
     }
@@ -314,7 +322,7 @@ void algo_sections::intersections(const algo_sections &other,
             algo_section tmp_section = cur_self;
             algo_section intersection;
             tmp_section.intersection(cur_other, intersection);
-            res += intersection;
+            res.plus_section(intersection);
             if(cur_other.start< cur_self.start)
             {
                 ++j;
@@ -369,7 +377,7 @@ void algo_sections::from_json_obj(const json_obj &obj)
     {
         algo_section section;
         section.from_json_obj(sec_obj);
-        *this += section;
+        plus_section(section);
     }
     assert(obj["len"].get_number() == len);
 }
@@ -412,6 +420,18 @@ void algo_sections::supplesections(const algo_sections &other,algo_sections &res
         res -= inters;
     }
 }
+
+void algo_sections::check_sections()
+{
+    unsigned long max_len = 1UL<<63;
+    for(auto it : sections)
+    {
+        assert(it.len + it.start < max_len);
+        max_len = it.start;
+    }
+    
+}
+
 
 
 }

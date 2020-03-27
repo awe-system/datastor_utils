@@ -4,6 +4,7 @@
 #include "algo.h"
 #include "debug.h"
 #include "algo_interface.h"
+#include <set>
 static env checksum_on("awe_log", "checksum_on");
 
 namespace ServerSan_Algo
@@ -224,6 +225,77 @@ block_io *block_io_set::get_block(const json_obj &key)
 {
     abort();
 }
+
+
+class safe_voidp_set
+{
+    std::mutex       m;
+    std::set<void *> s;
+public:
+    int alloc(void *p)
+    {
+        std::unique_lock<std::mutex> lck(m);
+        auto                         it = s.find(p);
+        if ( it == s.end() )
+        {
+            s.insert(p);
+            return ERROR_TYPE_OK;
+        }
+        return -ERROR_TYPE_MEMORY;
+    }
+    
+    int free(void *p)
+    {
+        std::unique_lock<std::mutex> lck(m);
+        auto                         it = s.find(p);
+        if ( it == s.end() )
+        {
+            
+            return -ERROR_TYPE_MEMORY;
+        }
+        s.erase(p);
+        return ERROR_TYPE_OK;
+    }
+    
+    bool is_alive(void *p)
+    {
+        std::unique_lock<std::mutex> lck(m);
+        auto                         it = s.find(p);
+        if ( it == s.end() )
+        {
+            return false;
+        }
+        return true;
+    }
+};
+
+static safe_voidp_set            p_sets;
+
+algo_obj::algo_obj()
+{
+    memset(magic_stack,0xcc,MAGIC_STACK_SIZE);
+    p_sets.alloc(this);
+}
+
+static bool is_stack_legal(unsigned char empty_stack[])
+{
+    unsigned char com_stack[MAGIC_STACK_SIZE];
+    memset(com_stack, 0xcc, MAGIC_STACK_SIZE);
+    return 0 == memcmp(com_stack, empty_stack, MAGIC_STACK_SIZE);
+}
+
+algo_obj::~algo_obj()
+{
+    p_sets.free(this);
+}
+
+void algo_obj::assert_legal()
+{
+    assert(p_sets.is_alive(this));
+    
+    assert(is_stack_legal(magic_stack));
+}
+
 }
 
 ServerSan_Algo::algo_pool_operation *ServerSan_Algo::algo_cluster_operation::ref_pool(const string &pool_name)

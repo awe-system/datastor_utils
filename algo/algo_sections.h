@@ -54,7 +54,7 @@ private:
 public:
     void intersections(const algo_sections &other, algo_sections &res)const;
     
-    //字节在other中的补集
+    //self在other中的补集
     void supplesections(const algo_sections &other, algo_sections &res);
     
     bool is_section_insections(const algo_section & section) const;
@@ -66,8 +66,9 @@ public:
     void erase_point(unsigned long offset);
    
     algo_sections &operator-=(const algo_section &section);
-    
+//
     algo_sections &operator+=(const algo_section &section);
+    
     
     algo_sections &operator-=(const algo_sections &other);
     
@@ -92,6 +93,11 @@ public:
     bool operator==(const algo_sections &other) const;
     
     bool operator!=(const algo_sections &other) const;
+
+private:
+    void check_sections();
+    
+    void plus_section(const algo_section &section);
 };
 
 }

@@ -5,6 +5,7 @@
 //NOTE: 前提是disconect被调用后不会出现新的rcv_done
 void lt_client_service::rcv_done_inthread(lt_session *sess, lt_data_t *received_data, int error)
 {
+    assert_legal();
     AWE_MODULE_DEBUG("communicate",
                      "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done_inthread before lock sess [%p] snddone no err received_data %p",
                      sess, received_data);
@@ -32,6 +33,7 @@ void lt_client_service::rcv_done_inthread(lt_session *sess, lt_data_t *received_
 void lt_client_service::rcv_done(lt_session *sess, lt_data_t *received_data,
                                  int error)
 {
+    assert_legal();
     AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done before post sess [%p] snddone no err received_data %p", sess, received_data);
     pool.submit_task(boost::bind(&lt_client_service::rcv_done_inthread, this, sess, received_data,error));
     AWE_MODULE_DEBUG("communicate", ">>>>>>>>>>>>>>>>>>>>>>>>lt_client_service::rcv_done after post sess [%p] snddone no err received_data %p", sess,received_data);
@@ -40,6 +42,7 @@ void lt_client_service::rcv_done(lt_session *sess, lt_data_t *received_data,
 
 void lt_client_service::rcv_done_nolock(lt_session *sess, lt_data_t *received_data, int error)
 {
+    assert_legal();
     AWE_MODULE_DEBUG("communicate", "enter lt_client_service::rcv_done %p error %d received_data %p", sess, error, received_data);
     /*
     if( !rcvdata_set.erase(received_data))
@@ -70,7 +73,7 @@ void
 lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
                                      int error)
 {
-    
+    assert_legal();
     AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<lt_client_service::snd_done_inthread before lock sess [%p] snddone no err sent_data %p", sess, sent_data);
     std::unique_lock<std::mutex> lck(m);
     AWE_MODULE_DEBUG("communicate", ">>>>>>>>>>lt_client_service::snd_done_inthread after lock sess [%p] snddone no err sent_data %p", sess, sent_data);
@@ -118,34 +121,21 @@ lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
 
 void lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
 {
+    assert_legal();
     AWE_MODULE_DEBUG("communicate", "<<<<<<<<<<<lt_client_service::snd_done before post sess [%p] snddone no err sent_data %p", sess, sent_data);
     pool.submit_task(boost::bind(&lt_client_service::snd_done_inthread, this, sess, sent_data,error));
 }
 
 void lt_client_service::disconnected(lt_session *sess)
 {
-    //   std::unique_lock<std::mutex> lck(m);
-//    is_connect = false;
-    /*
-    abort();
-    AWE_MODULE_DEBUG("communicate", "<====================       enter lt_client_service::disconnected sess [%p]", sess);
-    is_connect = false;
-    AWE_MODULE_DEBUG("communicate", "lt_client_service::disconnected after lock sess [%p] ", sess);
-    lt_data_t * rcv_data;
-    while(rcvdata_set.first(rcv_data))
-    {
-        AWE_MODULE_DEBUG("communicate", "before  rcv_done sess [%p] rcv_data %p", sess, rcv_data);
-        rcv_done_nolock(sess, rcv_data, -RPC_ERROR_TYPE_NET_BROKEN);
-        AWE_MODULE_DEBUG("communicate", "after rcv_done %p rcv_data %p", sess, rcv_data);
-    }
-     */
-    
+    assert_legal();
     AWE_MODULE_DEBUG("communicate", "=================>      lt_client_service::disconnected sess [%p]", sess);
 }
 
 void lt_client_service::connected(lt_session *sess)
 {//NOTE:do nothing
     //is_connect = true;
+    assert_legal();
 }
 
 lt_client_service::lt_client_service(boost::asio::io_service *_io_service, unsigned short port):
@@ -156,12 +146,23 @@ lt_client_service::lt_client_service(boost::asio::io_service *_io_service, unsig
 
 int lt_client_service::snd(lt_session_cli_safe *sess, lt_data_t *data)
 {
+    assert_legal();
     sess->snd(data);
     return 0;
 }
 
 void lt_client_service::set_ioservice(boost::asio::io_service *_io_service)
 {
+    assert_legal();
     io_service = _io_service;
+}
+
+void lt_client_service::from_json_obj(const json_obj &obj)
+{
+}
+
+json_obj lt_client_service::to_json_obj() const
+{
+    return json_obj();
 }
 

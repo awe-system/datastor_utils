@@ -13,7 +13,7 @@
 #include "lt_safe_state.hpp"
 #include "lt_session_dog.h"
 #include "lt_data/lt_data_t.h"
-#include "../../algo/algo.h"
+#include "../algo/algo.h"
 
 #define DEFAULT_WAIT_SECONDS 600
 

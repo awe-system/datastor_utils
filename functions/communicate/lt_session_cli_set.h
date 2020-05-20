@@ -9,7 +9,6 @@
 class lt_session_cli_set
 {
 private:
-    std::mutex              m;
     boost::asio::io_service *io_service;
     lt_session_callback     *cb;
 public:
@@ -17,15 +16,15 @@ public:
                        lt_session_callback *_cb);
     
     void set_ioservice(boost::asio::io_service *_io_service);
-
-private:
-    lt_bidirectional_map<std::string, lt_session_cli_safe *> set;
+    
 public:
-    void get_session(lt_session_cli_safe *sess);
+    void get_session_internal(lt_session_cli_safe *sess);
     
+    bool put_session_internal(lt_session_cli_safe *sess);
+    
+public:
     lt_session_cli_safe *get_session(const std::string &key);
-    
-    bool put_session(lt_session_cli_safe *);
+    bool put_session(lt_session_cli_safe *sess);
 };
 
 #endif //TEST_COMMUNICATE_LT_SESSION_CLI_SET_H

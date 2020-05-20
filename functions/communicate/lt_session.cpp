@@ -12,7 +12,7 @@ lt_session::lt_session(boost::asio::io_service *_io_service, lt_session_callback
         _connect(false, boost::bind(&lt_session::state_changed, this, _1))
 {
     AWE_MODULE_INFO("comunicate","struct lt_session %p", this);
-    std::cout << "session : this : " << __FUNCTION__ << this << std::endl;
+//    std::cout << "session : this : " << __FUNCTION__ << this << std::endl;
 }
 
 void lt_session::rcv(lt_data_t *data)
@@ -256,9 +256,8 @@ void lt_session::handle_event()
 
 lt_session::~lt_session()
 {
-    assert_legal();
     AWE_MODULE_INFO("comunicate","~lt_session %p", this);
-    std::cout << "session : this : " << __FUNCTION__ << this << std::endl;
+//    std::cout << "session : this : " << __FUNCTION__ << this << std::endl;
     queue.clear();
     rcv_queue.clear();
     _socket.close();

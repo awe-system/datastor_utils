@@ -135,7 +135,7 @@ void lt_session_cli_safe::rcv(lt_data_t *data)
                      "before rcv lt_session_cli_safe::snd sess %p", this);
     if ( !is_down_connected )
     {
-        cb->rcv_done(this, data, -RPC_ERROR_TYPE_NET_BROKEN);
+        cb->rcv_done(this, data, -RPC_ERROR_TYPE_NETDOWN_ALREADY);
         return;
     }
     
@@ -152,7 +152,7 @@ void lt_session_cli_safe::snd(lt_data_t *data)
                      "before snd lt_session_cli_safe::snd sess %p", this);
     if ( !is_down_connected )
     {
-        cb->snd_done(this, data, -RPC_ERROR_TYPE_NET_BROKEN);
+        cb->snd_done(this, data, -RPC_ERROR_TYPE_NETDOWN_ALREADY);
         return;
     }
     

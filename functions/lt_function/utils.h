@@ -12,13 +12,18 @@
 #include <vector>
 #include <assert.h>
 #include <boost/algorithm/string.hpp>
+#include <boost/thread/thread.hpp>
+
+
+typedef boost::shared_mutex rw_lock_t;
+typedef boost::unique_lock< rw_lock_t >  write_lock_t;
+typedef boost::shared_lock< rw_lock_t >  read_lock_t;
 
 using namespace std;
 using namespace boost;
 
-
-string int2string(int i, const char* format);
-string _str_trim(const string& s);
+std::string int2string(int i, const char* format);
+std::string _str_trim(const string& s);
 
 #define BLANK_CHAR_STR " \a\b\f\n\r\t\v"
 void _str_split(vector <string> &v, const string& s, const char* sep = BLANK_CHAR_STR);

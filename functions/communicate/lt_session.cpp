@@ -63,7 +63,7 @@ void lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error
     AWE_MODULE_DEBUG("communicate", "--enter lt_session::rcv_done sess %p", this);
     unsigned err = 0;
     if (error || (!is_connected())) {
-        err = -RPC_ERROR_TYPE_NET_BROKEN;
+        err = -RPC_ERROR_TYPE_RCV_FAILD;
         let_it_down();
         rcv_queue.clear();
     } else {
@@ -185,7 +185,7 @@ void lt_session::snd_data_done(lt_data_t *data, const boost::system::error_code 
     int err = 0;
     if (error || (!is_connected())) {
         let_it_down();
-        err = -RPC_ERROR_TYPE_NET_BROKEN;
+        err = -RPC_ERROR_TYPE_SND_FAILD;
     } else {
         mark_sent();
     }

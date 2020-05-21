@@ -8,6 +8,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <list>
+#include <boost/thread/pthread/shared_mutex.hpp>
 #include "lt_async_2safe_async.h"
 #include "lt_reference.h"
 #include "lt_safe_state.hpp"

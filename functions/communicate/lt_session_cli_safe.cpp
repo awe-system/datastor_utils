@@ -8,31 +8,16 @@ static data_channel::thread_pool discon_pool(CLI_DISCONNECT_WAIT_POOL_NUM);
 
 void lt_session_cli_safe::connect(const std::string &ip, unsigned short port)
 {
-    try
-    {
-        std::unique_lock<std::mutex> lck(conn_m);
-        if ( ++out_connect_ref == 1 )
-        {
-            connect_first(ip, port);
-        }
-        else if ( !is_down_connected )
-        {
-            reconnect(ip, port);
-        }
-    }
-    catch (int &err)
-    {
-        --out_connect_ref;
-        throw err;
-    }
+    
+    assert(++connect_cnt == 1);
+    lt_session_cli::connect(ip, port);
+    is_down_connected = true;
 }
 
 void lt_session_cli_safe::disconnect()
 {
-    if ( out_connect_ref.fetch_sub(1) == 1 )
-    {
-        disconnect_last();
-    }
+    assert(++disconnect_cnt == 1);
+    lt_session_cli::disconnect();
 }
 
 lt_session_cli_safe::lt_session_cli_safe(lt_session_cli_set *_set,
@@ -41,7 +26,6 @@ lt_session_cli_safe::lt_session_cli_safe(lt_session_cli_set *_set,
         lt_session_cli(_io_service, (lt_session_callback *) this),
         is_down_connected(false), cb(_cb), set(_set), pending_cnt(0)
 {
-    out_connect_ref.store(0);
 }
 
 void lt_session_cli_safe::disconnected_inthread()
@@ -81,24 +65,6 @@ void lt_session_cli_safe::disconnected()
     AWE_MODULE_INFO("communicate", "disconnected_inthread post %p", this);
     discon_pool.submit_task(
             boost::bind(&lt_session_cli_safe::disconnected_inthread, this));
-}
-
-void
-lt_session_cli_safe::connect_first(const std::string &ip, unsigned short port)
-{
-    lt_session_cli::connect(ip, port);
-    is_down_connected = true;
-}
-
-void lt_session_cli_safe::reconnect(const std::string &ip, unsigned short port)
-{
-    lt_session_cli::connect(ip, port);
-    is_down_connected = true;
-}
-
-void lt_session_cli_safe::disconnect_last()
-{
-    lt_session_cli::disconnect();
 }
 
 void lt_session_cli_safe::rcv_done(lt_session *sess, lt_data_t *received_data,

@@ -14,18 +14,13 @@ class lt_session_cli_safe : public lt_session_cli, public lt_session_callback
 {
     long wait_disconn_num = 0;
 private:
+    int connect_cnt =0;
+    int disconnect_cnt =0;
     std::mutex          conn_m;
     bool is_down_connected;
     long                pending_cnt;
-    std::atomic<int>    out_connect_ref;
     lt_session_callback *cb;
     lt_session_cli_set  *set;
-private:
-    void connect_first(const std::string &ip, unsigned short port);
-    
-    void reconnect(const std::string &ip, unsigned short port);
-    
-    void disconnect_last();
 
 private:
     void disconnected_inthread();
@@ -50,8 +45,10 @@ public:
                         boost::asio::io_service *_io_service,
                         lt_session_callback *_cb);
     
+    //FIXNE connect 只会被调用一次
     void connect(const std::string &ip, unsigned short port) override;
     
+    //NOTE： disconnect 只会被调用一次
     void disconnect() override;
     
     void rcv(lt_data_t *data) override;

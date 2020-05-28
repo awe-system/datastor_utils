@@ -112,7 +112,7 @@ void lt_session::rcv_head_done_unsafe(lt_data_t *data,
     if ( data->_length == 0 || data->_length > (256 << 20) )
     {
         rcv_queue.continue_to();
-        rcv_done(data, boost::asio::error::network_down);;
+        rcv_done(data, boost::asio::error::network_down);
         AWE_MODULE_ERROR("communicate", "too big len %ld sess %p localip[%s] remoteip[%s]",
                          data->_length, this,
                          this->_socket.local_endpoint().address().to_string()

@@ -123,10 +123,9 @@ void lt_session::rcv_head_done_unsafe(lt_data_t *data,
     }
     
     data->realloc_buf();
-    start_rcv_data_unsafe(data);
     AWE_MODULE_DEBUG("communicate",
                      "--leave lt_session::rcv_head_done_unsafe sess %p", this);
-    
+    start_rcv_data_unsafe(data);
 }
 
 void lt_session::start_rcv_data_unsafe(lt_data_t *data)

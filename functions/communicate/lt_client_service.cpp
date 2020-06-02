@@ -93,7 +93,7 @@ lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
         delete sent_data;
         return;
     }
-     */
+    */
     
     AWE_MODULE_DEBUG("communicate", "enter lt_client_service::snd_done_inthread sess [%p] snddone no err", sess);
     lt_data_t *received_data = new lt_data_t();

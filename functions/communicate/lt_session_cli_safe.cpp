@@ -32,26 +32,34 @@ void lt_session_cli_safe::disconnected_inthread()
 {
     assert_legal();
     
-    AWE_MODULE_DEBUG("communicate", "disconnected_inthread in %p", this);
+    AWE_MODULE_DEBUG("communicate", "disconnected_inthread in %p remoteip [%s]", this,
+                     _socket.remote_endpoint().address().to_string()
+                             .c_str());
     long pending = pending_cnt;
     if ( pending != 0 )
     {
         usleep(1000);
         if ( ++wait_disconn_num > MAX_DICONNECT_WAIT_NUM )
         {
-            AWE_MODULE_WARN("communicate", "disconnected_inthread wait too long %p", this);
-            wait_disconn_num= 0;
+            AWE_MODULE_WARN("communicate",
+                            "disconnected_inthread wait too long %p remoteip [%s]",
+                            this,
+                            _socket.remote_endpoint().address().to_string()
+                                    .c_str());
+            wait_disconn_num = 0;
         }
         
         discon_pool.submit_task(
-                    boost::bind(&lt_session_cli_safe::disconnected_inthread,
-                                this));
+                boost::bind(&lt_session_cli_safe::disconnected_inthread,
+                            this));
         
     }
     else
     {
-        AWE_MODULE_INFO("communicate", "disconnected_inthread before notice %p",
-                        this);
+        AWE_MODULE_INFO("communicate",
+                        "disconnected_inthread before notice %p remoteip [%s]",
+                        this, _socket.remote_endpoint().address().to_string()
+                                .c_str());
         lt_session::disconnected();
         AWE_MODULE_INFO("communicate", "disconnected_inthread out");
     }
@@ -62,7 +70,9 @@ void lt_session_cli_safe::disconnected()
 {
     std::unique_lock<std::mutex> lck(conn_m);
     is_down_connected = false;
-    AWE_MODULE_INFO("communicate", "disconnected_inthread post %p", this);
+    AWE_MODULE_INFO("communicate",
+                    "disconnected_inthread post %p remoteip [%s]", this,
+                    _socket.remote_endpoint().address().to_string().c_str());
     discon_pool.submit_task(
             boost::bind(&lt_session_cli_safe::disconnected_inthread, this));
 }

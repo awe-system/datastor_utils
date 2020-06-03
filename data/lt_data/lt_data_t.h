@@ -14,7 +14,7 @@ public:
 private:
     unsigned char *_buf_from_outside;
     unsigned char *_buf_self_generated;
-    void *private_data;
+    void *private_data = nullptr;
     std::vector<void *> data_stack;
 
 public:

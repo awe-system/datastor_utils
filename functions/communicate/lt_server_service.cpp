@@ -48,9 +48,7 @@ lt_server_service::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
 
 void lt_server_service::disconnected(lt_session *sess)
 {
-    AWE_MODULE_ERROR("communicate", "disconnected [%s]",
-                     sess->_socket.remote_endpoint().address().to_string()
-                             .c_str());
+    AWE_MODULE_ERROR("communicate", "disconnected [%p]",sess);
     lt_session_description *session = (lt_session_description *) sess;
     cb->disconnected(session);
 }

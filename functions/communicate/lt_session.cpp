@@ -192,9 +192,8 @@ void lt_session::disconnected()
 {
     assert_legal();
     AWE_MODULE_ERROR("communicate",
-                     "--enter lt_session::disconnected sess [%p] ip[%s]",
-                     this,
-                     _socket.remote_endpoint().address().to_string().c_str());
+                     "--enter lt_session::disconnected sess [%p]",
+                     this);
     
     cb->disconnected(this);
     queue.clear();
@@ -285,9 +284,7 @@ void lt_session::state_changed(const bool &is_con)
                      this);
     if ( !is_con )
     {
-        AWE_MODULE_ERROR("communicate", "--enter disconn sess %p ip[%s]",
-                         this, _socket.remote_endpoint().address().to_string()
-                                 .c_str());
+        AWE_MODULE_ERROR("communicate", "--enter disconn sess %p",this);
         disconnected();
     }
     else

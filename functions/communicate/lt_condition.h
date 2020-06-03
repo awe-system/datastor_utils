@@ -86,6 +86,7 @@ public:
             AWE_MODULE_DEBUG("cond",
                              "+-+-+-is_to_wait before notify_one this %p",
                              this);
+            
             cond.notify_one();
             AWE_MODULE_DEBUG("cond",
                              "+-+-+-is_to_wait after notify_one this %p", this);

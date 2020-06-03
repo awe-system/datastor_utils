@@ -167,9 +167,7 @@ void lt_client_service::disconnected(lt_session *sess)
 {
     assert_legal();
     AWE_MODULE_ERROR("communicate",
-                     "lt_client_service::disconnected sess [%p] ip", sess,
-                     sess->_socket.remote_endpoint().address().to_string()
-                             .c_str());
+                     "lt_client_service::disconnected sess [%p]", sess);
 }
 
 void lt_client_service::connected(lt_session *sess)

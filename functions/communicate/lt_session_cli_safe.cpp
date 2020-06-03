@@ -32,9 +32,7 @@ void lt_session_cli_safe::disconnected_inthread()
 {
     assert_legal();
     
-    AWE_MODULE_ERROR("communicate", "disconnected_inthread in %p remoteip [%s]", this,
-                     _socket.remote_endpoint().address().to_string()
-                             .c_str());
+    AWE_MODULE_ERROR("communicate", "disconnected_inthread in %p", this);
     long pending = pending_cnt;
     if ( pending != 0 )
     {
@@ -42,10 +40,8 @@ void lt_session_cli_safe::disconnected_inthread()
         if ( ++wait_disconn_num > MAX_DICONNECT_WAIT_NUM )
         {
             AWE_MODULE_WARN("communicate",
-                            "disconnected_inthread wait too long %p remoteip [%s]",
-                            this,
-                            _socket.remote_endpoint().address().to_string()
-                                    .c_str());
+                            "disconnected_inthread wait too long %p",
+                            this);
             wait_disconn_num = 0;
         }
         
@@ -57,9 +53,8 @@ void lt_session_cli_safe::disconnected_inthread()
     else
     {
         AWE_MODULE_INFO("communicate",
-                        "disconnected_inthread before notice %p remoteip [%s]",
-                        this, _socket.remote_endpoint().address().to_string()
-                                .c_str());
+                        "disconnected_inthread before notice %p",
+                        this);
         cb->disconnected(this);
         AWE_MODULE_INFO("communicate", "disconnected_inthread out");
     }
@@ -90,8 +85,7 @@ void lt_session_cli_safe::disconnected(lt_session *sess)
     assert(sess == sess_this);
     is_down_connected = false;
     AWE_MODULE_INFO("communicate",
-                    "disconnected_inthread post %p remoteip [%s]", this,
-                    _socket.remote_endpoint().address().to_string().c_str());
+                    "disconnected_inthread post %p ", this);
     discon_pool.submit_task(
             boost::bind(&lt_session_cli_safe::disconnected_inthread, this));
 }

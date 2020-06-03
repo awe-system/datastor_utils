@@ -87,9 +87,8 @@ lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error)
     if ( err )
     {
         AWE_MODULE_ERROR("comunicate",
-                         "lt_session::rcv_done %p err [%d] remoteip[%s]", this,
-                         err, _socket.remote_endpoint().address().to_string()
-                                 .c_str());
+                         "lt_session::rcv_done %p err [%d]", this,
+                         err);
     }
     cb->rcv_done(this, data, err);
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_done sess %p",
@@ -240,9 +239,8 @@ void lt_session::snd_data_done(lt_data_t *data,
     if ( err )
     {
         AWE_MODULE_ERROR("comunicate",
-                         "lt_session::rcv_done %p err [%d] remoteip[%s]", this,
-                         err, _socket.remote_endpoint().address().to_string()
-                                 .c_str());
+                         "lt_session::rcv_done %p err [%d]", this,
+                         err);
     }
     
     cb->snd_done(this, data, err);

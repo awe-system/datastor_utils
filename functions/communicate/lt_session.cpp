@@ -122,9 +122,8 @@ void lt_session::rcv_head_done_unsafe(lt_data_t *data,
     {
         rcv_queue.clear();
         AWE_MODULE_ERROR("comunicate",
-                         "lt_session::rcv_done %p err [%d] remoteip[%s]", this,
-                         err, _socket.remote_endpoint().address().to_string()
-                                 .c_str());
+                         "lt_session::rcv_done %p err [%d]", this,
+                         err);
         
         
         rcv_done(data, boost::asio::error::network_down);

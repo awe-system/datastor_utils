@@ -32,7 +32,7 @@ void lt_session_cli_safe::disconnected_inthread()
 {
     assert_legal();
     
-    AWE_MODULE_DEBUG("communicate", "disconnected_inthread in %p remoteip [%s]", this,
+    AWE_MODULE_ERROR("communicate", "disconnected_inthread in %p remoteip [%s]", this,
                      _socket.remote_endpoint().address().to_string()
                              .c_str());
     long pending = pending_cnt;

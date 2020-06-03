@@ -88,7 +88,8 @@ lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error)
     {
         AWE_MODULE_ERROR("comunicate",
                          "lt_session::rcv_done %p err [%d] remoteip[%s]", this,
-                         err,_socket.remote_endpoint().address().to_string().c_str());
+                         err, _socket.remote_endpoint().address().to_string()
+                                 .c_str());
     }
     cb->rcv_done(this, data, err);
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_done sess %p",
@@ -122,7 +123,8 @@ void lt_session::rcv_head_done_unsafe(lt_data_t *data,
         rcv_queue.clear();
         AWE_MODULE_ERROR("comunicate",
                          "lt_session::rcv_done %p err [%d] remoteip[%s]", this,
-                         err,_socket.remote_endpoint().address().to_string().c_str());
+                         err, _socket.remote_endpoint().address().to_string()
+                                 .c_str());
         
         
         rcv_done(data, boost::asio::error::network_down);
@@ -191,16 +193,17 @@ void lt_session::connected()
 void lt_session::disconnected()
 {
     assert_legal();
-    AWE_MODULE_DEBUG("communicate", "--enter lt_session::disconnected sess %p",
-                     this);
+    AWE_MODULE_ERROR("communicate",
+                     "--enter lt_session::disconnected sess [%p] ip[%s]",
+                     this,
+                     _socket.remote_endpoint().address().to_string().c_str());
     
     cb->disconnected(this);
     queue.clear();
     rcv_queue.clear();
     stop_monitor();
     
-    AWE_MODULE_DEBUG("communicate", "--leave lt_session::disconnected sess %p",
-                     this);
+    AWE_MODULE_ERROR("communicate", "--leave lt_session::disconnected");
 }
 
 void lt_session::start_snd_data(lt_data_t *data)
@@ -239,7 +242,8 @@ void lt_session::snd_data_done(lt_data_t *data,
     {
         AWE_MODULE_ERROR("comunicate",
                          "lt_session::rcv_done %p err [%d] remoteip[%s]", this,
-                         err,_socket.remote_endpoint().address().to_string().c_str());
+                         err, _socket.remote_endpoint().address().to_string()
+                                 .c_str());
     }
     
     cb->snd_done(this, data, err);
@@ -280,19 +284,19 @@ void lt_session::snd_data_done_unsafe(lt_data_t *data,
 void lt_session::state_changed(const bool &is_con)
 {
     assert_legal();
-    AWE_MODULE_DEBUG("communicate", "--enter lt_session::state_changed sess %p",
+    AWE_MODULE_ERROR("communicate", "--enter lt_session::state_changed sess %p",
                      this);
     if ( !is_con )
     {
+        AWE_MODULE_ERROR("communicate", "--enter disconn sess %p ip[%s]",
+                         this, _socket.remote_endpoint().address().to_string()
+                                 .c_str());
         disconnected();
     }
     else
     {
         connected();
     }
-    AWE_MODULE_DEBUG("communicate", "--leave lt_session::state_changed sess %p",
-                     this);
-    
 }
 
 bool lt_session::is_connected() const

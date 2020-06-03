@@ -60,22 +60,11 @@ void lt_session_cli_safe::disconnected_inthread()
                         "disconnected_inthread before notice %p remoteip [%s]",
                         this, _socket.remote_endpoint().address().to_string()
                                 .c_str());
-        lt_session::disconnected();
+        cb->disconnected(this);
         AWE_MODULE_INFO("communicate", "disconnected_inthread out");
     }
 }
 
-
-void lt_session_cli_safe::disconnected()
-{
-    std::unique_lock<std::mutex> lck(conn_m);
-    is_down_connected = false;
-    AWE_MODULE_INFO("communicate",
-                    "disconnected_inthread post %p remoteip [%s]", this,
-                    _socket.remote_endpoint().address().to_string().c_str());
-    discon_pool.submit_task(
-            boost::bind(&lt_session_cli_safe::disconnected_inthread, this));
-}
 
 void lt_session_cli_safe::rcv_done(lt_session *sess, lt_data_t *received_data,
                                    int error)
@@ -97,7 +86,14 @@ lt_session_cli_safe::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
 
 void lt_session_cli_safe::disconnected(lt_session *sess)
 {
-    cb->disconnected(sess);
+    lt_session_cli_safe * sess_this = dynamic_cast<lt_session_cli_safe *>(sess);
+    assert(sess == sess_this);
+    is_down_connected = false;
+    AWE_MODULE_INFO("communicate",
+                    "disconnected_inthread post %p remoteip [%s]", this,
+                    _socket.remote_endpoint().address().to_string().c_str());
+    discon_pool.submit_task(
+            boost::bind(&lt_session_cli_safe::disconnected_inthread, this));
 }
 
 void lt_session_cli_safe::connected(lt_session *sess)

@@ -38,7 +38,7 @@ typedef enum
     ERROR_TYPE_UNKNOWN = 99,
 } ERROR_T;
 
-static std::string error_str(int err)
+static inline std::string error_str(int err)
 {
     switch ( abs(err))
     {

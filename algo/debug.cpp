@@ -26,6 +26,7 @@
 #define BBLUE	"\033[1;34;47;0m"
 #define AWE_NORMAL	"\033[30;0m"
 
+dbg_end_type end_dbg;
 
 debug &  debug::operator<<(const std::string &out)
 {
@@ -212,7 +213,7 @@ debug &debug::operator<<(const lt_data_t &out)
     cout<<"len:"<<out._length<<endl;
     cout<<"buf:"<<endl;
     unsigned  char * buf = out.get_buf();
-    long i = 0;
+    unsigned long i = 0;
     if(out._length <= 1024)
     {
         for(i = 0; i<out._length; ++i)
@@ -229,7 +230,7 @@ debug &debug::operator<<(const lt_data_t &out)
             if(i%32 == 31) cout<<endl;
         }
 
-        for(long i = 0; i<32; ++i)
+        for(i = 0; i<32; ++i)
         {
             printf("-- ");
             if(i%32 == 31) cout<<endl;

@@ -16,7 +16,6 @@ class lt_session_cli_safe : public lt_session_cli, public lt_session_callback
 private:
     int connect_cnt =0;
     int disconnect_cnt =0;
-    std::mutex          conn_m;
     bool is_down_connected;
     long                pending_cnt;
     lt_session_callback *cb;
@@ -24,11 +23,7 @@ private:
 
 private:
     void disconnected_inthread();
-
-protected:
     
-    void disconnected() override;
-
 public:
     void connected(lt_session *sess) override;
 

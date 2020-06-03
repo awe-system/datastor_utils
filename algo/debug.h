@@ -26,13 +26,13 @@ typedef enum
     color_byellow,
     color_bpurple,
     color_normal,
-}color_type;
+} color_type;
 
 class dbg_end_type
 {
 };
 
-static dbg_end_type end_dbg;
+extern dbg_end_type end_dbg;
 
 std::string dbg_now_time();
 
@@ -42,33 +42,57 @@ std::string dbg_now_time();
 class debug
 {
     std::mutex m;
-    string start_str;
-    string end_str;
-    bool is_start;
+    string     start_str;
+    string     end_str;
+    bool       is_start;
 public:
     void start();
+    
     void stop();
+    
     debug();
+    
     debug(color_type color);
+    
     void set_color(color_type color);
-    debug & operator <<(const debug & debug1);
-    debug & operator <<(const std::string & out);
-    debug &  operator <<(const lt_data_t& out);
-    debug &  operator <<(const color_type& color);
-    debug &  operator <<(const dbg_end_type& end);
-    debug &  operator <<(const char out);
-    debug &  operator <<(const void* out);
-    debug &  operator <<(const int out);
-    debug &  operator <<(const long out);
-    debug &  operator <<(const unsigned long out);
-    debug &  operator <<(const unsigned int out);
-    debug &  operator <<(const char *out);
-    debug &  operator <<(const json_obj & obj);
-    debug &  operator <<(const std::vector<void *> & stack_out);
+    
+    debug &operator<<(const debug &debug1);
+    
+    debug &operator<<(const std::string &out);
+    
+    debug &operator<<(const lt_data_t &out);
+    
+    debug &operator<<(const color_type &color);
+    
+    debug &operator<<(const dbg_end_type &end);
+    
+    debug &operator<<(const char out);
+    
+    debug &operator<<(const void *out);
+    
+    debug &operator<<(const int out);
+    
+    debug &operator<<(const long out);
+    
+    debug &operator<<(const unsigned long out);
+    
+    debug &operator<<(const unsigned int out);
+    
+    debug &operator<<(const char *out);
+    
+    debug &operator<<(const json_obj &obj);
+    
+    debug &operator<<(const std::vector<void *> &stack_out);
 };
 
 static debug dbg;
-static bool debug_init(){dbg.start();}
-static bool dbg_initilize = debug_init();
+
+static inline bool debug_init()
+{
+    dbg.start();
+    return false;
+}
+
+static bool  dbg_initilize = debug_init();
 
 #endif //SS_METADATA_DEBUG_H

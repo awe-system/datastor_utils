@@ -27,6 +27,8 @@ void lt_session::rcv(lt_data_t *data)
     {
         AWE_MODULE_ERROR("comunicate", "lt_session::rcv_done %p err [%d]", this,
                          -RPC_ERROR_TYPE_CONNECT_FAIL);
+        queue.clear();
+        rcv_queue.clear();
         cb->rcv_done(this, data, -RPC_ERROR_TYPE_CONNECT_FAIL);
     }
     
@@ -42,6 +44,8 @@ void lt_session::snd(lt_data_t *data)
     }
     else
     {
+        queue.clear();
+        rcv_queue.clear();
         cb->snd_done(this, data, -RPC_ERROR_TYPE_CONNECT_FAIL);
     }
     AWE_MODULE_DEBUG("communicate", "leave lt_session::snd sess %p", this);
@@ -88,6 +92,8 @@ lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error)
         AWE_MODULE_ERROR("comunicate",
                          "lt_session::rcv_done %p err [%d]", this,
                          err);
+        queue.clear();
+        rcv_queue.clear();
     }
     cb->rcv_done(this, data, err);
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_done sess %p",
@@ -190,11 +196,10 @@ void lt_session::disconnected()
     AWE_MODULE_ERROR("communicate",
                      "--enter lt_session::disconnected sess [%p]",
                      this);
-    
-    cb->disconnected(this);
+    stop_monitor();
     queue.clear();
     rcv_queue.clear();
-    stop_monitor();
+    cb->disconnected(this);
     
     AWE_MODULE_ERROR("communicate", "--leave lt_session::disconnected");
 }
@@ -211,6 +216,8 @@ void lt_session::start_snd_data(lt_data_t *data)
     }
     else
     {
+        queue.clear();
+        rcv_queue.clear();
         snd_data_done(data, boost::asio::error::network_down);
     }
 }
@@ -235,6 +242,8 @@ void lt_session::snd_data_done(lt_data_t *data,
         AWE_MODULE_ERROR("comunicate",
                          "lt_session::rcv_done %p err [%d]", this,
                          err);
+        queue.clear();
+        rcv_queue.clear();
     }
     
     cb->snd_done(this, data, err);
@@ -283,6 +292,7 @@ void lt_session::state_changed(const bool &is_con)
     }
     else
     {
+        AWE_MODULE_ERROR("communicate", "--enter disconn sess %p",this);
         connected();
     }
 }

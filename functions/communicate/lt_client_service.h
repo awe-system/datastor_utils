@@ -21,6 +21,9 @@ public:
     json_obj to_json_obj() const override;
 
 public:
+    
+    virtual ~lt_client_service() = default;
+    
     lt_client_service(boost::asio::io_service *_io_service,
                       unsigned short port);
     

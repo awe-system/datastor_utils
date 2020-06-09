@@ -15,6 +15,8 @@ public:
     lt_session_cli_set(boost::asio::io_service *_io_service,
                        lt_session_callback *_cb);
     
+    virtual ~lt_session_cli_set() = default;
+    
     void set_ioservice(boost::asio::io_service *_io_service);
     
 public:

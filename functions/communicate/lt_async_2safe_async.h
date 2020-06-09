@@ -34,6 +34,8 @@ public:
     lt_async_2safe_async();
 
 public:
+    bool is_empty();
+    
     void begin_to(boost::function<void()> f, boost::function<void()> callback_f);
 
     void continue_to();

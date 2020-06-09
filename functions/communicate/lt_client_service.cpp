@@ -8,13 +8,13 @@ lt_client_service::rcv_done_inthread(lt_session *sess, lt_data_t *received_data,
                                      int error)
 {
     assert_legal();
-    AWE_MODULE_DEBUG("communicate",
-                     "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done_inthread before lock sess [%p] snddone no err received_data %p",
-                     sess, received_data);
-    std::unique_lock<std::mutex> lck(m);
-    AWE_MODULE_DEBUG("communicate",
-                     ">>>>>>>>>>>>>>>>>>>>>>>>lt_client_service::rcv_done_inthread after lock sess [%p] snddone no err received_data %p",
-                     sess, received_data);
+    
+    if(error)
+    {
+        AWE_MODULE_ERROR("communicate",
+                         "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done_inthread sess [%p] snddone no err received_data %p error[%d]",
+                         sess, received_data, error);
+    }
     //if ( is_connect ){
     /*
     if (!is_connect) {
@@ -22,15 +22,20 @@ lt_client_service::rcv_done_inthread(lt_session *sess, lt_data_t *received_data,
     }
      */
     rcv_done_nolock(sess, received_data, error);
+    
+    if(error)
+    {
+        AWE_MODULE_ERROR("communicate",
+                         "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done_inthread error[%d]",
+                         error);
+    }
+    
     //}
     //else {
     // because of revdata_set has been cleaned up when executed the disconnected function
     // do nothing
     //}
     //std::cout << __FUNCTION__ << "error : " << error << std::endl;
-    AWE_MODULE_DEBUG("communicate",
-                     ">>>>>>>>>>>>>>>>>>>>>>>>lt_client_service::rcv_done_inthread after rcv_done_nolock sess [%p] snddone no err",
-                     sess);
 }
 
 
@@ -41,6 +46,12 @@ void lt_client_service::rcv_done(lt_session *sess, lt_data_t *received_data,
     AWE_MODULE_DEBUG("communicate",
                      "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done before post sess [%p] snddone no err received_data %p",
                      sess, received_data);
+    if ( error )
+    {
+        AWE_MODULE_ERROR("communicate",
+                         "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done before post sess [%p] snddone no err received_data %p err[%d]",
+                         sess, received_data, error);
+    }
     pool.submit_task(
             boost::bind(&lt_client_service::rcv_done_inthread, this, sess,
                         received_data, error));
@@ -55,9 +66,12 @@ lt_client_service::rcv_done_nolock(lt_session *sess, lt_data_t *received_data,
                                    int error)
 {
     assert_legal();
-    AWE_MODULE_DEBUG("communicate",
-                     "enter lt_client_service::rcv_done %p error %d received_data %p",
-                     sess, error, received_data);
+    if(error)
+    {
+        AWE_MODULE_ERROR("communicate",
+                         "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done_nolock error[%d]",
+                         error);
+    }
     /*
     if( !rcvdata_set.erase(received_data))
     {
@@ -69,11 +83,11 @@ lt_client_service::rcv_done_nolock(lt_session *sess, lt_data_t *received_data,
     //std::cout << "sent_data address" << sent_data << std::endl;
     if ( error )
     {
-        AWE_MODULE_DEBUG("communicate",
+        AWE_MODULE_ERROR("communicate",
                          "before handler_by_input %p error %d sent_data %p received_data %p",
                          sess, error, sent_data, received_data);
         handler_by_input(sent_data, error);
-        AWE_MODULE_DEBUG("communicate",
+        AWE_MODULE_ERROR("communicate",
                          "after handler_by_input %p error %d sent_data %p received_data %p",
                          sess, error, sent_data, received_data);
     }
@@ -99,7 +113,6 @@ lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
     AWE_MODULE_DEBUG("communicate",
                      "<<<<<<<<<<<lt_client_service::snd_done_inthread before lock sess [%p] snddone no err sent_data %p",
                      sess, sent_data);
-    std::unique_lock<std::mutex> lck(m);
     AWE_MODULE_DEBUG("communicate",
                      ">>>>>>>>>>lt_client_service::snd_done_inthread after lock sess [%p] snddone no err sent_data %p",
                      sess, sent_data);
@@ -158,6 +171,12 @@ lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
     AWE_MODULE_DEBUG("communicate",
                      "<<<<<<<<<<<lt_client_service::snd_done before post sess [%p] snddone no err sent_data %p",
                      sess, sent_data);
+    if(error)
+    {
+        AWE_MODULE_ERROR("communicate",
+                         "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::snd_done error[%d]",
+                         error);
+    }
     pool.submit_task(
             boost::bind(&lt_client_service::snd_done_inthread, this, sess,
                         sent_data, error));

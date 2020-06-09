@@ -84,6 +84,7 @@ private:
     lt_async_2safe_async queue;
     lt_async_2safe_async rcv_queue;
 private:
+   
     void start_rcv_head_unsafe(lt_data_t *data);
     
     void start_rcv(lt_data_t *data);
@@ -120,6 +121,8 @@ protected:
     virtual void connected();
 
 public:
+    void assert_queue_empy();
+    
     void let_it_up();
     
     void let_it_down();

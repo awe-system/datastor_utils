@@ -56,6 +56,7 @@ void lt_session_cli_safe::disconnected_inthread()
                         "disconnected_inthread before notice %p",
                         this);
         cb->disconnected(this);
+        assert_queue_empy();
         AWE_MODULE_INFO("communicate", "disconnected_inthread out");
     }
 }
@@ -65,6 +66,10 @@ void lt_session_cli_safe::rcv_done(lt_session *sess, lt_data_t *received_data,
                                    int error)
 {
     assert_legal();
+    if(error)
+    {
+        AWE_MODULE_ERROR("communicate", "rcv_done err[%d] %p",error, sess);
+    }
     cb->rcv_done(sess, received_data, error);
     __sync_sub_and_fetch(&pending_cnt, 1);
     set->put_session_internal(this);

@@ -77,7 +77,6 @@ lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error)
     {
         err = -RPC_ERROR_TYPE_RCV_FAILD;
         let_it_down();
-        rcv_queue.clear();
     }
     else
     {
@@ -119,11 +118,9 @@ void lt_session::rcv_head_done_unsafe(lt_data_t *data,
     int err = boost_err_translate(error);
     if ( err )
     {
-        rcv_queue.clear();
         AWE_MODULE_ERROR("comunicate",
                          "lt_session::rcv_done %p err [%d]", this,
                          err);
-        
         
         rcv_done(data, boost::asio::error::network_down);
         return;
@@ -153,7 +150,6 @@ void lt_session::rcv_data_done_unsafe(lt_data_t *data,
     if ( !is_connected() )
     {
         err = boost::asio::error::network_down;
-        rcv_queue.clear();
     }
     
     if ( error )
@@ -234,7 +230,6 @@ void lt_session::snd_data_done(lt_data_t *data,
         mark_sent();
     }
     
-    
     if ( err )
     {
         AWE_MODULE_ERROR("comunicate",
@@ -266,7 +261,6 @@ void lt_session::snd_data_done_unsafe(lt_data_t *data,
     boost::system::error_code err = error;
     if ( !is_connected() )
     {
-        queue.clear();
         err = boost::asio::error::network_down;
     }
     
@@ -334,6 +328,12 @@ void lt_session::from_json_obj(const json_obj &obj)
 json_obj lt_session::to_json_obj() const
 {
     return json_obj();
+}
+
+void lt_session::assert_queue_empy()
+{
+    assert(queue.is_empty());
+    assert(rcv_queue.is_empty());
 }
 
 void *lt_session_description_imp::get_session_private() const

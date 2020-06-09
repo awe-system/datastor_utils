@@ -64,3 +64,9 @@ lt_async_2safe_async::lt_async_2safe_async() : is_doing(false)
 {
 
 }
+
+bool lt_async_2safe_async::is_empty()
+{
+    std::unique_lock<std::mutex> lock(f_m);
+    return func_list.empty();
+}

@@ -194,9 +194,8 @@ void lt_session::disconnected()
                      "--enter lt_session::disconnected sess [%p]",
                      this);
     stop_monitor();
-    clear();
     cb->disconnected(this);
-    
+    clear();
     AWE_MODULE_ERROR("communicate", "--leave lt_session::disconnected");
 }
 

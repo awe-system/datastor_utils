@@ -127,6 +127,8 @@ public:
     
     void let_it_down();
 
+protected:
+    void clear();
 public:
     lt_session(boost::asio::io_service *_io_service, lt_session_callback *_cb);
     

@@ -27,8 +27,7 @@ void lt_session::rcv(lt_data_t *data)
     {
         AWE_MODULE_ERROR("comunicate", "lt_session::rcv_done %p err [%d]", this,
                          -RPC_ERROR_TYPE_CONNECT_FAIL);
-        queue.clear();
-        rcv_queue.clear();
+        clear();
         cb->rcv_done(this, data, -RPC_ERROR_TYPE_CONNECT_FAIL);
     }
     
@@ -44,8 +43,7 @@ void lt_session::snd(lt_data_t *data)
     }
     else
     {
-        queue.clear();
-        rcv_queue.clear();
+        clear();
         cb->snd_done(this, data, -RPC_ERROR_TYPE_CONNECT_FAIL);
     }
     AWE_MODULE_DEBUG("communicate", "leave lt_session::snd sess %p", this);
@@ -92,8 +90,7 @@ lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error)
         AWE_MODULE_ERROR("comunicate",
                          "lt_session::rcv_done %p err [%d]", this,
                          err);
-        queue.clear();
-        rcv_queue.clear();
+        clear();
     }
     cb->rcv_done(this, data, err);
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_done sess %p",
@@ -197,8 +194,7 @@ void lt_session::disconnected()
                      "--enter lt_session::disconnected sess [%p]",
                      this);
     stop_monitor();
-    queue.clear();
-    rcv_queue.clear();
+    clear();
     cb->disconnected(this);
     
     AWE_MODULE_ERROR("communicate", "--leave lt_session::disconnected");
@@ -216,8 +212,7 @@ void lt_session::start_snd_data(lt_data_t *data)
     }
     else
     {
-        queue.clear();
-        rcv_queue.clear();
+        clear();
         snd_data_done(data, boost::asio::error::network_down);
     }
 }
@@ -242,8 +237,7 @@ void lt_session::snd_data_done(lt_data_t *data,
         AWE_MODULE_ERROR("comunicate",
                          "lt_session::rcv_done %p err [%d]", this,
                          err);
-        queue.clear();
-        rcv_queue.clear();
+        clear();
     }
     
     cb->snd_done(this, data, err);
@@ -325,8 +319,7 @@ lt_session::~lt_session()
 {
     AWE_MODULE_INFO("comunicate", "~lt_session %p", this);
 //    std::cout << "session : this : " << __FUNCTION__ << this << std::endl;
-    queue.clear();
-    rcv_queue.clear();
+    clear();
     _socket.close();
 }
 
@@ -344,6 +337,12 @@ void lt_session::assert_queue_empy()
 {
     assert(queue.is_empty());
     assert(rcv_queue.is_empty());
+}
+
+void lt_session::clear()
+{
+    queue.clear();
+    rcv_queue.clear();
 }
 
 void *lt_session_description_imp::get_session_private() const

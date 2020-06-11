@@ -36,6 +36,7 @@ public:
     void disconnected(lt_session *sess) override;
 
 public:
+    virtual ~lt_session_cli_safe();
     lt_session_cli_safe(lt_session_cli_set *_set,
                         boost::asio::io_service *_io_service,
                         lt_session_callback *_cb);

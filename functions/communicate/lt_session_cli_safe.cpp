@@ -31,34 +31,9 @@ lt_session_cli_safe::lt_session_cli_safe(lt_session_cli_set *_set,
 void lt_session_cli_safe::disconnected_inthread()
 {
     assert_legal();
-    
     AWE_MODULE_ERROR("communicate", "disconnected_inthread in %p", this);
-    long pending = pending_cnt;
-    if ( pending != 0 )
-    {
-        usleep(1000);
-        if ( ++wait_disconn_num > MAX_DICONNECT_WAIT_NUM )
-        {
-            AWE_MODULE_WARN("communicate",
-                            "disconnected_inthread wait too long %p",
-                            this);
-            wait_disconn_num = 0;
-        }
-        
-        discon_pool.submit_task(
-                boost::bind(&lt_session_cli_safe::disconnected_inthread,
-                            this));
-        
-    }
-    else
-    {
-        AWE_MODULE_INFO("communicate",
-                        "disconnected_inthread before notice %p",
-                        this);
-        cb->disconnected(this);
-        assert_queue_empy();
-        AWE_MODULE_INFO("communicate", "disconnected_inthread out");
-    }
+    cb->disconnected(this);
+    AWE_MODULE_ERROR("communicate", "disconnected_inthread in %p", this);
 }
 
 
@@ -66,9 +41,9 @@ void lt_session_cli_safe::rcv_done(lt_session *sess, lt_data_t *received_data,
                                    int error)
 {
     assert_legal();
-    if(error)
+    if ( error )
     {
-        AWE_MODULE_ERROR("communicate", "rcv_done err[%d] %p",error, sess);
+        AWE_MODULE_ERROR("communicate", "rcv_done err[%d] %p", error, sess);
     }
     cb->rcv_done(sess, received_data, error);
     __sync_sub_and_fetch(&pending_cnt, 1);
@@ -86,7 +61,7 @@ lt_session_cli_safe::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
 
 void lt_session_cli_safe::disconnected(lt_session *sess)
 {
-    lt_session_cli_safe * sess_this = dynamic_cast<lt_session_cli_safe *>(sess);
+    lt_session_cli_safe *sess_this = dynamic_cast<lt_session_cli_safe *>(sess);
     assert(sess == sess_this);
     is_down_connected = false;
     AWE_MODULE_INFO("communicate",
@@ -132,4 +107,35 @@ void lt_session_cli_safe::snd(lt_data_t *data)
     lt_session::snd(data);
     AWE_MODULE_DEBUG("communicate",
                      "after snd lt_session_cli_safe::snd sess %p", this);
+}
+
+lt_session_cli_safe::~lt_session_cli_safe()
+{
+    clear();
+    long pending = 0;
+    do
+    {
+        pending = pending_cnt;
+        if ( pending != 0 )
+        {
+            usleep(1000);
+            if ( ++wait_disconn_num > MAX_DICONNECT_WAIT_NUM )
+            {
+                AWE_MODULE_WARN("communicate",
+                                "~lt_session_cli_safe wait too long %p",
+                                this);
+                wait_disconn_num = 0;
+            }
+            continue;
+        }
+        else
+        {
+            AWE_MODULE_INFO("communicate",
+                            "~lt_session_cli_safe before assert_queue_empy %p",
+                            this);
+        
+            assert_queue_empy();
+            AWE_MODULE_INFO("communicate", "~lt_session_cli_safe out");
+        }
+    }while(pending);
 }

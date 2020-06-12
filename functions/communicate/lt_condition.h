@@ -31,9 +31,8 @@ private:
     std::condition_variable cond;
     int                     error;
     lt_data_t               _data;
-    long long               func_ref = 0;
 public:
-    lt_condition() : error(0), stat(lt_condition_stat_notstart), _data(), ref(0)
+    lt_condition() : error(0), stat(lt_condition_stat_notstart), _data()
     {
         AWE_MODULE_DEBUG("cond",
                          "XXXXXXXXXXXXXXXX    lt_condition   XXXXXXXXXXXXXXXXXXX this %p",

@@ -37,6 +37,8 @@ class lt_session_description_imp : public lt_session_description
 private:
     void *description_internal_pri = nullptr;
 public:
+    virtual ~lt_session_description_imp() = default;
+    
     void set_session_private(void *pri);
     
     void *get_session_private() const;

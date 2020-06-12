@@ -22,7 +22,7 @@ public:
 
     void set_seconds(int sec);
 
-    ~lt_watch_dog();
+    virtual ~lt_watch_dog();
 
 public:
     void start_monitor();

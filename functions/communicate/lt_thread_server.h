@@ -16,7 +16,7 @@ public:
 public:
     lt_thread_single(boost::asio::io_service *io_service);
     boost::asio::io_service *get_io_service();
-    ~lt_thread_single();
+    virtual ~lt_thread_single();
 };
 
 class lt_thread_server
@@ -30,7 +30,7 @@ private:
 public:
     lt_thread_server(int thread_num);
     boost::asio::io_service *get_io_service();
-    ~lt_thread_server();
+    virtual ~lt_thread_server();
 };
 
 

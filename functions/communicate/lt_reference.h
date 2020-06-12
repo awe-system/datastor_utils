@@ -11,6 +11,7 @@ private:
 public:
     explicit lt_reference();
     
+    virtual ~lt_reference() = default;
     bool get_check_first();
 
     lt_reference* get();

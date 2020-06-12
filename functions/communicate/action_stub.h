@@ -10,6 +10,7 @@ private:
     std::atomic_ullong snd_num;
     std::atomic_ullong rcv_num;
 public:
+    virtual ~action_stub() = default;
     action_stub();
 
     action_stub(const action_stub &other);

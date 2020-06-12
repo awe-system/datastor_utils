@@ -142,7 +142,7 @@ public:
         return _data;
     }
     
-    ~lt_condition()
+    virtual ~lt_condition()
     {
         AWE_MODULE_DEBUG("cond",
                          "XXXXXXXXXXXXXXXX    ~lt_condition   XXXXXXXXXXXXXXXXXXX this %p",

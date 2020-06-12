@@ -15,8 +15,6 @@ enum lt_condition_stat_t
 
 class lt_condition : public ServerSan_Algo::algo_obj
 {
-    lt_condition_stat_t stat = lt_condition_stat_notstart;
-    std::mutex          lock;
 public:
     void from_json_obj(const json_obj &obj) override
     {
@@ -28,6 +26,8 @@ public:
     }
 
 private:
+    lt_condition_stat_t stat = lt_condition_stat_notstart;
+    std::mutex          lock;
     std::condition_variable cond;
     int                     error;
     lt_data_t               _data;
@@ -94,9 +94,9 @@ public:
                              this);
             
             cond.notify_one();
-            could_destroy = true;
             AWE_MODULE_DEBUG("cond",
                              "+-+-+-is_to_wait after notify_one this %p", this);
+            could_destroy = true;
         }
         else if ( stat == lt_condition_stat_notstart )
         {
@@ -110,6 +110,7 @@ public:
                              this);
             abort();
         }
+        lck.unlock();
     }
     
     void notify()
@@ -126,9 +127,9 @@ public:
                              "+-+-+-is_to_wait before notify_one this %p",
                              this);
             cond.notify_one();
-            could_destroy = true;
             AWE_MODULE_DEBUG("cond",
                              "+-+-+-is_to_wait after notify_one this %p", this);
+            could_destroy = true;
         }
         else if ( stat == lt_condition_stat_notstart )
         {
@@ -142,7 +143,7 @@ public:
                              this);
             abort();
         }
-        
+        lck.unlock();
     }
     
     const lt_data_t &get_data() const

@@ -31,8 +31,10 @@ private:
     std::condition_variable cond;
     int                     error;
     lt_data_t               _data;
+    bool                    could_destroy = true;
 public:
-    lt_condition() : error(0), stat(lt_condition_stat_notstart),_data()
+    lt_condition() : error(0), stat(lt_condition_stat_notstart),_data(),
+                     could_destroy(true)
     {
         AWE_MODULE_DEBUG("cond",
                          "XXXXXXXXXXXXXXXX    lt_condition   XXXXXXXXXXXXXXXXXXX this %p",
@@ -52,6 +54,7 @@ public:
             stat = lt_condition_stat_waiting;
             AWE_MODULE_DEBUG("cond", "+-+-+-is_to_wait before wait this %p",
                              this);
+            could_destroy = false;
             cond.wait(lck);
             AWE_MODULE_DEBUG("cond", "+-+-+-is_to_wait after wait this %p",
                              this);
@@ -91,6 +94,7 @@ public:
                              this);
             
             cond.notify_one();
+            could_destroy = true;
             AWE_MODULE_DEBUG("cond",
                              "+-+-+-is_to_wait after notify_one this %p", this);
         }
@@ -122,6 +126,7 @@ public:
                              "+-+-+-is_to_wait before notify_one this %p",
                              this);
             cond.notify_one();
+            could_destroy = true;
             AWE_MODULE_DEBUG("cond",
                              "+-+-+-is_to_wait after notify_one this %p", this);
         }
@@ -150,6 +155,16 @@ public:
         AWE_MODULE_DEBUG("cond",
                          "XXXXXXXXXXXXXXXX    ~lt_condition   XXXXXXXXXXXXXXXXXXX this %p",
                          this);
+        std::unique_lock<std::mutex> lck(lock);
+        while(!could_destroy)
+        {
+            lck.unlock();
+            usleep(1000);
+            lck.lock();
+        }
+        AWE_MODULE_DEBUG("cond",
+                             "XXXXXXXXXXXXXXXX    ~lt_condition   XXXXXXXXXXXXXXXXXXX this %p",
+                             this);
     }
 };
 

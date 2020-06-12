@@ -10,10 +10,10 @@
 class lt_data_t
 {
 public:
-    unsigned long _length;
+    unsigned long _length =0;
 private:
-    unsigned char *_buf_from_outside;
-    unsigned char *_buf_self_generated;
+    unsigned char *_buf_from_outside = nullptr;
+    unsigned char *_buf_self_generated = nullptr;
     void *private_data = nullptr;
     std::vector<void *> data_stack;
 
@@ -33,12 +33,8 @@ public:
     {
     }
 
-    lt_data_t(const lt_data_t &other): _length(other._length),_buf_from_outside(nullptr), _buf_self_generated(NULL)
+    lt_data_t(const lt_data_t &other): _length(other._length),_buf_from_outside(nullptr), _buf_self_generated(nullptr)
     {
-        if(_length == 0)
-        {
-            return ;
-        }
         if ( other.is_buf_from_outside())
         {
             _buf_from_outside = other._buf_from_outside;
@@ -48,8 +44,11 @@ public:
         else
         {
             _length = other._length;
-            realloc_buf();
-            memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
+            if(_length)
+            {
+                realloc_buf();
+                memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
+            }
         }
     }
 
@@ -64,7 +63,7 @@ public:
         else
         {
             _length = other._length;
-        
+            _buf_from_outside = _buf_self_generated = nullptr;
             realloc_buf();
             memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
             
@@ -260,8 +259,9 @@ private:
         if ( _buf_self_generated )
         {
             free(_buf_self_generated);
-            _buf_self_generated = nullptr;
         }
+        _buf_self_generated = nullptr;
+        _buf_from_outside = nullptr;
     }
 
 };

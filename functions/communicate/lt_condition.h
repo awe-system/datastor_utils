@@ -26,15 +26,14 @@ public:
     }
 
 private:
-    lt_condition_stat_t stat = lt_condition_stat_notstart;
-    std::mutex          lock;
+    lt_condition_stat_t     stat     = lt_condition_stat_notstart;
+    std::mutex              lock;
     std::condition_variable cond;
     int                     error;
     lt_data_t               _data;
-    bool                    could_destroy = true;
+    long long               func_ref = 0;
 public:
-    lt_condition() : error(0), stat(lt_condition_stat_notstart),_data(),
-                     could_destroy(true)
+    lt_condition() : error(0), stat(lt_condition_stat_notstart), _data(), ref(0)
     {
         AWE_MODULE_DEBUG("cond",
                          "XXXXXXXXXXXXXXXX    lt_condition   XXXXXXXXXXXXXXXXXXX this %p",
@@ -54,8 +53,10 @@ public:
             stat = lt_condition_stat_waiting;
             AWE_MODULE_DEBUG("cond", "+-+-+-is_to_wait before wait this %p",
                              this);
-            could_destroy = false;
-            cond.wait(lck);
+            while(stat != lt_condition_stat_notified)
+            {
+                cond.wait(lck);
+            }
             AWE_MODULE_DEBUG("cond", "+-+-+-is_to_wait after wait this %p",
                              this);
         }
@@ -92,11 +93,10 @@ public:
             AWE_MODULE_DEBUG("cond",
                              "+-+-+-is_to_wait before notify_one this %p",
                              this);
-            
-            cond.notify_one();
+            stat = lt_condition_stat_notified;
             AWE_MODULE_DEBUG("cond",
                              "+-+-+-is_to_wait after notify_one this %p", this);
-            could_destroy = true;
+            cond.notify_all();
         }
         else if ( stat == lt_condition_stat_notstart )
         {
@@ -110,7 +110,6 @@ public:
                              this);
             abort();
         }
-        lck.unlock();
     }
     
     void notify()
@@ -126,10 +125,10 @@ public:
             AWE_MODULE_DEBUG("cond",
                              "+-+-+-is_to_wait before notify_one this %p",
                              this);
+            stat = lt_condition_stat_notified;
             cond.notify_one();
             AWE_MODULE_DEBUG("cond",
                              "+-+-+-is_to_wait after notify_one this %p", this);
-            could_destroy = true;
         }
         else if ( stat == lt_condition_stat_notstart )
         {
@@ -143,7 +142,6 @@ public:
                              this);
             abort();
         }
-        lck.unlock();
     }
     
     const lt_data_t &get_data() const
@@ -156,16 +154,6 @@ public:
         AWE_MODULE_DEBUG("cond",
                          "XXXXXXXXXXXXXXXX    ~lt_condition   XXXXXXXXXXXXXXXXXXX this %p",
                          this);
-        std::unique_lock<std::mutex> lck(lock);
-        while(!could_destroy)
-        {
-            lck.unlock();
-            usleep(1000);
-            lck.lock();
-        }
-        AWE_MODULE_DEBUG("cond",
-                             "XXXXXXXXXXXXXXXX    ~lt_condition   XXXXXXXXXXXXXXXXXXX this %p",
-                             this);
     }
 };
 

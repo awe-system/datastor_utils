@@ -82,7 +82,7 @@ public:
             _data = data;
         }
         AWE_MODULE_DEBUG("cond",
-                         "***************************notify before lock");
+                         "***************************notify before lock %p", this);
         std::unique_lock<std::mutex> lck(lock);
         AWE_MODULE_DEBUG("cond",
                          "***************************notify after lock this %p",
@@ -114,7 +114,7 @@ public:
     void notify()
     {
         AWE_MODULE_DEBUG("cond",
-                         "***************************notify before lock");
+                         "***************************notify before lock %p", this);
         std::unique_lock<std::mutex> lck(lock);
         AWE_MODULE_DEBUG("cond",
                          "***************************notify after lock this %p",

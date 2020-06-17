@@ -139,9 +139,12 @@ lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
     */
     
     AWE_MODULE_DEBUG("communicate",
-                     "enter lt_client_service::snd_done_inthread sess [%p] snddone no err",
-                     sess);
+                     "enter lt_client_service::snd_done_inthread sess [%p] sent_data[%p] snddone no err",
+                     sess,sent_data);
     lt_data_t *received_data = new lt_data_t();
+    AWE_MODULE_DEBUG("communicate",
+                     "before snd sess [%p] snd_data[%p]received_data[%p] snddone no err",
+                     sess,sent_data, received_data);
     received_data->push_private(sent_data);
     
     lt_session_cli_safe *session = (lt_session_cli_safe *) sess;

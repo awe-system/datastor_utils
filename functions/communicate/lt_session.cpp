@@ -19,14 +19,14 @@ lt_session::lt_session(boost::asio::io_service *_io_service,
 void lt_session::rcv(lt_data_t *data)
 {
     assert_legal();
-    AWE_MODULE_DEBUG("comunicate", "lt_session::rcv_done %p data[%p]", this,
+    AWE_MODULE_DEBUG("comunicate", "lt_session::rcv %p data[%p]", this,
                      data);
     if ( is_connected() )
     {
-        AWE_MODULE_DEBUG("comunicate", "lt_session::rcv_done %p data[%p]", this,
+        AWE_MODULE_DEBUG("comunicate", "lt_session::rcv %p data[%p]", this,
                           data);
         start_rcv(data);
-        AWE_MODULE_DEBUG("comunicate", "lt_session::rcv_done %p data[%p]", this,
+        AWE_MODULE_DEBUG("comunicate", "lt_session::rcv %p data[%p]", this,
                          data);
     }
     else
@@ -188,9 +188,9 @@ void lt_session::rcv_data_done_unsafe(lt_data_t *data,
         err = boost::asio::error::network_down;
     }
     
-    if ( error )
+    if ( err )
     {
-        AWE_MODULE_INFO("communicate", "rcv_done sess %p err [%d]", this, err);
+        AWE_MODULE_INFO("communicate", "rcv_done sess %p err [%d] data [%p]", this, err,data);
     }
     AWE_MODULE_DEBUG("communicate", "rcv_data_done_unsafe sess %p data [%p]", this, data);
     rcv_done(data, err);

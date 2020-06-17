@@ -45,7 +45,13 @@ void lt_session_cli_safe::rcv_done(lt_session *sess, lt_data_t *received_data,
     {
         AWE_MODULE_ERROR("communicate", "rcv_done err[%d] %p", error, sess);
     }
+    AWE_MODULE_DEBUG("communicate",
+                     "lt_session_cli_safe::rcv_done err[%d] sess[%pp received_data[%p]",
+                     error, sess, received_data);
     cb->rcv_done(sess, received_data, error);
+    AWE_MODULE_DEBUG("communicate",
+                     "lt_session_cli_safe::rcv_done err[%d] sess[%pp received_data[%p]",
+                     error, sess, received_data);
     __sync_sub_and_fetch(&pending_cnt, 1);
     set->put_session_internal(this);
 }
@@ -54,7 +60,13 @@ void
 lt_session_cli_safe::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
 {
     assert_legal();
+    AWE_MODULE_DEBUG("communicate",
+                     "lt_session_cli_safe::snd_done err[%d] sess[%pp sent_data[%p]",
+                     error, sess, sent_data);
     cb->snd_done(sess, sent_data, error);
+    AWE_MODULE_DEBUG("communicate",
+                     "lt_session_cli_safe::snd_done err[%d] sess[%pp sent_data[%p]",
+                     error, sess, sent_data);
     __sync_sub_and_fetch(&pending_cnt, 1);
     set->put_session_internal(this);
 }
@@ -78,7 +90,8 @@ void lt_session_cli_safe::connected(lt_session *sess)
 void lt_session_cli_safe::rcv(lt_data_t *data)
 {
     AWE_MODULE_DEBUG("communicate",
-                     "before rcv lt_session_cli_safe::snd sess %p", this);
+                     "before rcv lt_session_cli_safe::snd sess %p data[%p]",
+                     this, data);
     if ( !is_down_connected )
     {
         cb->rcv_done(this, data, -RPC_ERROR_TYPE_NETDOWN_ALREADY);
@@ -89,7 +102,8 @@ void lt_session_cli_safe::rcv(lt_data_t *data)
     __sync_add_and_fetch(&pending_cnt, 1);
     lt_session::rcv(data);
     AWE_MODULE_DEBUG("communicate",
-                     "after rcv lt_session_cli_safe::snd sess %p", this);
+                     "after rcv lt_session_cli_safe::snd sess %p data[%p]",
+                     this, data);
 }
 
 void lt_session_cli_safe::snd(lt_data_t *data)
@@ -133,9 +147,9 @@ lt_session_cli_safe::~lt_session_cli_safe()
             AWE_MODULE_INFO("communicate",
                             "~lt_session_cli_safe before assert_queue_empy %p",
                             this);
-        
+            
             assert_queue_empy();
             AWE_MODULE_INFO("communicate", "~lt_session_cli_safe out");
         }
-    }while(pending);
+    } while ( pending );
 }

@@ -87,23 +87,23 @@ void lt_session_cli_safe::connected(lt_session *sess)
     cb->connected(sess);
 }
 
-void lt_session_cli_safe::rcv(lt_data_t *data)
+void lt_session_cli_safe::rcv(lt_data_t *rcv_data)
 {
     AWE_MODULE_DEBUG("communicate",
                      "before rcv lt_session_cli_safe::snd sess %p data[%p]",
-                     this, data);
+                     this, rcv_data);
     if ( !is_down_connected )
     {
-        cb->rcv_done(this, data, -RPC_ERROR_TYPE_NETDOWN_ALREADY);
+        cb->rcv_done(this, rcv_data, -RPC_ERROR_TYPE_NETDOWN_ALREADY);
         return;
     }
     
     set->get_session_internal(this);
     __sync_add_and_fetch(&pending_cnt, 1);
-    lt_session::rcv(data);
+    lt_session::rcv(rcv_data);
     AWE_MODULE_DEBUG("communicate",
                      "after rcv lt_session_cli_safe::snd sess %p data[%p]",
-                     this, data);
+                     this, rcv_data);
 }
 
 void lt_session_cli_safe::snd(lt_data_t *data)

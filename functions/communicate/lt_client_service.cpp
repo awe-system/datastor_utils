@@ -72,36 +72,21 @@ lt_client_service::rcv_done_nolock(lt_session *sess, lt_data_t *received_data,
                          "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::rcv_done_nolock error[%d]",
                          error);
     }
-    /*
-    if( !rcvdata_set.erase(received_data))
+   
+    if(!error)
     {
-        AWE_MODULE_DEBUG("communicate", "leave lt_client_service::rcv_done %p error no received_data %p", sess, received_data);
-        return;
-    }
-     */
-    lt_data_t *sent_data = (lt_data_t *) received_data->pop_private();
-    //std::cout << "sent_data address" << sent_data << std::endl;
-    if ( error )
-    {
-        AWE_MODULE_ERROR("communicate",
-                         "before handler_by_input %p error %d sent_data %p received_data %p",
-                         sess, error, sent_data, received_data);
-        handler_by_input(sent_data, error);
-        AWE_MODULE_ERROR("communicate",
-                         "after handler_by_input %p error %d sent_data %p received_data %p",
-                         sess, error, sent_data, received_data);
+        AWE_MODULE_DEBUG("communicate",
+                         "before handler_by_output %p no error received_data [%p]",
+                         sess, received_data);
+        handler_by_output(received_data);
+        AWE_MODULE_DEBUG("communicate",
+                         "before handler_by_output %p no error received_data [%p]",
+                         sess, received_data);
     }
     else
     {
-        AWE_MODULE_DEBUG("communicate",
-                         "before handler_by_output %p no error received_data [%p] sent_data [%p]",
-                         sess, received_data, sent_data);
-        handler_by_output(received_data);
-        AWE_MODULE_DEBUG("communicate",
-                         "before handler_by_output %p no error received_data [%p] sent_data [%p]",
-                         sess, received_data, sent_data);
+        handler_rcvd();
     }
-    delete sent_data;
     delete received_data;
 }
 
@@ -126,14 +111,12 @@ lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
         AWE_MODULE_DEBUG("communicate",
                          "after snd_done_inthread handler_by_input sess [%p] error %d sent_data %p",
                          sess, error, sent_data);
-        delete sent_data;
         return;
     }
-    
+   
     /*
     if (!is_connect) {
         handler_by_input(sent_data, -RPC_ERROR_TYPE_NET_BROKEN);
-        delete sent_data;
         return;
     }
     */
@@ -145,12 +128,10 @@ lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
     AWE_MODULE_DEBUG("communicate",
                      "before snd sess [%p] snd_data[%p]received_data[%p] snddone no err",
                      sess,sent_data, received_data);
-    received_data->push_private(sent_data);
     
     lt_session_cli_safe *session = (lt_session_cli_safe *) sess;
     
     session->rcv(received_data);
-    
     /*
      if ( rcvdata_set.insert(received_data))
      {

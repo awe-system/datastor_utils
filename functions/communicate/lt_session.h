@@ -134,7 +134,7 @@ protected:
 public:
     lt_session(boost::asio::io_service *_io_service, lt_session_callback *_cb);
     
-    virtual void rcv(lt_data_t *data);
+    virtual void rcv(lt_data_t *rcv_data);
     
     virtual void snd(lt_data_t *data);
     

@@ -16,32 +16,32 @@ lt_session::lt_session(boost::asio::io_service *_io_service,
 //    std::cout << "session : this : " << __FUNCTION__ << this << std::endl;
 }
 
-void lt_session::rcv(lt_data_t *data)
+void lt_session::rcv(lt_data_t *rcv_data)
 {
     assert_legal();
     AWE_MODULE_DEBUG("comunicate", "lt_session::rcv %p data[%p]", this,
-                     data);
+                     rcv_data);
     if ( is_connected() )
     {
         AWE_MODULE_DEBUG("comunicate", "lt_session::rcv %p data[%p]", this,
-                          data);
-        start_rcv(data);
+                          rcv_data);
+        start_rcv(rcv_data);
         AWE_MODULE_DEBUG("comunicate", "lt_session::rcv %p data[%p]", this,
-                         data);
+                         rcv_data);
     }
     else
     {
         AWE_MODULE_ERROR("comunicate", "lt_session::rcv_done %p err [%d] data[%p]", this,
-                         -RPC_ERROR_TYPE_CONNECT_FAIL,data);
+                         -RPC_ERROR_TYPE_CONNECT_FAIL,rcv_data);
         clear();
         AWE_MODULE_ERROR("comunicate", "lt_session::rcv_done %p err [%d] data[%p]", this,
-                         -RPC_ERROR_TYPE_CONNECT_FAIL, data);
-        cb->rcv_done(this, data, -RPC_ERROR_TYPE_CONNECT_FAIL);
+                         -RPC_ERROR_TYPE_CONNECT_FAIL, rcv_data);
+        cb->rcv_done(this, rcv_data, -RPC_ERROR_TYPE_CONNECT_FAIL);
         AWE_MODULE_ERROR("comunicate", "lt_session::rcv_done %p err [%d] data[%p]", this,
-                         -RPC_ERROR_TYPE_CONNECT_FAIL, data);
+                         -RPC_ERROR_TYPE_CONNECT_FAIL, rcv_data);
     }
     AWE_MODULE_DEBUG("comunicate", "lt_session::rcv_done %p data[%p]", this,
-                     data);
+                     rcv_data);
 }
 
 void lt_session::snd(lt_data_t *data)

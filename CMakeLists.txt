@@ -155,7 +155,8 @@ set(LOG_FILES
         log/src/log4cpp_src/AbortAppender.cpp
 
         data/lt_data/lt_mempool.h
-        functions/checksum/MD5.cpp functions/checksum/MD5.h)
+        functions/checksum/MD5.cpp functions/checksum/MD5.h
+        functions/communicate/safe_voidp_map.cpp functions/communicate/safe_voidp_map.h)
 
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -183,6 +184,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif ()
 
 INSTALL(FILES functions/lt_function/thread_pool.hpp
+        functions/communicate/safe_voidp_map.h
         functions/communicate/action_stub.h
         functions/communicate/lt_async_2safe_async.h
         functions/communicate/lt_bidirectional_map.hpp

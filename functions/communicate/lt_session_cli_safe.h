@@ -47,7 +47,7 @@ public:
     //NOTE： disconnect 只会被调用一次
     void disconnect() override;
     
-    void rcv(lt_data_t *data) override;
+    void rcv(lt_data_t *rcv_data) override;
     
     void snd(lt_data_t *data) override;
 };

@@ -55,6 +55,8 @@ private:
     
     virtual void handler_by_input(lt_data_t *sent_data, int error) = 0;
     
+    virtual void handler_rcvd() = 0;
+    
 };
 
 

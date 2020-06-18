@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <string>
 #include <vector>
+#include <awe_log.h>
 
 //#include "../log/include/awe_log.h"
 class lt_data_t
@@ -20,21 +21,25 @@ private:
 public:
     lt_data_t() : _length(0),_buf_from_outside(NULL), _buf_self_generated(NULL)
     {
+        AWE_MODULE_DEBUG("lt_data", "lt_data_t() %p", this);
     }
 
     lt_data_t(unsigned long length) :
             _length(length),_buf_from_outside(NULL), _buf_self_generated(NULL)
     {
+        AWE_MODULE_DEBUG("lt_data", "lt_data_t() %p length [%ld]", this, length);
         realloc_buf();
     }
 
     lt_data_t(unsigned long length, unsigned char *buf) :
             _length(length),_buf_from_outside(buf), _buf_self_generated(NULL)
     {
+        AWE_MODULE_DEBUG("lt_data", "lt_data_t() %p length [%ld] buf[%p]", this, length, buf);
     }
 
     lt_data_t(const lt_data_t &other): _length(other._length),_buf_from_outside(nullptr), _buf_self_generated(nullptr)
     {
+        
         if ( other.is_buf_from_outside())
         {
             _buf_from_outside = other._buf_from_outside;
@@ -50,6 +55,7 @@ public:
                 memcpy(_buf_from_outside, other._buf_from_outside, sizeof(_length) + _length);
             }
         }
+        AWE_MODULE_DEBUG("lt_data", "lt_data_t() %p length [%ld] _buf_from_outside[%p]", this, _length, _buf_from_outside);
     }
 
     lt_data_t &operator=(const lt_data_t &other)
@@ -241,6 +247,7 @@ public:
     ~lt_data_t()
     {
         free_buf();
+        AWE_MODULE_DEBUG("lt_data", "~lt_data_t() %p", this);
     }
 
 private:

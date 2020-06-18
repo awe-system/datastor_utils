@@ -158,8 +158,8 @@ lt_client_service::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
     if(error)
     {
         AWE_MODULE_ERROR("communicate",
-                         "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::snd_done error[%d]",
-                         error);
+                         "<<<<<<<<<<<<<<<<<<<<<<<<lt_client_service::snd_done error[%d] sent_data [%p]",
+                         error, sent_data);
     }
     pool.submit_task(
             boost::bind(&lt_client_service::snd_done_inthread, this, sess,

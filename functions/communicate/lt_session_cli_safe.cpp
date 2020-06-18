@@ -153,3 +153,13 @@ lt_session_cli_safe::~lt_session_cli_safe()
         }
     } while ( pending );
 }
+
+void lt_session_cli_safe::set_cli(void *cli)
+{
+    cli_pri = cli;
+}
+
+void *lt_session_cli_safe::get_cli()
+{
+    return cli_pri;
+}

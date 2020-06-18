@@ -12,6 +12,7 @@ class lt_session_cli_set;
 
 class lt_session_cli_safe : public lt_session_cli, public lt_session_callback
 {
+    void *cli_pri = nullptr;
     long wait_disconn_num = 0;
 private:
     int connect_cnt =0;
@@ -28,6 +29,8 @@ public:
     void connected(lt_session *sess) override;
 
 public:
+    void set_cli(void * cli);
+    void* get_cli();
     void
     rcv_done(lt_session *sess, lt_data_t *received_data, int error) override;
     

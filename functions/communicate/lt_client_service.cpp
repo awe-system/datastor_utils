@@ -78,14 +78,14 @@ lt_client_service::rcv_done_nolock(lt_session *sess, lt_data_t *received_data,
         AWE_MODULE_DEBUG("communicate",
                          "before handler_by_output %p no error received_data [%p]",
                          sess, received_data);
-        handler_by_output(received_data);
+        handler_by_output(dynamic_cast<lt_session_cli_safe *>(sess), received_data);
         AWE_MODULE_DEBUG("communicate",
                          "before handler_by_output %p no error received_data [%p]",
                          sess, received_data);
     }
     else
     {
-        handler_rcvd();
+        handler_rcvd(dynamic_cast<lt_session_cli_safe *>(sess));
     }
     delete received_data;
 }
@@ -107,7 +107,7 @@ lt_client_service::snd_done_inthread(lt_session *sess, lt_data_t *sent_data,
         AWE_MODULE_DEBUG("communicate",
                          "before snd_done_inthread handler_by_input sess [%p] error %d sent_data %p",
                          sess, error, sent_data);
-        handler_by_input(sent_data, error);
+        handler_by_input(dynamic_cast<lt_session_cli_safe *>(sess), sent_data, error);
         AWE_MODULE_DEBUG("communicate",
                          "after snd_done_inthread handler_by_input sess [%p] error %d sent_data %p",
                          sess, error, sent_data);

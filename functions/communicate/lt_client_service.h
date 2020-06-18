@@ -50,12 +50,15 @@ protected:
     
     virtual void connected(lt_session *sess) override;
 
-private:
-    virtual void handler_by_output(lt_data_t *received_data) = 0;
+public:
+    virtual void
+    handler_by_output(lt_session_cli_safe *sess, lt_data_t *received_data) = 0;
     
-    virtual void handler_by_input(lt_data_t *sent_data, int error) = 0;
+    virtual void
+    handler_by_input(lt_session_cli_safe *sess, lt_data_t *sent_data,
+                     int error) = 0;
     
-    virtual void handler_rcvd() = 0;
+    virtual void handler_rcvd(lt_session_cli_safe *sess) = 0;
     
 };
 

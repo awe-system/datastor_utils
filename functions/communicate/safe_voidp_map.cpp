@@ -30,7 +30,9 @@ void *safe_voidp_map::out(void *key)
     auto it = _map.find(key);
     if(it == _map.end()) return nullptr;
     assert(it->second);
-    return it->second;
+    void * res = it->second;
+    _map.erase(it);
+    return res;
 }
 
 void safe_voidp_map::cp(std::map<void *, void *> &out_map)

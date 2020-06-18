@@ -20,27 +20,9 @@ void lt_session::rcv(lt_data_t *rcv_data)
 {
     assert_legal();
     AWE_MODULE_DEBUG("comunicate", "lt_session::rcv %p data[%p]", this,
-                     rcv_data);
-    if ( is_connected() )
-    {
-        AWE_MODULE_DEBUG("comunicate", "lt_session::rcv %p data[%p]", this,
-                          rcv_data);
-        start_rcv(rcv_data);
-        AWE_MODULE_DEBUG("comunicate", "lt_session::rcv %p data[%p]", this,
-                         rcv_data);
-    }
-    else
-    {
-        AWE_MODULE_ERROR("comunicate", "lt_session::rcv_done %p err [%d] data[%p]", this,
-                         -RPC_ERROR_TYPE_CONNECT_FAIL,rcv_data);
-        clear();
-        AWE_MODULE_ERROR("comunicate", "lt_session::rcv_done %p err [%d] data[%p]", this,
-                         -RPC_ERROR_TYPE_CONNECT_FAIL, rcv_data);
-        cb->rcv_done(this, rcv_data, -RPC_ERROR_TYPE_CONNECT_FAIL);
-        AWE_MODULE_ERROR("comunicate", "lt_session::rcv_done %p err [%d] data[%p]", this,
-                         -RPC_ERROR_TYPE_CONNECT_FAIL, rcv_data);
-    }
-    AWE_MODULE_DEBUG("comunicate", "lt_session::rcv_done %p data[%p]", this,
+                      rcv_data);
+    start_rcv(rcv_data);
+    AWE_MODULE_DEBUG("comunicate", "lt_session::rcv %p data[%p]", this,
                      rcv_data);
 }
 
@@ -69,27 +51,14 @@ void lt_session::start_rcv(lt_data_t *data)
     assert_legal();
     AWE_MODULE_DEBUG("communicate", "lt_session::start_rcv sess %p data [%p]",
                      this, data);
-    if ( is_connected() )
-    {
-        AWE_MODULE_DEBUG("communicate", "lt_session::start_rcv sess %p data [%p]",
-                         this, data);
-        rcv_queue.begin_to(
-                boost::bind(&lt_session::start_rcv_head_unsafe, this, data),
-                boost::bind(&lt_session::rcv_done, this, data,
-                            boost::asio::error::network_down));
-        AWE_MODULE_DEBUG("communicate", "lt_session::start_rcv sess %p data [%p]",
-                         this, data);
-    }
-    else
-    {
-        AWE_MODULE_INFO("communicate", "rcv_done sess %p error network_down",
-                        this);
-        rcv_done(data, boost::asio::error::network_down);
-        AWE_MODULE_DEBUG("communicate", "lt_session::start_rcv sess %p data [%p]",
-                         this, data);
-    }
+
+    rcv_queue.begin_to(
+            boost::bind(&lt_session::start_rcv_head_unsafe, this, data),
+            boost::bind(&lt_session::rcv_done, this, data,
+                        boost::asio::error::network_down));
     AWE_MODULE_DEBUG("communicate", "lt_session::start_rcv sess %p data [%p]",
                      this, data);
+  
 }
 
 void
@@ -99,7 +68,7 @@ lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error)
     AWE_MODULE_DEBUG("communicate", "--enter lt_session::rcv_done sess %p data [%p]",
                      this, data);
     unsigned err = 0;
-    if ( error || (!is_connected()) )
+    if ( error )
     {
         AWE_MODULE_DEBUG("communicate", "lt_session::rcv_done sess %p data [%p]",
                          this, data);
@@ -183,10 +152,6 @@ void lt_session::rcv_data_done_unsafe(lt_data_t *data,
     assert_legal();
     AWE_MODULE_DEBUG("communicate", "rcv_data_done_unsafe sess %p data [%p]", this, data);
     boost::system::error_code err = error;
-    if ( !is_connected() )
-    {
-        err = boost::asio::error::network_down;
-    }
     
     if ( err )
     {
@@ -245,20 +210,12 @@ void lt_session::start_snd_data(lt_data_t *data)
 {
     assert_legal();
     AWE_MODULE_DEBUG("communicate", "IN start_snd_data lt_session::start_snd_data sess %p data %p", this, data);
-    if ( is_connected() )
-    {
-        AWE_MODULE_DEBUG("communicate", "is_connected lt_session::start_snd_data sess %p data %p", this, data);
-        queue.begin_to(
-                boost::bind(&lt_session::start_snd_data_unsafe, this, data),
-                boost::bind(&lt_session::snd_data_done, this, data,
-                            boost::asio::error::network_down));
-    }
-    else
-    {
-        AWE_MODULE_DEBUG("communicate", "not connected lt_session::start_snd_data sess %p data %p", this, data);
-        clear();
-        snd_data_done(data, boost::asio::error::network_down);
-    }
+    
+    queue.begin_to(
+            boost::bind(&lt_session::start_snd_data_unsafe, this, data),
+            boost::bind(&lt_session::snd_data_done, this, data,
+                        boost::asio::error::network_down));
+   
     AWE_MODULE_DEBUG("communicate", "OUT start_snd_data lt_session::start_snd_data sess %p data %p", this, data);
 }
 
@@ -268,7 +225,7 @@ void lt_session::snd_data_done(lt_data_t *data,
     assert_legal();
     int err = 0;
     AWE_MODULE_DEBUG("communicate", "enter lt_session::snd_data_done sess %p data %p", this, data);
-    if ( error || (!is_connected()) )
+    if ( error )
     {
         AWE_MODULE_ERROR("communicate", "error lt_session::snd_data_done sess %p data %p", this, data);
         let_it_down();
@@ -313,10 +270,6 @@ void lt_session::snd_data_done_unsafe(lt_data_t *data,
     AWE_MODULE_DEBUG("communicate",
                      "--enter lt_session::snd_data_done_unsafe sess %p data %p", this, data);
     boost::system::error_code err = error;
-    if ( !is_connected() )
-    {
-        err = boost::asio::error::network_down;
-    }
     
     AWE_MODULE_DEBUG("communicate",
                      "lt_session::snd_data_done_unsafe sess %p data %p", this, data);

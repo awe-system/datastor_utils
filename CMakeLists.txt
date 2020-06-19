@@ -92,7 +92,11 @@ set(SOURCE_FILES
         algo/debug.h algo/debug.cpp
         README.md functions/lt_function/lt_safe_set.h algo/test_block_io_set.cpp algo/test_block_io_set.h algo/algo_sections.cpp algo/algo_sections.h algo/algo_bitmap.cpp algo/algo_bitmap.h algo/algo_bitmaps.cpp algo/algo_bitmaps.h
         data/lt_data/lt_stack.h
-        data/lt_data/lt_mempool.h)
+        data/lt_data/lt_mempool.h
+        algo/libaio_device_server.cpp
+        algo/libaio_device.cpp
+        algo/algo_aio_device.cpp
+        algo/algo_aio_device.h)
 
 set(LOG_FILES
         log/src/ss_logger.h
@@ -161,6 +165,7 @@ endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_library(datastor_utils SHARED ${SOURCE_FILES} ${LOG_FILES} )
     target_link_libraries(datastor_utils boost_system boost_date_time boost_thread)
+    target_link_libraries(datastor_utils aio)
 endif()
 
 set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
@@ -228,6 +233,9 @@ INSTALL(FILES algo/algo.h
         algo/test_algo_device.h
         algo/test_block_io_set.h
         algo/debug.h
+        algo/libaio_device_server.h
+        algo/libaio_device.h
+        algo/algo_aio_device.h
         DESTINATION ${include_dir}/algo)
 
 INSTALL(FILES conf/awe_conf/env.h DESTINATION  ${include_dir}/awe_conf)

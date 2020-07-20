@@ -1,5 +1,6 @@
 #include "algo.h"
 #include "algo_block_open_ref.h"
+#include "../log/include/awe_log.h"
 
 using namespace ServerSan_Algo;
 #include <iostream>
@@ -26,6 +27,7 @@ unsigned long long algo_block_open_ref::get_sector_num()const
 int algo_block_open_ref::open(void)
 {
 	int err = ERROR_TYPE_OK;
+    AWE_MODULE_DEBUG("open_ref", "open file");
 	std::unique_lock <std::mutex> lck(open_lock);
 	if(0 != ref)
 	{
@@ -40,8 +42,10 @@ int algo_block_open_ref::open(void)
 
 void algo_block_open_ref::close(void)
 {
-	int err = ERROR_TYPE_OK;
+    AWE_MODULE_DEBUG("open_ref", "close file");
+    int err = ERROR_TYPE_OK;
 	std::unique_lock <std::mutex> lck(open_lock);
+    assert(ref >= 0);
 	ref--;
 	if(0 == ref) org_block->close();
 }

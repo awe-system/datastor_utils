@@ -177,7 +177,10 @@ int test_algo_device::open(void)
     fd = ::open(path.c_str(), O_RDWR);
 //    printf("test_algo_device::open:fd = %d, errno = %d, path = %s\n", fd, errno, path.c_str());
     if ( fd == -1 )
-    { return -1; }
+    {
+        AWE_MODULE_DEBUG("algo", "open file failed : %d, path : %s", fd, path.c_str());
+        return -1;
+    }
     return 0;
 }
 
@@ -188,6 +191,7 @@ void test_algo_device::close(void)
         ::close(fd);
     }
     fd = -1;
+    AWE_MODULE_DEBUG("algo", "close file : %d, path : %s", fd, path.c_str());
     return;
 }
 
@@ -204,6 +208,7 @@ void test_algo_device::do_request(request_t *request)
         unsigned int real_len = 0;
         if ( fd == -1 )
         {
+            AWE_MODULE_DEBUG("algo", "open file failed : %d, path : %s", fd, path.c_str());
             throw ERROR_TYPE_NOTOPEN;
         }
         switch ( request->type )
@@ -259,6 +264,9 @@ void test_algo_device::do_request(request_t *request)
         if ( is_sync )
         {
             complete_request(request, -err);
+        } else {
+            std::unique_lock<std::mutex> lck(m);
+            io_request_queue.push_back(request);
         }
         
         return;

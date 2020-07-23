@@ -25,7 +25,7 @@ void lt_session_cli_safe::connect(const std::string &ip, unsigned short port)
 
 void lt_session_cli_safe::disconnect()
 {
-    if ( --out_connect_ref == 0 )
+    if ( out_connect_ref.fetch_sub(1) == 1 )
     {
         disconnect_last();
     }

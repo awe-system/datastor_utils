@@ -34,7 +34,7 @@ public:
 
     void start_accept();
 
-    int snd(lt_session_serv *sess, boost::function<int(lt_data_t *)> gendata_f);
+    int snd(lt_session_serv *sess, lt_data_t *data);
 
 private:
     void accepted(lt_session_serv *sess, const boost::system::error_code &error);

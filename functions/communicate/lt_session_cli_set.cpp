@@ -1,3 +1,4 @@
+#include <lt_function/thread_pool.hpp>
 #include "lt_session_cli_set.h"
 
 lt_session_cli_set::lt_session_cli_set(boost::asio::io_service *_io_service, lt_session_callback *_cb) :
@@ -6,15 +7,25 @@ lt_session_cli_set::lt_session_cli_set(boost::asio::io_service *_io_service, lt_
 
 }
 
+static data_channel::thread_pool delete_pool(1);
+
+void delete_func(lt_session_cli_safe *sess)
+{
+    std::cout << "delete session : " << sess << std::endl;
+    delete sess;
+}
+
 bool lt_session_cli_set::put_session(lt_session_cli_safe *sess)
 {
+    std::unique_lock<std::mutex> lck(m);
     bool to_destroy = sess->put();
     if ( to_destroy )
     {
-        std::unique_lock<std::mutex> lck(m);
+        std::cout << "-----" << __FUNCTION__ << " " << to_destroy << " " <<
+        std::this_thread::get_id() << std::endl;
         set.erase_val(sess);
         lck.unlock();
-        delete sess;
+        delete_pool.submit_task(boost::bind(&delete_func, sess));
     }
     return to_destroy;
 }

@@ -10,16 +10,16 @@ class lt_client_service : public lt_session_callback
 {
     std::mutex m;
     boost::asio::io_service *io_service;
-    lt_safe_set<lt_data_t *> rcvdata_set;
+    //lt_safe_set<lt_data_t *> rcvdata_set;
     data_channel::thread_pool pool;
+    //std::atomic_bool is_connect;
 public:
     lt_client_service(boost::asio::io_service *_io_service,
                       unsigned short port);
     
     void set_ioservice(boost::asio::io_service *_io_service);
     
-    int
-    snd(lt_session_cli_safe *sess, boost::function<int(lt_data_t *)> gendata_f);
+    int snd(lt_session_cli_safe *sess, lt_data_t *data);
 
 private:
     void

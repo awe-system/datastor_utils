@@ -1,5 +1,7 @@
+#include <lt_function/thread_pool.hpp>
 #include "lt_server_service.h"
 #include "../lt_function_error.h"
+#include "lt_session_cli_safe.h"
 
 
 void lt_server_service::connected(lt_session *sess)
@@ -22,24 +24,10 @@ void lt_server_service::rcv_done(lt_session *sess, lt_data_t *received_data, int
     sess->rcv(received_data);
 }
 
-
-int lt_server_service::snd(lt_session_serv *sess, boost::function<int(lt_data_t *)> gendata_f)
+int lt_server_service::snd(lt_session_serv *sess, lt_data_t *data)
 {
-    lt_data_t *data = NULL;
-    try
-    {
-        data = new lt_data_t();
-        int err = gendata_f(data);
-        if ( err )
-            throw err;
-        get_session(sess)->snd(data);
-        return RPC_ERROR_TYPE_OK;
-
-    } catch (...)
-    {
-        delete data;
-        return -RPC_ERROR_TYPE_MEMORY;
-    }
+    get_session(sess)->snd(data);
+    return RPC_ERROR_TYPE_OK;
 }
 
 void lt_server_service::snd_done(lt_session *sess, lt_data_t *sent_data, int error)
@@ -81,11 +69,18 @@ lt_server_service::lt_server_service(int thread_num, unsigned short _port, lt_se
 {
 }
 
+static data_channel::thread_pool ser_delete_pool(1);
+
+void ser_delete_func(lt_session_serv *sess)
+{
+    delete sess;
+}
+
 void lt_server_service::put_session(lt_session_serv *sess)
 {
     if ( sess->put())
     {
-        delete sess;
+        ser_delete_pool.submit_task(boost::bind(&ser_delete_func, sess));
     }
 }
 

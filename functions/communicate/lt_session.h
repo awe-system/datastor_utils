@@ -71,13 +71,13 @@ private:
 
     void start_rcv(lt_data_t *data);
 
-    void rcv_done(lt_data_t *data, const boost::system::error_code &error);
+    void rcv_done(lt_data_t *data, const boost::system::error_code error);
 
-    void rcv_head_done_unsafe(lt_data_t *data, const boost::system::error_code &error);
+    void rcv_head_done_unsafe(lt_data_t *data, const boost::system::error_code error);
 
     void start_rcv_data_unsafe(lt_data_t *data);
 
-    void rcv_data_done_unsafe(lt_data_t *data, const boost::system::error_code &error);
+    void rcv_data_done_unsafe(lt_data_t *data, const boost::system::error_code error);
 
 private:
     void start_snd_data_unsafe(lt_data_t *data);

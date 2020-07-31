@@ -38,7 +38,9 @@ libaio_device::libaio_device(std::string dev_path, int max_event_num, libaio_dev
 
 int libaio_device::open()
 {
-    int res = ::open(dev_path.c_str(), O_RDWR | O_DIRECT);
+    //int res = ::open(dev_path.c_str(), O_RDWR | O_DIRECT);
+    int res = ::open(dev_path.c_str(), O_RDWR);
+    std::cout << " dev path :" << dev_path << std::endl;
     if ( res == -1 )
     {
         return -1;
@@ -52,27 +54,6 @@ int libaio_device::open()
 void libaio_device::close()
 {
     ::close(dev_fd);
-    ::close(event_fd);
-    printf("libaio_device::close\n");
-    io_destroy(*libaio_context);
-    free(libaio_context);
-    device_service->erase_device(dev_fd);
-}
-
-unsigned long libaio_device::obtain_fd()
-{
-    return dev_fd;
-}
-
-unsigned long libaio_device::get_fd()
-{
-    ++fd_ref;
-    return dev_fd;
-}
-
-int libaio_device::put_fd()
-{
-    return --fd_ref;
 }
 
 void libaio_device::put_pending_size()
@@ -136,7 +117,6 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
     int submit_num = io_submit(*libaio_context, 1, &iocb_p);
     assert(submit_num == 1);
 
-    //device_service->submit_event(libaio_context);
 #else
     threads.submit_task(boost::bind(&test_device::fake_async_read, this, offset, len, buf, pri));
 #endif
@@ -159,6 +139,7 @@ void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned
     struct iocb *iocb_p = (iocb *) malloc(sizeof(struct iocb));
     memset(iocb_p, 0, sizeof(sizeof(struct iocb)));
     unsigned long off = offset << 9;
+    std::cout << "off:" << offset << std::endl;
     io_prep_pwrite(iocb_p, dev_fd, tmp_buf, len, off);
 
     event_ctx *ctx = new event_ctx(pri, false, iocb_p, buf);
@@ -169,7 +150,6 @@ void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned
     std::cout << "submit_num" << submit_num << std::endl;
     assert(submit_num == 1);
 
-    //    device_service->submit_event(libaio_context);
 #else
     threads.submit_task(boost::bind(&test_device::fake_async_write, this, offset, len, buf, pri));
 #endif
@@ -195,7 +175,7 @@ void libaio_device::get_io()
     uint64_t finished_aio;
     uint64_t i = 0;
     struct io_event event;
-    struct timespec timeout = {3, 0};
+    struct timespec timeout = {5, 0};
     if ( read(event_fd, &finished_aio, sizeof(finished_aio)) != sizeof(finished_aio))
     {
         printf("[est_device:get_io] read event_fd fial \n");
@@ -207,6 +187,7 @@ void libaio_device::get_io()
         int error = 0;
         if ( res < 1 )
         {
+            // io timeout or get events error;
             error = -1;
         }
 
@@ -224,6 +205,12 @@ void libaio_device::get_io()
         }
         delete ctx;
     }
+}
+
+libaio_device::~libaio_device() {
+    ::close(event_fd);
+    io_destroy(*libaio_context);
+    free(libaio_context);
 }
 
 

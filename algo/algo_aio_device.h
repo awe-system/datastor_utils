@@ -28,6 +28,8 @@ public:
 
     bool is_local() const override ;
 
+    string get_device_id(void) const override;
+
     int open(void) override ;
 
     void close(void) override ;

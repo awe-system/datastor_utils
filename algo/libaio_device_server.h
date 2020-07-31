@@ -14,18 +14,15 @@ class libaio_device_service
 private:
     int epollfd;
 
-    thread_pool threads;
-    devices_t devices;
+    data_channel::thread_pool threads;
 
-    std::mutex devices_mutex;
+    std::mutex epoll_mutex;
     struct epoll_event ev_ctl, event_buf[MAX_EPOLL_EVENT];
 
 public:
     libaio_device_service(int thread_num);
 
     void insert_device(unsigned long fd, libaio_device *device);
-
-    void erase_device(unsigned long fd);
 
     void get_epoll_event();
 

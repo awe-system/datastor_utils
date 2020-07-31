@@ -48,4 +48,7 @@ void algo_aio_device::read_done(void *pri, int error) {
     complete_request(static_cast<ServerSan_Algo::request_t*>(pri), error);
 }
 
+string algo_aio_device::get_device_id(void) const {
+    return serial_num_;
+}
 }

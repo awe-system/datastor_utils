@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #include <inttypes.h>
 
-#include "thread_pool.hpp"
+#include <lt_function/thread_pool.hpp>
 
 #define ALIGN_SIZE  512
 
@@ -38,7 +38,6 @@ public:
     }
 };
 
-
 class libaio_device
 {
 public:
@@ -52,7 +51,7 @@ private:
     io_context_t *libaio_context;
     std::atomic_int pending_size;
     libaio_device_service *device_service;
-    thread_pool threads;
+    data_channel::thread_pool threads;
 
 public:
     libaio_device(std::string dev_path, int max_event_num,
@@ -61,12 +60,6 @@ public:
     int open();
 
     void close();
-
-    unsigned long obtain_fd();
-
-    unsigned long get_fd();
-
-    int put_fd();
 
     int get_event_fd();
 
@@ -85,13 +78,10 @@ public:
     std::string &obtain_dev_path();
 
     void get_io();
+    ~libaio_device();
 
 private:
     void get_pending_size();
 };
-
-typedef std::map<unsigned long, libaio_device *> devices_t;
-typedef std::map<unsigned long, libaio_device *>::iterator devices_it_t;
-
 
 #endif //SS_NBD_TEST_DEVICE_H

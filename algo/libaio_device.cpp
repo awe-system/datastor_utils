@@ -1,7 +1,7 @@
 #include <libaio.h>
-#include <iostream>
 #include "libaio_device.h"
 #include "libaio_device_server.h"
+#include "../log/include/awe_log.h"
 
 #define USE_LIBAIO
 
@@ -17,32 +17,31 @@ libaio_device::libaio_device(std::string dev_path, int max_event_num, libaio_dev
     libaio_context = (io_context_t *) malloc(sizeof(io_context_t));
     if ( !libaio_context )
     {
-        printf("alloc libaio_context failed!\n");
+        AWE_MODULE_ERROR("aio", "alloc libaio_context failed");
         assert(libaio_context != NULL);
     }
     memset(libaio_context, 0, sizeof(io_context_t));
     res = io_setup(max_event_num, libaio_context);
     if ( res != 0 )
     {
-        printf("[io_setup] res= %d\n", res);
+        AWE_MODULE_ERROR("aio", "io set up failed : %d", res);
     }
     assert(res == 0);
 
     event_fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
     if ( event_fd == -1 )
     {
-        perror("eventfd----------");
+        AWE_MODULE_ERROR("aio", "create eventfd err");
         return;
     }
 }
 
 int libaio_device::open()
 {
-    //int res = ::open(dev_path.c_str(), O_RDWR | O_DIRECT);
-    int res = ::open(dev_path.c_str(), O_RDWR);
-    std::cout << " dev path :" << dev_path << std::endl;
+    int res = ::open(dev_path.c_str(), O_RDWR | O_DIRECT);
     if ( res == -1 )
     {
+        AWE_MODULE_ERROR("aio", "aio open file err path : %s", dev_path.c_str());
         return -1;
     }
 
@@ -98,7 +97,7 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
 #ifdef USE_LIBAIO
     void *buf_tmp = NULL;
     assert(len % 512 == 0);
-    printf("libaio_device::async_write\n");
+    //printf("libaio_device::async_write\n");
 
     struct iocb *iocb_p = (iocb *) malloc(sizeof(struct iocb));
     memset(iocb_p, 0, sizeof(sizeof(struct iocb)));
@@ -134,12 +133,11 @@ void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned
         perror("posix_memalign");
     }
 
-    printf("libaio_device::async_write\n");
     memcpy(tmp_buf, buf, len);
     struct iocb *iocb_p = (iocb *) malloc(sizeof(struct iocb));
     memset(iocb_p, 0, sizeof(sizeof(struct iocb)));
     unsigned long off = offset << 9;
-    std::cout << "off:" << offset << std::endl;
+    //std::cout << "off:" << offset << std::endl;
     io_prep_pwrite(iocb_p, dev_fd, tmp_buf, len, off);
 
     event_ctx *ctx = new event_ctx(pri, false, iocb_p, buf);
@@ -147,7 +145,7 @@ void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned
 
     io_set_eventfd(iocb_p, event_fd);
     int submit_num = io_submit(*libaio_context, 1, &iocb_p);
-    std::cout << "submit_num" << submit_num << std::endl;
+    //std::cout << "submit_num" << submit_num << std::endl;
     assert(submit_num == 1);
 
 #else

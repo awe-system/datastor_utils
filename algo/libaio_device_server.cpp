@@ -3,6 +3,7 @@
 //
 
 #include "libaio_device_server.h"
+#include "../log/include/awe_log.h"
 
 libaio_device_service::libaio_device_service(int thread_num) : threads(thread_num)
 {
@@ -38,7 +39,7 @@ void libaio_device_service::libaio_epoll_create()
     epollfd = epoll_create(MAX_EPOLL_EVENT);
     if ( epollfd == -1 )
     {
-
+        AWE_MODULE_ERROR("aio", "epoll_create error");
         return ;
     }
 }

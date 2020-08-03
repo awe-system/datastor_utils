@@ -174,10 +174,14 @@ void libaio_device::get_io()
     uint64_t i = 0;
     struct io_event event;
     struct timespec timeout = {5, 0};
-    if ( read(event_fd, &finished_aio, sizeof(finished_aio)) != sizeof(finished_aio))
+    std::lock_guard<std::mutex> lock(mtx_);
+    int ret = read(event_fd, &finished_aio, sizeof(finished_aio));
+    if (ret != sizeof(finished_aio))
     {
-        printf("[est_device:get_io] read event_fd fial \n");
+        AWE_MODULE_ERROR("aio", "read event failed : %d", ret);
         //FIXME  错误处理
+        assert(ret <= 0);
+        return ;
     }
     for ( i = 0; i < finished_aio; i++ )
     {

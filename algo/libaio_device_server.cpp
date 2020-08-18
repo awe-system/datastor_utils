@@ -45,9 +45,9 @@ void libaio_device_service::libaio_epoll_create()
 }
 
 
-void libaio_device_service::insert_device(unsigned long fd,libaio_device *device)
+void libaio_device_service::insert_device(libaio_device *device)
 {
-    std::lock_guard<std::mutex> lock(epoll_mutex);
+    struct epoll_event ev_ctl;
     ev_ctl.events = EPOLLIN | EPOLLET;
     ev_ctl.data.ptr = (void *)device;
     if (epoll_ctl(epollfd, EPOLL_CTL_ADD, device->get_event_fd(), &ev_ctl)) {

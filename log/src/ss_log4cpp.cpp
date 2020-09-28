@@ -4,6 +4,7 @@
 #include "awe_conf/env.h"
 #include "log4cpp/ss_log4cpp.h"
 
+const int MAX_LOG_FILE_SIZE = 1024 * 1024 * 300;
 
 ss_log4cpp &logger = ss_log4cpp::getInstance();
 
@@ -66,7 +67,7 @@ ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
     log4cpp::RollingFileAppender
             *roll_appender_error = new log4cpp::RollingFileAppender(
             "roll_appender_error", log_path_prefix + "_error.log",
-            1024 * 1024 * 100, 3);
+			MAX_LOG_FILE_SIZE, 3);
     roll_appender_error->setLayout(layout_error);
     
     
@@ -76,7 +77,7 @@ ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
     log4cpp::RollingFileAppender
             *roll_appender_warn = new log4cpp::RollingFileAppender(
             "roll_appender_error", log_path_prefix + "_warn.log",
-            1024 * 1024 * 100, 3);
+			MAX_LOG_FILE_SIZE, 3);
     roll_appender_warn->setLayout(layout_warn);
     
     
@@ -86,7 +87,7 @@ ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
     log4cpp::RollingFileAppender
             *roll_appender_info = new log4cpp::RollingFileAppender(
             "roll_appender_error", log_path_prefix + "_info.log",
-            1024 * 1024 * 100, 3);
+			MAX_LOG_FILE_SIZE, 3);
     roll_appender_info->setLayout(layout_info);
     
     log4cpp::PatternLayout *layout_debug = new log4cpp::PatternLayout();
@@ -96,7 +97,7 @@ ss_log4cpp::ss_log4cpp() : root_category(log4cpp::Category::getRoot()),
     log4cpp::RollingFileAppender
             *roll_appender_debug = new log4cpp::RollingFileAppender(
             "roll_appender_error", log_path_prefix + "_debug.log",
-            1024 * 1024 * 100, 3);
+			MAX_LOG_FILE_SIZE, 3);
     roll_appender_debug->setLayout(layout_debug);
     
     if ( loglevel == "error" )

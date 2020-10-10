@@ -16,13 +16,12 @@ private:
 
     data_channel::thread_pool threads;
 
-    std::mutex epoll_mutex;
-    struct epoll_event ev_ctl, event_buf[MAX_EPOLL_EVENT];
+    struct epoll_event event_buf[MAX_EPOLL_EVENT];
 
 public:
     libaio_device_service(int thread_num);
 
-    void insert_device(unsigned long fd, libaio_device *device);
+    void insert_device(libaio_device *device);
 
     void get_epoll_event();
 

@@ -34,10 +34,16 @@ libaio_device::libaio_device(std::string dev_path, int max_event_num, libaio_dev
         AWE_MODULE_ERROR("aio", "create eventfd err");
         return;
     }
+    AWE_MODULE_DEBUG("aio", "libaio_device : %p, "
+                            "libaio_context : %p, path : %s", this, libaio_context,
+                     dev_path.c_str());
 }
 
 int libaio_device::open()
 {
+    AWE_MODULE_DEBUG("aio", "libaio_device : %p, "
+                            "libaio_context : %p, path : %s", this, libaio_context,
+                            dev_path.c_str());
     int res = ::open(dev_path.c_str(), O_RDWR | O_DIRECT);
     if ( res == -1 )
     {
@@ -46,12 +52,15 @@ int libaio_device::open()
     }
 
     dev_fd = (unsigned long) res;
-    device_service->insert_device(dev_fd, this);
+    device_service->insert_device(this);
     return 0;
 }
 
 void libaio_device::close()
 {
+    AWE_MODULE_DEBUG("aio", "libaio_device : %p, "
+                            "libaio_context : %p, path : %s", this, libaio_context,
+                     dev_path.c_str());
     ::close(dev_fd);
 }
 
@@ -176,6 +185,9 @@ void libaio_device::get_io()
     struct timespec timeout = {5, 0};
     std::lock_guard<std::mutex> lock(mtx_);
     int ret = read(event_fd, &finished_aio, sizeof(finished_aio));
+    AWE_MODULE_DEBUG("aio", "libaio_device : %p, "
+                            "libaio_context : %p, path : %s", this, libaio_context,
+                     dev_path.c_str());
     if (ret != sizeof(finished_aio))
     {
         AWE_MODULE_ERROR("aio", "read event failed : %d", ret);
@@ -185,6 +197,7 @@ void libaio_device::get_io()
     }
     for ( i = 0; i < finished_aio; i++ )
     {
+        assert(libaio_context != nullptr);
         int res = io_getevents(*libaio_context, 1, 1, &event, &timeout);
         int error = 0;
         if ( res < 1 )
@@ -210,9 +223,13 @@ void libaio_device::get_io()
 }
 
 libaio_device::~libaio_device() {
+    AWE_MODULE_DEBUG("aio", "libaio_device : %p, "
+                            "libaio_context : %p, path : %s", this, libaio_context,
+                     dev_path.c_str());
     ::close(event_fd);
     io_destroy(*libaio_context);
     free(libaio_context);
+    libaio_context = nullptr;
 }
 
 

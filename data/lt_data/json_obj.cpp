@@ -530,7 +530,7 @@ void json_obj::load_array(const rapidjson::Value &val_input)
     // 	cout<<"not IsArray"<<endl<<endl;
     // 	getchar();
     // }
-    for (int i = 0; i < val_input.Size(); ++i )
+    for (unsigned int i = 0; i < val_input.Size(); ++i )
     {
         const rapidjson::Value &val = val_input[i];
         json_obj obj(val);
@@ -581,7 +581,7 @@ void json_obj::load_dic(const rapidjson::Document &doc)
 void json_obj::load_array(const rapidjson::Document &doc)
 {
     // cout<<"in load_array"<<endl;
-    for ( int i = 0; i < doc.Size(); ++i )
+    for ( unsigned int i = 0; i < doc.Size(); ++i )
     {
         const rapidjson::Value &val = doc[i];
         // cout<<"in load_array for i = "<<i<<endl;

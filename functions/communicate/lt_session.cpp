@@ -72,8 +72,6 @@ void lt_session::start_rcv(lt_data_t *data)
 
 void
 lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error)
-void
-lt_session::rcv_done(lt_data_t *data, const boost::system::error_code &error)
 {
     assert_legal();
     AWE_MODULE_DEBUG("communicate", "--enter lt_session::rcv_done sess %p data [%p]",
@@ -105,7 +103,6 @@ lt_session::rcv_done(lt_data_t *data, const boost::system::error_code &error)
                      this, data);
     AWE_MODULE_DEBUG("communicate", "--enter lt_session::rcv_done sess %p",
                      this);
-    check_disconnect_when_done(error);
     cb->rcv_done(this, data, RPC_ERROR_TYPE_OK);
     mark_received();
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_done sess %p",
@@ -174,12 +171,8 @@ void lt_session::start_rcv_data_unsafe(lt_data_t *data)
                                         data,
                                         boost::asio::placeholders::error));
     AWE_MODULE_DEBUG("communicate", "start_rcv_data_unsafe sess %p data [%p]", this, data);
-                                        data,
-                                        boost::asio::placeholders::error));
 }
 
-void lt_session::rcv_data_done_unsafe(lt_data_t *data,
-                                      const boost::system::error_code &error)
 void lt_session::rcv_data_done_unsafe(lt_data_t *data,
                                       const boost::system::error_code error)
 {
@@ -311,12 +304,7 @@ void lt_session::start_snd_data_unsafe(lt_data_t *data)
                                          this,
                                          data,
                                          boost::asio::placeholders::error));
-                             boost::asio::buffer(data->get_data(),
-                                                 data->data_len()),
-                             boost::bind(&lt_session::snd_data_done_unsafe,
-                                         this,
-                                         data,
-                                         boost::asio::placeholders::error));
+                            
     AWE_MODULE_DEBUG("communicate", "leave lt_session::start_snd_data_unsafe sess %p data %p", this, data);
 }
 
@@ -380,7 +368,7 @@ bool lt_session::is_to_feed() const
 {
     unsigned long since_last_snd = get_time_frame_since_last_snd();
     unsigned long since_last_rcv = get_time_frame_since_last_rcv();
-    return std::min(since_last_snd, since_last_rcv) < max_wait_seconds;
+    return std::min(since_last_snd, since_last_rcv) < (unsigned long)max_wait_seconds;
 }
 
 void lt_session::handle_event()

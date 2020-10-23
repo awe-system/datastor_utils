@@ -32,7 +32,7 @@ private:
     int                     error;
     lt_data_t               _data;
 public:
-    lt_condition() : error(0), stat(lt_condition_stat_notstart), _data()
+    lt_condition() : error(0), _data()
     {
         AWE_MODULE_DEBUG("cond",
                          "XXXXXXXXXXXXXXXX    lt_condition   XXXXXXXXXXXXXXXXXXX this %p",

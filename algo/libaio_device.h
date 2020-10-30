@@ -40,8 +40,6 @@ public:
 
 class libaio_device
 {
-public:
-    std::mutex mt;
 private:
     unsigned long dev_fd;
     std::string dev_path;
@@ -52,7 +50,8 @@ private:
     std::atomic_int pending_size;
     libaio_device_service *device_service;
     data_channel::thread_pool threads;
-
+    
+    std::mutex mtx_;
 public:
     libaio_device(std::string dev_path, int max_event_num,
             libaio_device_service *device_service, io_done_callback *io_cb);

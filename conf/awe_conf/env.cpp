@@ -22,7 +22,13 @@ env::env(const char *repo_name,const char *key)
 
 int env::get_int()
 {
-    return atoi(val.c_str());
+	int num = 0;
+	try {
+		num = std::stoi(val);
+	} catch(...) {
+		num = 0;
+	}
+    return num;
 }
 
 string env::get_string()

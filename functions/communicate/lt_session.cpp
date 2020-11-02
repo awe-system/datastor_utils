@@ -62,12 +62,12 @@ void lt_session::start_rcv(lt_data_t *data)
   
     AWE_MODULE_DEBUG("communicate", "--enter lt_session::start_rcv sess %p",
                      this);
-    rcv_queue.begin_to(
+    /*rcv_queue.begin_to(
             boost::bind(&lt_session::start_rcv_head_unsafe, this, data),
             boost::bind(&lt_session::rcv_done, this, data,
                         boost::asio::error::network_down));
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::start_rcv sess %p",
-                     this);
+                     this);*/
 }
 
 void
@@ -256,9 +256,9 @@ void lt_session::start_snd_data(lt_data_t *data)
                         boost::asio::error::network_down));
    
     AWE_MODULE_DEBUG("communicate", "OUT start_snd_data lt_session::start_snd_data sess %p data %p", this, data);
-    queue.begin_to(boost::bind(&lt_session::start_snd_data_unsafe, this, data),
+    /*queue.begin_to(boost::bind(&lt_session::start_snd_data_unsafe, this, data),
                    boost::bind(&lt_session::snd_data_done, this, data,
-                               boost::asio::error::network_down));
+                               boost::asio::error::network_down));*/
 }
 
 void lt_session::snd_data_done(lt_data_t *data,
@@ -321,8 +321,7 @@ void lt_session::snd_data_done_unsafe(lt_data_t *data,
     
     AWE_MODULE_DEBUG("communicate",
                      "lt_session::snd_data_done_unsafe sess %p data %p", this, data);
-    AWE_MODULE_DEBUG("communicate",
-                     "--enter lt_session::snd_data_done_unsafe sess %p", this);
+
     queue.continue_to();  //FIXME 不立即调done，有可能引发超时
     snd_data_done(data, error);
     AWE_MODULE_DEBUG("communicate",

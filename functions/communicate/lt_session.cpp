@@ -101,9 +101,7 @@ lt_session::rcv_done(lt_data_t *data, const boost::system::error_code error)
     cb->rcv_done(this, data, err);
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_done sess %p data [%p]",
                      this, data);
-    AWE_MODULE_DEBUG("communicate", "--enter lt_session::rcv_done sess %p",
-                     this);
-    cb->rcv_done(this, data, RPC_ERROR_TYPE_OK);
+
     mark_received();
     AWE_MODULE_DEBUG("communicate", "--leave lt_session::rcv_done sess %p",
                      this);

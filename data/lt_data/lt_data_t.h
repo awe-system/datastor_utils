@@ -19,16 +19,19 @@ private:
 public:
     lt_data_t() : _buf_from_outside(NULL), _buf_self_generated(NULL), _length(0)
     {
+        //AWE_MODULE_DEBUG("lt_data", "lt_data_t() %p", this);
     }
 
     lt_data_t(unsigned long length) : _buf_from_outside(NULL), _buf_self_generated(NULL), _length(length)
     {
+        //AWE_MODULE_DEBUG("lt_data", "lt_data_t() %p length [%ld]", this, length);
         realloc_buf();
     }
 
     lt_data_t(unsigned long length, unsigned char *buf) : _buf_from_outside(buf), _buf_self_generated(NULL),
                                                           _length(length)
     {
+        //AWE_MODULE_DEBUG("lt_data", "lt_data_t() %p length [%ld] buf[%p]", this, length, buf);
     }
 
     lt_data_t(const lt_data_t &other):_buf_from_outside(nullptr), _buf_self_generated(NULL),
@@ -74,10 +77,14 @@ public:
 
     unsigned char *get_buf() const
     {
-        if ( !is_buf_from_outside())
-            return &_buf_self_generated[sizeof(_length)];
-        else
+        if ( !is_buf_from_outside()) {
+            if (_buf_self_generated != nullptr)
+                return &_buf_self_generated[sizeof(_length)];
+            else
+                return nullptr;
+        } else {
             return _buf_from_outside;
+        }
     }
 
     unsigned char *get_data()
@@ -90,6 +97,22 @@ public:
     {
         assert(!is_buf_from_outside());
         return _length + sizeof(_length);
+    }
+
+    void realloc_to_self_generated()
+    {
+        if (!is_buf_from_outside() || _buf_from_outside == nullptr || _length < 1)
+            return;
+
+        _buf_self_generated =
+                static_cast<unsigned char *>(malloc(_length + sizeof(_length)));
+
+        assert(_buf_self_generated);
+        unsigned char *data_start = _buf_self_generated + sizeof(_length);
+
+        std::memcpy(_buf_self_generated, &_length, sizeof(_length));
+        std::memcpy(data_start, _buf_from_outside, _length);
+        mark_buf_self_generated();
     }
 
     void realloc_buf()
@@ -225,6 +248,7 @@ public:
     ~lt_data_t()
     {
         free_buf();
+        //AWE_MODULE_DEBUG("lt_data", "~lt_data_t() %p", this);
     }
 
 private:
@@ -243,8 +267,9 @@ private:
         if ( _buf_self_generated )
         {
             free(_buf_self_generated);
-            _buf_self_generated = nullptr;
         }
+        _buf_self_generated = nullptr;
+        _buf_from_outside = nullptr;
     }
 
 };

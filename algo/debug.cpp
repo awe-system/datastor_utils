@@ -212,7 +212,7 @@ debug &debug::operator<<(const lt_data_t &out)
     cout<<"len:"<<out._length<<endl;
     cout<<"buf:"<<endl;
     unsigned  char * buf = out.get_buf();
-    long i = 0;
+    ulong i = 0;
     if(out._length <= 1024)
     {
         for(i = 0; i<out._length; ++i)
@@ -229,7 +229,7 @@ debug &debug::operator<<(const lt_data_t &out)
             if(i%32 == 31) cout<<endl;
         }
 
-        for(long i = 0; i<32; ++i)
+        for(i = 0; i<32; ++i)
         {
             printf("-- ");
             if(i%32 == 31) cout<<endl;

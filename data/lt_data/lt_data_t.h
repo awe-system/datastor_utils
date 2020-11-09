@@ -17,25 +17,25 @@ private:
     std::vector<void *> data_stack;
 
 public:
-    lt_data_t() : _buf_from_outside(NULL), _buf_self_generated(NULL), _length(0)
+    lt_data_t() :  _length(0),_buf_from_outside(NULL), _buf_self_generated(NULL)
     {
         //AWE_MODULE_DEBUG("lt_data", "lt_data_t() %p", this);
     }
 
-    lt_data_t(unsigned long length) : _buf_from_outside(NULL), _buf_self_generated(NULL), _length(length)
+    lt_data_t(unsigned long length) : _length(length), _buf_from_outside(NULL), _buf_self_generated(NULL)
     {
         //AWE_MODULE_DEBUG("lt_data", "lt_data_t() %p length [%ld]", this, length);
         realloc_buf();
     }
 
-    lt_data_t(unsigned long length, unsigned char *buf) : _buf_from_outside(buf), _buf_self_generated(NULL),
-                                                          _length(length)
+    lt_data_t(unsigned long length, unsigned char *buf) :_length(length), _buf_from_outside(buf),
+    _buf_self_generated(NULL)
+
     {
         //AWE_MODULE_DEBUG("lt_data", "lt_data_t() %p length [%ld] buf[%p]", this, length, buf);
     }
 
-    lt_data_t(const lt_data_t &other):_buf_from_outside(nullptr), _buf_self_generated(NULL),
-    _length(other._length)
+    lt_data_t(const lt_data_t &other): _length(other._length), _buf_from_outside(nullptr), _buf_self_generated(NULL)
     {
         if(_length == 0)
         {
@@ -132,7 +132,7 @@ public:
         auto first_size = (8>this->_length)?this->_length:8;
         auto sencod_size = (16 > this->_length)?this->_length - 16:8;
         unsigned char *buf = this->get_buf();
-        for(int i = 0;i < first_size; ++i )
+        for(uint i = 0;i < first_size; ++i )
         {
             char tmp_buf[32] = {0};
             sprintf(tmp_buf, "%02x ", buf[i]);
@@ -140,7 +140,7 @@ public:
         }
         if(first_size < 8) return res + "]";
         res += "... ";
-        for(int i = this->_length - sencod_size;i < this->_length; ++i )
+        for(uint i = this->_length - sencod_size;i < this->_length; ++i )
         {
             char tmp_buf[32] = {0};
             sprintf(tmp_buf, "%02x ", buf[i]);
@@ -169,7 +169,7 @@ public:
                 if ( i % 32 == 0 )
                 {
                     char tmp[32] = {0};
-                    sprintf(tmp, "%-10d ", i);
+                    sprintf(tmp, "%-10ld ", i);
                     result += std::string(tmp);
                 }
                 char tmp_buf[32] = {0};
@@ -188,7 +188,7 @@ public:
                 if ( i % 16 == 0 )
                 {
                     char tmp[32] = {0};
-                    sprintf(tmp, "%-10d ", i);
+                    sprintf(tmp, "%-10ld ", i);
                     result += std::string(tmp);
                 }
                 char tmp_buf[32] = {0};
@@ -212,7 +212,7 @@ public:
                 if ( i % 16 == 0 )
                 {
                     char tmp[32] = {0};
-                    sprintf(tmp, "%-10d ", i);
+                    sprintf(tmp, "%-10ld ", i);
                     result += std::string(tmp);
                 }
                 char tmp_buf[32] = {0};

@@ -135,6 +135,8 @@ public:
     void push_callback(block_io_callback *cb);
     
     void request_done(int error);
+
+    void clear();
 };
 
 

@@ -55,6 +55,18 @@ request_t::request_t() : type(REQUEST_UNKNOWN), offset(0), buf(NULL), len(0), pr
 {
 }
 
+void request_t::clear()
+{
+    type = REQUEST_UNKNOWN;
+    offset = 0;
+    buf = nullptr;
+    len = 0;
+    private_data = nullptr;
+//    trace_info = "";
+    data_stack.clear();
+//    string_stack.clear();
+}
+
 request_t::request_t(unsigned int _len, unsigned char *_buf) : type(REQUEST_UNKNOWN), offset(0), buf(_buf), len(_len),
                                                                private_data(NULL)
 {

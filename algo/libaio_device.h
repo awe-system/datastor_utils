@@ -17,13 +17,9 @@
 
 #define ALIGN_SIZE  512
 
-class io_done_callback
-{
-public:
-    virtual void write_done(void *pri, int error) = 0;
 
-    virtual void read_done(void *pri, int error) = 0;
-};
+typedef std::function<void(void* ,int)> io_done_callback;
+
 class libaio_device_service;
 class event_ctx
 {
@@ -43,18 +39,17 @@ class libaio_device
 private:
     unsigned long dev_fd;
     std::string dev_path;
-    int fd_ref;
+    //int fd_ref;
     int event_fd;
-    io_done_callback *io_cb_;
+    io_done_callback io_cb_;
     io_context_t *libaio_context;
     std::atomic_int pending_size;
     libaio_device_service *device_service;
-    data_channel::thread_pool threads;
     
     std::mutex mtx_;
 public:
     libaio_device(std::string dev_path, int max_event_num,
-            libaio_device_service *device_service, io_done_callback *io_cb);
+            libaio_device_service *device_service, io_done_callback io_cb);
 
     int open();
 

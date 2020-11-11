@@ -1,16 +1,14 @@
 #include <libaio.h>
+#include <iostream>
 #include "libaio_device.h"
 #include "libaio_device_server.h"
 #include "../log/include/awe_log.h"
 
-#define USE_LIBAIO
-
 libaio_device::libaio_device(std::string dev_path, int max_event_num, libaio_device_service *device_service,
-                             io_done_callback *io_cb):
+                             io_done_callback io_cb):
         dev_path(dev_path),
         device_service(device_service),
-        fd_ref(0),
-        threads(4),
+        //fd_ref(0),
         io_cb_(io_cb) {
     pending_size = 0;
     int res = 0;
@@ -45,6 +43,7 @@ int libaio_device::open()
                             "libaio_context : %p, path : %s", this, libaio_context,
                             dev_path.c_str());
     int res = ::open(dev_path.c_str(), O_RDWR | O_DIRECT);
+    //int res = ::open(dev_path.c_str(), O_RDWR);
     if ( res == -1 )
     {
         AWE_MODULE_ERROR("aio", "aio open file err path : %s", dev_path.c_str());
@@ -103,10 +102,8 @@ int libaio_device::sync_write(unsigned long offset, unsigned int len, unsigned c
 
 void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned char *buf, void *pri)
 {
-#ifdef USE_LIBAIO
     void *buf_tmp = NULL;
     assert(len % 512 == 0);
-    //printf("libaio_device::async_write\n");
 
     struct iocb *iocb_p = (iocb *) malloc(sizeof(struct iocb));
     memset(iocb_p, 0, sizeof(sizeof(struct iocb)));
@@ -125,20 +122,14 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
     int submit_num = io_submit(*libaio_context, 1, &iocb_p);
     assert(submit_num == 1);
 
-#else
-    threads.submit_task(boost::bind(&test_device::fake_async_read, this, offset, len, buf, pri));
-#endif
 }
 
 
-void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned char *buf, void *pri)
-{
-#ifdef USE_LIBAIO
+void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned char *buf, void *pri) {
     void *tmp_buf = NULL;
     assert(len % ALIGN_SIZE == 0);
 
-    if ( posix_memalign(&tmp_buf, ALIGN_SIZE, len))
-    {
+    if (posix_memalign(&tmp_buf, ALIGN_SIZE, len)) {
         perror("posix_memalign");
     }
 
@@ -154,12 +145,7 @@ void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned
 
     io_set_eventfd(iocb_p, event_fd);
     int submit_num = io_submit(*libaio_context, 1, &iocb_p);
-    //std::cout << "submit_num" << submit_num << std::endl;
     assert(submit_num == 1);
-
-#else
-    threads.submit_task(boost::bind(&test_device::fake_async_write, this, offset, len, buf, pri));
-#endif
 }
 
 std::string &libaio_device::obtain_dev_path()
@@ -213,11 +199,7 @@ void libaio_device::get_io()
         }
         free(event.obj->u.c.buf);
         free(event.obj);
-        if(ctx->is_read) {
-            io_cb_->read_done(ctx->pri, error);
-        } else {
-            io_cb_->write_done(ctx->pri, error);
-        }
+        io_cb_(ctx->pri, error);
         delete ctx;
     }
 }
@@ -231,5 +213,3 @@ libaio_device::~libaio_device() {
     free(libaio_context);
     libaio_context = nullptr;
 }
-
-

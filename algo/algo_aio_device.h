@@ -16,7 +16,7 @@ using namespace std;
 namespace ServerSan_Algo
 {
 
-class algo_aio_device : public algo_device, public io_done_callback
+class algo_aio_device : public algo_device
 {
 public:
     algo_aio_device(const string ser, const string path,
@@ -36,9 +36,7 @@ public:
 
     void do_request(request_t *request) override ;
 
-    void write_done(void *pri, int error) override;
-
-    void read_done(void *pri, int error) override;
+    void req_done(void *pri, int error);
 
 private:
     libaio_device_service *aio_server_;

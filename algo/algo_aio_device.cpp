@@ -9,7 +9,9 @@ namespace ServerSan_Algo {
 algo_aio_device::algo_aio_device(const string ser, const string path, unsigned long size_secs,
                                  libaio_device_service *aio_server) :
     serial_num_(ser), path_(path),sector_num_(size_secs), aio_server_(aio_server),
-    aio_dev_(path, 256, aio_server, this){}
+    aio_dev_(path, 256, aio_server, std::bind(&algo_aio_device::req_done, this, std::placeholders::_1,
+                                                     std::placeholders::_2)){}
+
 
 
 unsigned long long int ServerSan_Algo::algo_aio_device::get_sector_num() const {
@@ -40,11 +42,7 @@ void ServerSan_Algo::algo_aio_device::do_request(ServerSan_Algo::request_t *requ
     }
 }
 
-void algo_aio_device::write_done(void *pri, int error) {
-    complete_request(static_cast<ServerSan_Algo::request_t*>(pri), error);
-}
-
-void algo_aio_device::read_done(void *pri, int error) {
+void algo_aio_device::req_done(void *pri, int error) {
     complete_request(static_cast<ServerSan_Algo::request_t*>(pri), error);
 }
 

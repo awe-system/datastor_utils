@@ -47,8 +47,9 @@ typedef enum
     REQUEST_SYNC_WRITE,
     REQUEST_ASYNC_READ,
     REQUEST_ASYNC_WRITE,
-    REQUEST_UNKNOWN,
     REQUEST_MIGRATE,
+    REQUEST_RECOVERY,
+    REQUEST_UNKNOWN,
 }                                            request_type;
 
 static inline unsigned long sec_to_size(unsigned long sec)

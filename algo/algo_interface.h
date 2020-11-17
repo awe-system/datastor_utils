@@ -123,6 +123,8 @@ public:
     json_obj to_json_obj() const override;
     
     bool is_read() const;
+
+    bool is_recovery() const;
     
     request_t();
     

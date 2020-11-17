@@ -183,6 +183,10 @@ json_obj request_t::to_json_obj() const
     obj.merge(json_obj("stack_str",statck_str_obj));
     return obj;
 }
+bool request_t::is_recovery() const
+{
+    return type == REQUEST_RECOVERY;
+}
 
 
 block_io::block_io()

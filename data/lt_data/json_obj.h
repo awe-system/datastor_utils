@@ -204,7 +204,7 @@ public:
 
     void merge(const json_obj &other);
 
-    void loads(std::string &str);
+    void loads(const string &str);
 
     void loads(const char *s);
 

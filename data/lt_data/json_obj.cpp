@@ -622,7 +622,7 @@ void json_obj::loads(const char *s)
     loads(str);
 }
 
-void json_obj::loads(std::string &str)
+void json_obj::loads(const string &str)
 {
     this->clear();
     rapidjson::Document doc;

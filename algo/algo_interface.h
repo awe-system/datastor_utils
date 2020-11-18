@@ -115,7 +115,18 @@ public:
     unsigned int        len;
     void                *private_data;
     std::vector<void *> data_stack;
+private:
+    std::vector<std::string> string_stack;
+    std::string              trace_info;
 public:
+    void set_trace(const std::string &trace);
+
+    std::string get_trace() const;
+
+    void push_string(const std::string &str);
+
+    std::string pop_string();
+
     unsigned long checksum() const;
     
     void from_json_obj(const json_obj &obj) override;

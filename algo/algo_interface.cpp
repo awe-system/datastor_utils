@@ -183,6 +183,31 @@ json_obj request_t::to_json_obj() const
     obj.merge(json_obj("stack_str",statck_str_obj));
     return obj;
 }
+
+
+void request_t::push_string(const std::string &str)
+{
+    string_stack.push_back(str);
+}
+
+std::string request_t::pop_string()
+{
+    auto str = string_stack.front();
+    string_stack.pop_back();
+    return str;
+}
+
+void request_t::set_trace(const std::string &trace)
+{
+    trace_info = trace;
+}
+
+std::string request_t::get_trace() const
+{
+    return  trace_info;
+}
+
+
 bool request_t::is_recovery() const
 {
     return type == REQUEST_RECOVERY;

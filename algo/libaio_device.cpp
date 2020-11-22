@@ -42,8 +42,12 @@ int libaio_device::open()
     AWE_MODULE_DEBUG("aio", "libaio_device : %p, "
                             "libaio_context : %p, path : %s", this, libaio_context,
                             dev_path.c_str());
-    int res = ::open(dev_path.c_str(), O_RDWR | O_DIRECT);
-    //int res = ::open(dev_path.c_str(), O_RDWR);
+    int res;
+    if (is_buff_io) {
+        res = ::open(dev_path.c_str(), O_RDWR);
+    } else {
+        res = ::open(dev_path.c_str(), O_RDWR | O_DIRECT);
+    }
     if ( res == -1 )
     {
         AWE_MODULE_ERROR("aio", "aio open file err path : %s", dev_path.c_str());
@@ -212,4 +216,9 @@ libaio_device::~libaio_device() {
     io_destroy(*libaio_context);
     free(libaio_context);
     libaio_context = nullptr;
+}
+
+void libaio_device::set_open_buff()
+{
+    is_buff_io = true;
 }

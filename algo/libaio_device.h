@@ -51,6 +51,8 @@ public:
     libaio_device(std::string dev_path, int max_event_num,
             libaio_device_service *device_service, io_done_callback io_cb);
 
+    void set_open_buff();
+
     int open();
 
     void close();
@@ -75,6 +77,7 @@ public:
     ~libaio_device();
 
 private:
+    bool is_buff_io = false;
     void get_pending_size();
 };
 

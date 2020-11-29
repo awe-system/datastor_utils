@@ -137,6 +137,8 @@ public:
     bool is_read() const;
 
     bool is_recovery() const;
+
+    bool is_initial() const;
     
     request_t();
     

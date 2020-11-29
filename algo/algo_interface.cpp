@@ -213,6 +213,11 @@ bool request_t::is_recovery() const
     return type == REQUEST_RECOVERY;
 }
 
+bool request_t::is_initial() const
+{
+    return type == REQUEST_INITIALIZE;
+}
+
 
 block_io::block_io()
 {

@@ -49,6 +49,7 @@ typedef enum
     REQUEST_ASYNC_WRITE,
     REQUEST_MIGRATE,
     REQUEST_RECOVERY,
+    REQUEST_INITIALIZE,
     REQUEST_UNKNOWN,
 }                                            request_type;
 

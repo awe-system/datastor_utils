@@ -127,7 +127,23 @@ bool request_t::is_read() const
             return false;
             break;
     }
-    abort();
+    return false;
+}
+
+bool request_t::is_write() const
+{
+    switch ( type )
+    {
+        case REQUEST_SYNC_READ:
+        case REQUEST_ASYNC_READ:
+            return false;
+            break;
+        case REQUEST_SYNC_WRITE:
+        case REQUEST_ASYNC_WRITE:
+            return true;
+            break;
+    }
+    return false;
 }
 
 unsigned long request_t::checksum() const
@@ -217,7 +233,6 @@ bool request_t::is_initial() const
 {
     return type == REQUEST_INITIALIZE;
 }
-
 
 block_io::block_io()
 {

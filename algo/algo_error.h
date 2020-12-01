@@ -38,19 +38,7 @@ typedef enum
     ERROR_TYPE_UNKNOWN = 99,
 } ERROR_T;
 
-static std::string error_str(int err)
-{
-    switch ( abs(err))
-    {
-        case ERROR_TYPE_OK:
-            return std::string("OK\n");
-        case ERROR_TYPE_NOTSUPPORT:
-            return std::string("Not Support\n");
-        case ERROR_TYPE_UNKNOWN:
-        default:
-            return std::string("Unkown error\n");
-    }
-}
+std::string error_str(int err);
 };
 
 #endif

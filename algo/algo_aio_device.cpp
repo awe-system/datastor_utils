@@ -8,7 +8,7 @@ namespace ServerSan_Algo {
 
 algo_aio_device::algo_aio_device(const string ser, const string path, unsigned long size_secs,
                                  libaio_device_service *aio_server) :
-    serial_num_(ser), path_(path),sector_num_(size_secs), aio_server_(aio_server),
+        aio_server_(aio_server),serial_num_(ser), path_(path), sector_num_(size_secs),
     aio_dev_(path, 256, aio_server, std::bind(&algo_aio_device::req_done, this, std::placeholders::_1,
                                                      std::placeholders::_2)){}
 

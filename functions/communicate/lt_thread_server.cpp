@@ -26,7 +26,7 @@ void lt_thread_single::run()
 }
 
 lt_thread_server::lt_thread_server(int thread_num) :
-        curret_cnt(0), _io_service(),_work(_io_service)
+        _io_service(),_work(_io_service), curret_cnt(0)
 {
     for ( int i = 0; i < thread_num; ++i )
     {

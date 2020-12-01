@@ -8,6 +8,20 @@ namespace ServerSan_Algo
 env disk_info_sec("awe_algo","disk_info_sec");
 env pool_vols_sec("awe_algo","pool_vols_sec");
 env pool_info_sec("awe_algo","pool_info_sec");
+
+std::string error_str(int err)
+{
+    switch ( abs(err))
+    {
+        case ERROR_TYPE_OK:
+            return std::string("OK\n");
+        case ERROR_TYPE_NOTSUPPORT:
+            return std::string("Not Support\n");
+        case ERROR_TYPE_UNKNOWN:
+        default:
+            return std::string("Unkown error\n");
+    }
+}
 };
 
 #ifdef TEST_ALGO

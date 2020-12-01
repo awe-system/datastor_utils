@@ -74,7 +74,7 @@ void lt_server_service::accepted(lt_session_serv *sess, const boost::system::err
 }
 
 lt_server_service::lt_server_service(int thread_num, unsigned short _port, lt_server_callback *_cb) :
-        port(_port), server(thread_num), cb(_cb),
+         server(thread_num), cb(_cb),port(_port),
         end(boost::asio::ip::tcp::v4(), port),
         _acceptor(*(server.get_io_service()), end)
 {

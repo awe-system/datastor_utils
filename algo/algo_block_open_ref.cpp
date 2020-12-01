@@ -43,7 +43,6 @@ int algo_block_open_ref::open(void)
 void algo_block_open_ref::close(void)
 {
     AWE_MODULE_DEBUG("open_ref", "close file");
-    int err = ERROR_TYPE_OK;
 	std::unique_lock <std::mutex> lck(open_lock);
     assert(ref >= 0);
 	ref--;

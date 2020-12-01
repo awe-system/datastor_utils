@@ -85,12 +85,12 @@ string super_algo_device::get_device_id(void) const
 
 int super_algo_device::handle_offline(block_event *block)
 {
-    offline();
+    return offline();
 }
 
 int super_algo_device::handle_online(block_event *block)
 {
-    online();
+    return online();
 }
 
 int super_algo_device::write_pool_info(const json_obj & info)
@@ -103,7 +103,7 @@ int super_algo_device::write_pool_info(const json_obj & info)
     {
         return -ERROR_TYPE_WRITE_SUPER;
     }
-
+    return ERROR_TYPE_OK;
 }
 
 json_obj super_algo_device::read_pool_info()

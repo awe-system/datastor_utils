@@ -61,6 +61,7 @@ int algo_block_io_jbod::add_block(block_io *block)
     nosuper->add_block(block_io_super);
     multi_super.add_block(block_io_super);
     nosuper->set_io_callback((block_io_callback *) this);
+    return 0;
 }
 
 unsigned long long algo_block_io_jbod::get_sector_num()const

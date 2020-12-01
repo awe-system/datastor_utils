@@ -101,7 +101,7 @@ namespace log4cpp {
         Properties::const_iterator to = _properties.lower_bound(prefix + '/');
         for(Properties::const_iterator i = from; i != to; ++i) {
             const std::string& key = (*i).first;
-            const std::string& value = (*i).second;
+//            const std::string& value = (*i).second;
             std::list<std::string> propNameParts;
             std::back_insert_iterator<std::list<std::string> > pnpIt(propNameParts);
             StringUtil::split(pnpIt, key, '.');

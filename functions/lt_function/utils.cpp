@@ -81,8 +81,6 @@ int safe_system_cpp(const string &cmd)
 int buf_exec_cpp(const string &cmd, string &buf)
 {
     FILE *fp;
-    int readed = 0;
-
 //    cerr << "debug buf_exec_cpp(): cmd=[" << cmd << "]" << endl;
 
     buf.clear();

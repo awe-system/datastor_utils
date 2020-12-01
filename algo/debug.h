@@ -32,7 +32,7 @@ class dbg_end_type
 {
 };
 
-static dbg_end_type end_dbg;
+extern dbg_end_type end_dbg;
 
 std::string dbg_now_time();
 
@@ -67,8 +67,6 @@ public:
     debug &  operator <<(const std::vector<void *> & stack_out);
 };
 
-static debug dbg;
-static bool debug_init(){dbg.start();}
-static bool dbg_initilize = debug_init();
+extern debug dbg;
 
 #endif //SS_METADATA_DEBUG_H

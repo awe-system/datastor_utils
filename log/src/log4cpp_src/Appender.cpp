@@ -105,7 +105,7 @@ namespace log4cpp {
 
     void Appender::_deleteAllAppendersWOLock(std::vector<Appender*> &appenders) {
     /* assume Appender::_appenderMapMutex not locked */
-        AppenderMap& allAppenders = _getAllAppenders();
+//        AppenderMap& allAppenders = _getAllAppenders();
         for(std::vector<Appender*>::iterator i = appenders.begin(); i != appenders.end(); ++i) {
             Appender *app = (*i);
             delete (app);

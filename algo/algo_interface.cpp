@@ -126,6 +126,8 @@ bool request_t::is_read() const
         case REQUEST_ASYNC_WRITE:
             return false;
             break;
+        default:
+            return false;
     }
     return false;
 }
@@ -142,6 +144,8 @@ bool request_t::is_write() const
         case REQUEST_ASYNC_WRITE:
             return true;
             break;
+        default:
+            return false;
     }
     return false;
 }
@@ -247,6 +251,7 @@ block_io::block_io(const block_io &other)
 int block_io::set_io_callback(block_io_callback *_io_callback)
 {
     io_callback = _io_callback;
+    return ERROR_TYPE_OK;
 }
 
 block_io_callback *block_io::get_io_callback()

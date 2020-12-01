@@ -29,7 +29,7 @@ public:
     bool is_read;
     struct iocb *cb;
 public:
-    event_ctx(void *pri, bool is_read, struct iocb *cb, unsigned char *buf) : pri(pri), is_read(is_read), cb(cb), buf_ptr(buf)
+    event_ctx(void *pri, bool is_read, struct iocb *cb, unsigned char *buf) : pri(pri), buf_ptr(buf), is_read(is_read), cb(cb)
     {
     }
 };

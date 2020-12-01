@@ -13,82 +13,105 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
-#define AWE_RED 	"\033[31;0m"
-#define AWE_RESET	"\033[0m"
-#define AWE_GREEN	"\033[36;0m"
-#define AWE_YELLOW	"\033[32;0m"
-#define AWE_PURPLE	"\033[35;0m"
-#define AWE_BLUE	"\033[34;0m"
-#define BGREEN	"\033[1;36;47;0m"
-#define BRED 	"\033[1;31;47;0m"
-#define BYELLOW	"\033[1;32;47;0m"
-#define BPURPLE	"\033[1;35;47;0m"
-#define BBLUE	"\033[1;34;47;0m"
-#define AWE_NORMAL	"\033[30;0m"
+#define AWE_RED    "\033[31;0m"
+#define AWE_RESET    "\033[0m"
+#define AWE_GREEN    "\033[36;0m"
+#define AWE_YELLOW    "\033[32;0m"
+#define AWE_PURPLE    "\033[35;0m"
+#define AWE_BLUE    "\033[34;0m"
+#define BGREEN    "\033[1;36;47;0m"
+#define BRED    "\033[1;31;47;0m"
+#define BYELLOW    "\033[1;32;47;0m"
+#define BPURPLE    "\033[1;35;47;0m"
+#define BBLUE    "\033[1;34;47;0m"
+#define AWE_NORMAL    "\033[30;0m"
 
+dbg_end_type end_dbg;
+debug dbg;
+bool debug_init()
+{
+    dbg.start();
+    return false;
+}
+static bool dbg_initilize = debug_init();
 
-debug &  debug::operator<<(const std::string &out)
+debug &debug::operator<<(const std::string &out)
 {
     std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    cout<<out;
-    cout<<end_str;
+    if(!is_start)
+    {
+        return *this;
+    }
+    cout << start_str;
+    cout << out;
+    cout << end_str;
     return *this;
 }
 
-debug &  debug::operator<<(const int out)
+debug &debug::operator<<(const int out)
 {
     std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    cout<<out;
-    cout<<end_str;
+    if(!is_start)
+    {
+        return *this;
+    }
+    cout << start_str;
+    cout << out;
+    cout << end_str;
     return *this;
 }
 
-debug &  debug::operator<<(const char *out)
+debug &debug::operator<<(const char *out)
 {
     std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    cout<<out;
-    cout<<end_str;
+    if(!is_start)
+    {
+        return *this;
+    }
+    cout << start_str;
+    cout << out;
+    cout << end_str;
     return *this;
 }
 
-debug &  debug::operator<<(const json_obj &out)
+debug &debug::operator<<(const json_obj &out)
 {
     std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    cout<<out.dumps();
-    cout<<end_str;
+    if(!is_start)
+    {
+        return *this;
+    }
+    cout << start_str;
+    cout << out.dumps();
+    cout << end_str;
     return *this;
 }
 
-debug &  debug::operator<<(const long out)
+debug &debug::operator<<(const long out)
 {
     std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    cout<<out;
-    cout<<end_str;
+    if(!is_start)
+    {
+        return *this;
+    }
+    cout << start_str;
+    cout << out;
+    cout << end_str;
     return *this;
 }
 
@@ -98,10 +121,13 @@ debug &debug::operator<<(const unsigned long out)
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    cout<<out;
-    cout<<end_str;
+    if(!is_start)
+    {
+        return *this;
+    }
+    cout << start_str;
+    cout << out;
+    cout << end_str;
     return *this;
 }
 
@@ -111,10 +137,13 @@ debug &debug::operator<<(const unsigned int out)
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    cout<<out;
-    cout<<end_str;
+    if(!is_start)
+    {
+        return *this;
+    }
+    cout << start_str;
+    cout << out;
+    cout << end_str;
     return *this;
 }
 
@@ -124,10 +153,13 @@ debug &debug::operator<<(const void *out)
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    printf("%p",out);
-    cout<<end_str;
+    if(!is_start)
+    {
+        return *this;
+    }
+    cout << start_str;
+    printf("%p", out);
+    cout << end_str;
     return *this;
 }
 
@@ -137,10 +169,13 @@ debug &debug::operator<<(const char out)
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    cout<<out;
-    cout<<end_str;
+    if(!is_start)
+    {
+        return *this;
+    }
+    cout << start_str;
+    cout << out;
+    cout << end_str;
     return *this;
 }
 
@@ -153,10 +188,10 @@ debug::debug(color_type color)
 void debug::set_color(color_type color)
 {
     end_str = AWE_RESET;
-    switch (color)
+    switch(color)
     {
         case color_normal:
-            start_str=AWE_NORMAL;
+            start_str = AWE_NORMAL;
             end_str = string("");
             break;
         case color_blue:
@@ -200,49 +235,63 @@ debug::debug()
 }
 
 
-
 debug &debug::operator<<(const lt_data_t &out)
 {
     std::unique_lock<std::mutex> lck(m);
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    cout<<"len:"<<out._length<<endl;
-    cout<<"buf:"<<endl;
-    unsigned  char * buf = out.get_buf();
+    if(!is_start)
+    {
+        return *this;
+    }
+    cout << start_str;
+    cout << "len:" << out._length << endl;
+    cout << "buf:" << endl;
+    unsigned char *buf = out.get_buf();
     ulong i = 0;
     if(out._length <= 1024)
     {
-        for(i = 0; i<out._length; ++i)
+        for(i = 0; i < out._length; ++i)
         {
-            printf("%02x ",buf[i]);
-            if(i%32 == 31) cout<<endl;
+            printf("%02x ", buf[i]);
+            if(i % 32 == 31)
+            {
+                cout << endl;
+            }
         }
     }
     else
     {
-        for(i = 0; i<512; ++i)
+        for(i = 0; i < 512; ++i)
         {
-            printf("%02x ",buf[i]);
-            if(i%32 == 31) cout<<endl;
+            printf("%02x ", buf[i]);
+            if(i % 32 == 31)
+            {
+                cout << endl;
+            }
         }
 
-        for(i = 0; i<32; ++i)
+        for(i = 0; i < 32; ++i)
         {
             printf("-- ");
-            if(i%32 == 31) cout<<endl;
+            if(i % 32 == 31)
+            {
+                cout << endl;
+            }
         }
-        for(i = out._length-512; i<out._length; ++i)
+        for(i = out._length - 512; i < out._length; ++i)
         {
-            printf("%02x ",buf[i]);
-            if(i%32 == 31) cout<<endl;
+            printf("%02x ", buf[i]);
+            if(i % 32 == 31)
+            {
+                cout << endl;
+            }
         }
     }
 
-    cout<<endl;
-    cout<<end_str;
+    cout << endl;
+    cout << end_str;
     return *this;
 }
 
@@ -262,19 +311,22 @@ debug &debug::operator<<(const std::vector<void *> &stack_out)
 #ifndef START_DEBUG
     return *this;
 #endif
-    if(!is_start)return *this;
-    cout<<start_str;
-    cout<<"stack addr:"<<&stack_out<<endl;
-    int i=0;
-    for(std::vector<void *>::const_iterator it = stack_out.begin();
-            it!= stack_out.end();
-            ++it)
+    if(!is_start)
     {
-        printf("level %d\t:%p\n",i++,*it);
+        return *this;
+    }
+    cout << start_str;
+    cout << "stack addr:" << &stack_out << endl;
+    int i = 0;
+    for(std::vector<void *>::const_iterator it = stack_out.begin();
+        it != stack_out.end();
+        ++it)
+    {
+        printf("level %d\t:%p\n", i++, *it);
     }
 
-    cout<<endl;
-    cout<<end_str;
+    cout << endl;
+    cout << end_str;
     return *this;
 }
 
@@ -289,8 +341,8 @@ debug &debug::operator<<(const dbg_end_type &end)
 {
     std::unique_lock<std::mutex> lck(m);
     set_color(color_normal);
-    
-    cout<<dbg_now_time()<<DEBUG_END;
+
+    cout << dbg_now_time() << DEBUG_END;
     return *this;
 }
 
@@ -298,7 +350,7 @@ debug &debug::operator<<(const debug &debug1)
 {
     std::unique_lock<std::mutex> lck(m);
     set_color(color_normal);
-    cout<<DEBUG_END;
+    cout << DEBUG_END;
     return *this;
 }
 

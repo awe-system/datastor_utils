@@ -8,6 +8,30 @@ extern ss_log4cpp &logger;
 
 #define USE_LOG
 
+std::string rand_color(const char *msg)
+{
+    static int color_counter  = 0;
+    const char *current_color = "";
+    int        i              = __sync_fetch_and_add(&color_counter, 1);
+    switch ( abs(i) % 3 )
+    {
+        case 0:
+            current_color = AWE_PURPLE;
+            break;
+        case 1:
+            current_color = AWE_YELLOW;
+            break;
+        case 2:
+            current_color = AWE_CYAN;
+            break;
+        default:
+            current_color = AWE_RED;
+            break;
+    }
+    return std::string(current_color).append(msg).append(AWE_RESET);
+}
+
+
 void awe_log_error(const char * msg, ...)
 {
 #ifdef USE_LOG

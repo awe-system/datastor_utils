@@ -17,29 +17,7 @@
 #define AWE_RESET    " \033[0m "
 #define RANDCLOLORSIZE strlen(AWE_RED)
 
-static std::string rand_color(const char *msg)
-{
-    static int color_counter  = 0;
-    const char *current_color = "";
-    int        i              = __sync_fetch_and_add(&color_counter, 1);
-    switch ( abs(i) % 3 )
-    {
-        case 0:
-            current_color = AWE_PURPLE;
-            break;
-        case 1:
-            current_color = AWE_YELLOW;
-            break;
-        case 2:
-            current_color = AWE_CYAN;
-            break;
-        default:
-            current_color = AWE_RED;
-            break;
-    }
-    return std::string(current_color).append(msg).append(AWE_RESET);
-}
-
+std::string rand_color(const char *msg);
 
 #define postfix(msg)  std::string(msg).append(AWE_BLUE).append(AWE_LINE)\
     .append(" [").append(__FILE__).append(":").append(__func__)\

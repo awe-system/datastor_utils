@@ -59,7 +59,7 @@ unsigned int algo_sections::find_pos(unsigned long offset, bool &is_in_vec) cons
 bool algo_sections::is_point_insections(unsigned long offset)const
 {
     bool         is_in_vec;
-    unsigned int pos = find_pos(offset, is_in_vec);
+    find_pos(offset, is_in_vec);
     return is_in_vec;
 }
 
@@ -85,12 +85,12 @@ algo_sections &algo_sections::operator-=(const algo_section &section)
         insert_at_pos(sec_parts[1], pos);
     }
     len -= section.len;
+    return *this;
 }
 
 
 void algo_sections::add_section(const algo_section &section, unsigned int pos)
 {
-    bool         is_in_vec;
     algo_section tmp_section = section;
     int          merge_num   = 0;
     
@@ -304,7 +304,7 @@ bool algo_sections::try_merge_right(algo_section &section, unsigned int pos)
 void algo_sections::intersections(const algo_sections &other,
                                   algo_sections &res) const
 {
-    int i = 0, j = 0;
+    uint i = 0, j = 0;
     while(i<other.sections.size() && j < sections.size())
     {
         const algo_section &cur_other = other.sections[i];
@@ -345,7 +345,7 @@ bool algo_sections::operator==(const algo_sections &other) const
     
     if(len != other.len) return false;
     if(sections.size() != other.sections.size()) return false;
-    for(int i =0 ;i < sections.size(); ++i)
+    for(uint i =0 ;i < sections.size(); ++i)
     {
         if(sections[i] .start != other.sections[i].start ||
            sections[i].len != other.sections[i].len)
@@ -367,6 +367,7 @@ algo_sections &algo_sections::operator+=(unsigned long offset)
     {
         it.start += offset;
     }
+    return *this;
 }
 
 void algo_sections::from_json_obj(const json_obj &obj)
@@ -379,7 +380,7 @@ void algo_sections::from_json_obj(const json_obj &obj)
         section.from_json_obj(sec_obj);
         plus_section(section);
     }
-    assert(obj["len"].get_number() == len);
+    assert(obj["len"].get_number() == (long)len);
 }
 
 json_obj algo_sections::to_json_obj() const

@@ -252,7 +252,7 @@ bool lt_session::is_to_feed() const
 {
     unsigned long since_last_snd = get_time_frame_since_last_snd();
     unsigned long since_last_rcv = get_time_frame_since_last_rcv();
-    return std::min(since_last_snd, since_last_rcv) < max_wait_seconds;
+    return std::min(since_last_snd, since_last_rcv) < (uint)max_wait_seconds;
 }
 
 void lt_session::handle_event()

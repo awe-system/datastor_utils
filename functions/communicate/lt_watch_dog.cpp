@@ -2,9 +2,9 @@
 
 #define DEFALUT_TIMER_SECS 5
 
-lt_watch_dog::lt_watch_dog(boost::asio::io_service *_io_service) : timer(*_io_service), seconds(DEFALUT_TIMER_SECS)
+lt_watch_dog::lt_watch_dog(boost::asio::io_service *_io_service) :
+  seconds(DEFALUT_TIMER_SECS),is_monitoring(false), timer(*_io_service),on_monitor(false)
 {
-    on_monitor = false;
 }
 
 void lt_watch_dog::start_monitor()

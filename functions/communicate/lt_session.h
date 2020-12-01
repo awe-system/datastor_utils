@@ -36,6 +36,8 @@ public:
     void *get_session_private() const;
     
     virtual bool is_connected() const = 0;
+
+    virtual ~lt_session_description_imp() = default;
 };
 
 class lt_session;
@@ -52,7 +54,7 @@ public:
     virtual void connected(lt_session *sess) = 0;
 };
 
-class lt_session : public lt_reference, public lt_session_dog,public lt_session_description_imp
+class lt_session : public lt_reference, public lt_session_dog, public lt_session_description_imp
 {
 private:
     int max_wait_seconds;
@@ -104,6 +106,7 @@ public:
     void let_it_down();
 
 public:
+
     lt_session(boost::asio::io_service *_io_service, lt_session_callback *_cb);
 
     virtual void rcv(lt_data_t *data);

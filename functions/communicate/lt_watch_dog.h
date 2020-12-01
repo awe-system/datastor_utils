@@ -18,11 +18,11 @@ private:
     std::mutex pending_m;
     std::condition_variable pending_cond;
 public:
-    lt_watch_dog(boost::asio::io_service *_io_service);
+    explicit lt_watch_dog(boost::asio::io_service *_io_service);
 
     void set_seconds(int sec);
 
-    ~lt_watch_dog();
+    virtual ~lt_watch_dog();
 
 public:
     void start_monitor();

@@ -1,3 +1,4 @@
+#include <lt_function/utils.h>
 #include "env.h"
 
 #define MAX_SIXE   1024
@@ -46,3 +47,8 @@ int main()
 }
 
 #endif
+bool is_conf_different(const char *repo_name, const char *md5sum)
+{
+    std::string file_path = "/opt/awe_conf/conf/" + std::string(repo_name) + ".conf";
+    return false;
+}

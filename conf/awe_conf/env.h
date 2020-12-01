@@ -13,5 +13,7 @@ public:
     string get_string();
 };
 
+bool is_conf_different(const char *repo_name, const char *md5sum);
+
 
 #endif

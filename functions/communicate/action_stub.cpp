@@ -27,22 +27,22 @@ void action_stub::mark_received()
     last_rcv_timestamp.store((unsigned long) time(0));
 }
 
-const unsigned long action_stub::get_time_frame_since_last_snd() const
+unsigned long action_stub::get_time_frame_since_last_snd() const
 {
     return (unsigned long) time(0) - last_snd_timestamp.load();
 }
 
-const unsigned long action_stub::get_time_frame_since_last_rcv() const
+unsigned long action_stub::get_time_frame_since_last_rcv() const
 {
     return (unsigned long) time(0) - last_rcv_timestamp.load();
 }
 
-const unsigned long action_stub::get_snd_num() const
+unsigned long action_stub::get_snd_num() const
 {
     return snd_num.load();
 }
 
-const unsigned long action_stub::get_rcv_num() const
+unsigned long action_stub::get_rcv_num() const
 {
     return rcv_num.load();
 }

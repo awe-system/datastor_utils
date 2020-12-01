@@ -19,13 +19,13 @@ public:
 
     void mark_received();
 
-    const unsigned long get_time_frame_since_last_snd() const;
+    unsigned long get_time_frame_since_last_snd() const;
 
-    const unsigned long get_time_frame_since_last_rcv() const;
+    unsigned long get_time_frame_since_last_rcv() const;
 
-    const unsigned long get_snd_num() const;
+    unsigned long get_snd_num() const;
 
-    const unsigned long get_rcv_num() const;
+    unsigned long get_rcv_num() const;
 
     void reset();
 };

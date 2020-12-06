@@ -48,7 +48,7 @@ void request_worker(test_algo_device *device)
                 case REQUEST_ASYNC_WRITE:
                     while ( real_len < request->len )
                     {
-                        auto this_len = pwrite(device->fd, request->buf,
+                        int this_len = pwrite(device->fd, request->buf,
                                                request->len,
                                                request->offset * 512);
                         if ( this_len <= 0 )
@@ -67,7 +67,7 @@ void request_worker(test_algo_device *device)
                 case REQUEST_ASYNC_READ:
                     while ( real_len < request->len )
                     {
-                        auto this_len = pread(device->fd, request->buf,
+                        int this_len = pread(device->fd, request->buf,
                                               request->len,
                                               request->offset * 512);
                         if ( this_len <= 0 )
@@ -221,7 +221,7 @@ void test_algo_device::do_request(request_t *request)
                 //                cout<<"fd:"<<fd<<" len:"<<request->len<<" off:"<<request->offset<<endl;
                 while ( real_len < request->len )
                 {
-                    auto this_len = pwrite(fd, request->buf, request->len,
+                    int this_len = pwrite(fd, request->buf, request->len,
                                            request->offset * 512);
                     
                     //                cout<<"after Write real_len:"<<real_len<<endl;
@@ -242,7 +242,7 @@ void test_algo_device::do_request(request_t *request)
                 is_sync = true;
                 while ( real_len < request->len )
                 {
-                    auto this_len = pread(fd, request->buf, request->len,
+                    int this_len = pread(fd, request->buf, request->len,
                                           request->offset * 512);
                     if ( this_len <= 0 )
                     {

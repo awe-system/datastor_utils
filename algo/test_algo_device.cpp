@@ -176,7 +176,7 @@ bool test_algo_device::is_local(void) const
 
 int test_algo_device::open(void)
 {
-    fd = ::open(path.c_str(), O_RDWR);
+    fd = ::open(path.c_str(), O_RDWR | O_DIRECT);
 //    printf("test_algo_device::open:fd = %d, errno = %d, path = %s\n", fd, errno, path.c_str());
     if ( fd == -1 )
     {

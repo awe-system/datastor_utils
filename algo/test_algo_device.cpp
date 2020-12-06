@@ -54,7 +54,7 @@ void request_worker(test_algo_device *device)
                         if ( this_len <= 0 )
                         {
                             AWE_MODULE_ERROR("algo",
-                                             "request_worker this_len[%lu] <=0 %p request %p : %s",
+                                             "request_worker this_len[%d] <=0 %p request %p : %s",
                                              this_len,
                                              device, request,request->to_json_obj().dumps().c_str());
                             dump_request(request);
@@ -73,7 +73,7 @@ void request_worker(test_algo_device *device)
                         if ( this_len <= 0 )
                         {
                             AWE_MODULE_ERROR("algo",
-                                             "request_worker this_len[%lu] <=0 %p request %p : %s",
+                                             "request_worker this_len[%d] <=0 %p request %p : %s",
                                              this_len,
                                              device, request,request->to_json_obj().dumps().c_str());
                             dump_request(request);

@@ -53,9 +53,10 @@ void request_worker(test_algo_device *device)
                                                request->offset * 512);
                         if ( this_len <= 0 )
                         {
-                            cout
-                                    << "request_worker REQUEST_ASYNC_READ this_len:["
-                                    << this_len << "]" << endl;
+                            AWE_MODULE_ERROR("algo",
+                                             "request_worker this_len[%lu] <=0 %p request %p : %s",
+                                             this_len,
+                                             device, request,request->to_json_obj().dumps().c_str());
                             dump_request(request);
                             throw ERROR_TYPE_DEVICE;
                         }
@@ -71,9 +72,10 @@ void request_worker(test_algo_device *device)
                                               request->offset * 512);
                         if ( this_len <= 0 )
                         {
-                            cout
-                                    << "request_worker REQUEST_ASYNC_READ this_len:["
-                                    << this_len << "]" << endl;
+                            AWE_MODULE_ERROR("algo",
+                                             "request_worker this_len[%lu] <=0 %p request %p : %s",
+                                             this_len,
+                                             device, request,request->to_json_obj().dumps().c_str());
                             dump_request(request);
                             throw ERROR_TYPE_DEVICE;
                         }
@@ -89,13 +91,13 @@ void request_worker(test_algo_device *device)
         }
         catch (...)
         {
-            AWE_MODULE_DEBUG("algo",
+            AWE_MODULE_ERROR("algo",
                              "request_worker before complete ERROR_TYPE_DEVICE device %p request %p : %s",
                              device, request,request->to_json_obj().dumps().c_str());
 //            printf("test error req done catch\n");
             device->complete_request(request, ERROR_TYPE_DEVICE);
     
-            AWE_MODULE_DEBUG("algo",
+            AWE_MODULE_ERROR("algo",
                              "request_worker after complete ERROR_TYPE_DEVICE device %p request %p",
                              device, request);
             continue;

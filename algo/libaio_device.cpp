@@ -4,12 +4,9 @@
 #include "libaio_device_server.h"
 #include "../log/include/awe_log.h"
 
-
-std::mutex mtx_;
 libaio_device::libaio_device(std::string dev_path, int max_event_num, libaio_device_service *device_service,
                              io_done_callback io_cb) :
         dev_path(dev_path),
-        //fd_ref(0),
         io_cb_(io_cb),
         device_service(device_service)
 {
@@ -38,6 +35,7 @@ libaio_device::libaio_device(std::string dev_path, int max_event_num, libaio_dev
     AWE_MODULE_DEBUG("aio", "libaio_device : %p, "
                             "libaio_context : %p, path : %s", this, libaio_context,
                      dev_path.c_str());
+
 }
 
 int libaio_device::open()
@@ -83,47 +81,15 @@ int libaio_device::obtain_pending_size()
     return pending_size;
 }
 
-int libaio_device::sync_read(unsigned long offset, unsigned int len, unsigned char *buf)
-{
-    unsigned long off = offset << 9;
-    ssize_t this_len = 0;
-    for(ssize_t total_len = 0; total_len < len; total_len += this_len)
-    {
-        this_len = pread(dev_fd, &buf[total_len], len - total_len, off + total_len);
-        if(this_len <= 0)
-        {
-            return -1;
-        }
-    }
-    return 0;
-}
-
-int libaio_device::sync_write(unsigned long offset, unsigned int len, unsigned char *buf)
-{
-    unsigned long off = offset << 9;
-    ssize_t this_len = 0;
-    for(ssize_t total_len = 0; total_len < len; total_len += this_len)
-    {
-        this_len = pwrite(dev_fd, &buf[total_len], len - total_len, off + total_len);
-        if(this_len <= 0)
-        {
-            return -1;
-        }
-    }
-
-    return 0;
-}
-
 void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned char *buf, void *pri)
 {
     void *buf_tmp = NULL;
-    assert(len % 512 == 0);
 
     struct iocb *iocb_p = (iocb *)malloc(sizeof(struct iocb));
     memset(iocb_p, 0, sizeof(sizeof(struct iocb)));
     unsigned long off = offset << 9;
 
-    if(posix_memalign(&buf_tmp, 512, len))
+    if(posix_memalign(&buf_tmp, ALIGN_SIZE, len))
     {
         perror("posix_memalign");
     }
@@ -135,14 +101,12 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
     io_set_eventfd(iocb_p, event_fd);
     int submit_num = io_submit(*libaio_context, 1, &iocb_p);
     assert(submit_num == 1);
-
 }
 
 
 void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned char *buf, void *pri)
 {
     void *tmp_buf = NULL;
-    assert(len % ALIGN_SIZE == 0);
 
     if(posix_memalign(&tmp_buf, ALIGN_SIZE, len))
     {
@@ -153,7 +117,6 @@ void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned
     struct iocb *iocb_p = (iocb *)malloc(sizeof(struct iocb));
     memset(iocb_p, 0, sizeof(sizeof(struct iocb)));
     unsigned long off = offset << 9;
-    //std::cout << "off:" << offset << std::endl;
     io_prep_pwrite(iocb_p, dev_fd, tmp_buf, len, off);
 
     event_ctx *ctx = new event_ctx(pri, false, iocb_p, buf);
@@ -201,18 +164,27 @@ void libaio_device::get_io()
     {
         assert(libaio_context != nullptr);
         int res = io_getevents(*libaio_context, 1, 1, &event, &timeout);
-        int error = 0;
         if(res < 1)
         {
             // io timeout or get events error;
-            error = -1;
+            AWE_MODULE_ERROR("aio", "get events fail res=%d", res);
+            continue;
         }
 
         event_ctx *ctx = (event_ctx *)event.data;
+        int64_t error = 0;
+        int64_t tmp = event.res;
+        if(tmp < 0L)
+        {
+            AWE_MODULE_ERROR("aio", "do request failed errcode=%ld", tmp);
+            error = event.res;
+        }
+
         if(ctx->is_read)              //将读出来的内容拷贝到request buf
         {
             memcpy(ctx->buf_ptr, event.obj->u.c.buf, event.obj->u.c.nbytes);
         }
+
         free(event.obj->u.c.buf);
         free(event.obj);
         io_cb_(ctx->pri, error);

@@ -15,8 +15,7 @@
 
 #include <lt_function/thread_pool.hpp>
 
-#define ALIGN_SIZE  512
-
+#define ALIGN_SIZE  4096
 
 typedef std::function<void(void* ,int)> io_done_callback;
 
@@ -39,7 +38,6 @@ class libaio_device
 private:
     unsigned long dev_fd;
     std::string dev_path;
-    //int fd_ref;
     int event_fd;
     io_done_callback io_cb_;
     io_context_t *libaio_context;
@@ -62,10 +60,6 @@ public:
     void put_pending_size();
 
     int obtain_pending_size();
-
-    int sync_read(unsigned long offset, unsigned int len, unsigned char *buf);
-
-    int sync_write(unsigned long offset, unsigned int len, unsigned char *buf);
 
     void async_read(unsigned long offset, unsigned int len, unsigned char *buf, void *pri);
 

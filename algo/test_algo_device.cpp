@@ -30,11 +30,7 @@ static void dump_request(request_t *req)
 bool ServerSan_Algo::is_buf_4k_aligned(void *buf)
 {
     uintptr_t buf_long = (uintptr_t)buf;
-    if(buf_long % 4096 == 0)
-    {
-        return true;
-    }
-    return false;
+    return buf_long % ALIGNED_BASE == 0;
 }
 
 void *ServerSan_Algo::alloc_4k_aligned(uint len)
@@ -45,7 +41,7 @@ void *ServerSan_Algo::alloc_4k_aligned(uint len)
         return res_buf;
     }
     uintptr_t buf_org = (uintptr_t)res_buf;
-    uintptr_t buf_start = buf_org + 2 * ALIGNED_BASE - 1;
+    uintptr_t buf_start = (buf_org + 2 * ALIGNED_BASE - 1)%ALIGNED_BASE;
     uintptr_t buf_last = buf_start - sizeof(uintptr_t);
     memcpy((void *)buf_last, &buf_org, sizeof(uintptr_t));
     res_buf = reinterpret_cast<void *>(buf_start);
@@ -58,6 +54,7 @@ void ServerSan_Algo::free_4k_aligned(void *buf)
     if(ServerSan_Algo::is_buf_4k_aligned(buf))
     {
         free(buf);
+        return;
     }
     uintptr_t buf_org = 0;
     uintptr_t buf_start = (uintptr_t)buf;

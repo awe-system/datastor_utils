@@ -40,8 +40,8 @@ void *ServerSan_Algo::alloc_4k_aligned(uint len)
     {
         return res_buf;
     }
-    uintptr_t buf_org = (uintptr_t)res_buf;
-    uintptr_t buf_start = (buf_org + 2 * ALIGNED_BASE - 1)%ALIGNED_BASE;
+    uintptr_t buf_org = (uintptr_t)&res_buf;
+    uintptr_t buf_start = (buf_org + 2 * ALIGNED_BASE - 1) % ALIGNED_BASE;
     uintptr_t buf_last = buf_start - sizeof(uintptr_t);
     memcpy((void *)buf_last, &buf_org, sizeof(uintptr_t));
     res_buf = reinterpret_cast<void *>(buf_start);
@@ -60,8 +60,8 @@ void ServerSan_Algo::free_4k_aligned(void *buf)
     uintptr_t buf_start = (uintptr_t)buf;
     uintptr_t buf_last = buf_start - sizeof(uintptr_t);
     memcpy(&buf_org,(void *)buf_last, sizeof(uintptr_t));
-    void *org_buf = (void *)buf_org;
-    free(org_buf);
+    void **org_buf = (void **)buf_org;
+    free(*org_buf);
 }
 
 

@@ -54,8 +54,8 @@ void request_worker(test_algo_device *device)
                         if ( this_len <= 0 )
                         {
                             AWE_MODULE_ERROR("algo",
-                                             "fault IO request_worker this_len[%d] <=0 %p request %p : %s",
-                                             this_len,
+                                             "fault IO request_worker path[%s] len[%u] seek[%lu] this_len[%d] <=0 %p request %p : %s",
+                                             device->path.c_str(), request->len,request->offset * 512,this_len,
                                              device, request,request->to_json_obj().dumps().c_str());
                             dump_request(request);
                             throw ERROR_TYPE_DEVICE;
@@ -73,8 +73,8 @@ void request_worker(test_algo_device *device)
                         if ( this_len <= 0 )
                         {
                             AWE_MODULE_ERROR("algo",
-                                             "fault IO request_worker this_len[%d] <=0 %p request %p : %s",
-                                             this_len,
+                                             "fault IO request_worker path[%s] len[%u] seek[%lu] this_len[%d] <=0 %p request %p : %s",
+                                             device->path.c_str(), request->len,request->offset * 512,this_len,
                                              device, request,request->to_json_obj().dumps().c_str());
                             dump_request(request);
                             throw ERROR_TYPE_DEVICE;

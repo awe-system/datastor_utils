@@ -33,38 +33,6 @@ bool ServerSan_Algo::is_buf_4k_aligned(void *buf)
     return buf_long % ALIGNED_BASE == 0;
 }
 
-void *ServerSan_Algo::alloc_4k_aligned(uint len)
-{
-    void *res_buf = malloc(len + 2 * ALIGNED_BASE);
-    if(ServerSan_Algo::is_buf_4k_aligned(res_buf))
-    {
-        return res_buf;
-    }
-    uintptr_t buf_org = (uintptr_t)&res_buf;
-    uintptr_t buf_start = (buf_org + 2 * ALIGNED_BASE - 1) % ALIGNED_BASE;
-    uintptr_t buf_last = buf_start - sizeof(uintptr_t);
-    memcpy((void *)buf_last, &buf_org, sizeof(uintptr_t));
-    res_buf = reinterpret_cast<void *>(buf_start);
-
-    return res_buf;
-}
-
-void ServerSan_Algo::free_4k_aligned(void *buf)
-{
-    if(ServerSan_Algo::is_buf_4k_aligned(buf))
-    {
-        free(buf);
-        return;
-    }
-    uintptr_t buf_org = 0;
-    uintptr_t buf_start = (uintptr_t)buf;
-    uintptr_t buf_last = buf_start - sizeof(uintptr_t);
-    memcpy(&buf_org,(void *)buf_last, sizeof(uintptr_t));
-    void **org_buf = (void **)buf_org;
-    free(*org_buf);
-}
-
-
 void request_worker(test_algo_device *device)
 {
     request_t *request = NULL;

@@ -59,8 +59,6 @@ private:
 };
 
 bool is_buf_4k_aligned(void *buf);
-void *alloc_4k_aligned(uint len);
-void free_4k_aligned(void *buf);
 
 }
 

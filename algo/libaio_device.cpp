@@ -91,7 +91,8 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
 
     if(posix_memalign(&buf_tmp, ALIGN_SIZE, len))
     {
-        perror("posix_memalign");
+        AWE_MODULE_ERROR("aio", "read memalign failed len=%ud", len);
+        io_cb_(pri, MEMALIGN_ERR);
     }
     io_prep_pread(iocb_p, dev_fd, buf_tmp, len, off);
 
@@ -110,7 +111,8 @@ void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned
 
     if(posix_memalign(&tmp_buf, ALIGN_SIZE, len))
     {
-        perror("posix_memalign");
+        AWE_MODULE_ERROR("aio", "write memalign failed len=%ud", len);
+        io_cb_(pri, MEMALIGN_ERR);
     }
 
     memcpy(tmp_buf, buf, len);
@@ -174,6 +176,7 @@ void libaio_device::get_io()
         event_ctx *ctx = (event_ctx *)event.data;
         int64_t error = 0;
         int64_t tmp = event.res;
+        AWE_MODULE_DEBUG("aio", "event.res=%ld", event.res);
         if(tmp < 0L)
         {
             AWE_MODULE_ERROR("aio", "do request failed errcode=%ld", tmp);

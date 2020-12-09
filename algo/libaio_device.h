@@ -16,6 +16,8 @@
 #include <lt_function/thread_pool.hpp>
 
 #define ALIGN_SIZE  4096
+#define MEMALIGN_ERR  -1
+#define DATA_LEN_ERR -2
 
 typedef std::function<void(void* ,int)> io_done_callback;
 

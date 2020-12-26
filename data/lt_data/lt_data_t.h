@@ -80,10 +80,14 @@ public:
 
     unsigned char *get_buf() const
     {
-        if ( !is_buf_from_outside())
-            return &_buf_self_generated[sizeof(_length)];
-        else
+        if ( !is_buf_from_outside()) {
+            if (_buf_self_generated != nullptr)
+                return &_buf_self_generated[sizeof(_length)];
+            else
+                return nullptr;
+        } else {
             return _buf_from_outside;
+        }
     }
 
     unsigned char *get_data()
@@ -96,6 +100,22 @@ public:
     {
         assert(!is_buf_from_outside());
         return _length + sizeof(_length);
+    }
+
+    void realloc_to_self_generated()
+    {
+        if (!is_buf_from_outside() || _buf_from_outside == nullptr || _length < 1)
+            return;
+
+        _buf_self_generated =
+                static_cast<unsigned char *>(malloc(_length + sizeof(_length)));
+
+        assert(_buf_self_generated);
+        unsigned char *data_start = _buf_self_generated + sizeof(_length);
+
+        std::memcpy(_buf_self_generated, &_length, sizeof(_length));
+        std::memcpy(data_start, _buf_from_outside, _length);
+        mark_buf_self_generated();
     }
 
     void realloc_buf()

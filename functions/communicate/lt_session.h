@@ -20,7 +20,8 @@ typedef boost::shared_mutex rw_lock_t;
 typedef boost::unique_lock< rw_lock_t >  write_lock_t;
 typedef boost::shared_lock< rw_lock_t >  read_lock_t;
 
-#define DEFAULT_WAIT_SECONDS 30
+//#define DEFAULT_WAIT_SECONDS 30
+#define DEFAULT_WAIT_SECONDS 3000
 
 class lt_session_description
 {

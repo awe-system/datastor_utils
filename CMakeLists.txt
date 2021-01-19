@@ -174,7 +174,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_link_libraries(datastor_utils aio)
 
     add_library(datastor_utils_static STATIC ${SOURCE_FILES} ${LOG_FILES} )
-    target_link_libraries(datastor_utils_static boost_system boost_date_time boost_thread aio)
+    target_link_libraries(datastor_utils_static libboost_system.a libboost_date_time.a libboost_thread.a libaio.a)
     SET_TARGET_PROPERTIES (datastor_utils_static PROPERTIES OUTPUT_NAME "datastor_utils")
 endif()
 

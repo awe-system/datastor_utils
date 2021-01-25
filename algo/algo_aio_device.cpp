@@ -48,7 +48,7 @@ void ServerSan_Algo::algo_aio_device::do_request(ServerSan_Algo::request_t *requ
 
 void algo_aio_device::req_done(void *pri, int error) {
     AWE_MODULE_DEBUG("algo",
-                     "do_request %p request %p : %s request",
+                     "req_done %p request %p : %s request",
                      this, pri, static_cast<ServerSan_Algo::request_t*>(pri)->to_json_obj().dumps().c_str());
     complete_request(static_cast<ServerSan_Algo::request_t*>(pri), error);
 }

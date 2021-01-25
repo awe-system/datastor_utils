@@ -172,6 +172,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_library(datastor_utils SHARED ${SOURCE_FILES} ${LOG_FILES} )
     target_link_libraries(datastor_utils boost_system boost_date_time boost_thread)
     target_link_libraries(datastor_utils aio)
+
+    add_library(datastor_utils_static STATIC ${SOURCE_FILES} ${LOG_FILES} )
+    target_link_libraries(datastor_utils_static libboost_system.a libboost_date_time.a libboost_thread.a libaio.a)
+    SET_TARGET_PROPERTIES (datastor_utils_static PROPERTIES OUTPUT_NAME "datastor_utils")
 endif()
 
 set_target_properties(datastor_utils PROPERTIES LINKER_LANGUAGE CXX)
@@ -181,7 +185,14 @@ target_link_libraries(test_function datastor_utils)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(include_dir "include")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(include_dir "/usr/local/include")
+    IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        SET(CMAKE_INSTALL_PREFIX / CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
+        set(include_dir "usr/local/include")
+        set(CMAKE_INSTALL_LIBDIR "usr/local/lib")
+    ELSE()
+        INSTALL(FILES install_output.sh DESTINATION ${CMAKE_INSTALL_PREFIX})
+        set(include_dir "include")
+    ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif ()
 
 INSTALL(FILES functions/lt_function/thread_pool.hpp
@@ -252,11 +263,13 @@ INSTALL(FILES conf/awe_conf_error.h DESTINATION  ${include_dir}/awe_conf)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 target_link_libraries(test_function boost_system boost_date_time boost_thread pthread)
 
-INSTALL (TARGETS datastor_utils LIBRARY DESTINATION /usr/local/lib)
+MESSAGE("lib install to ${CMAKE_INSTALL_PREFIX}${CMAKE_INSTALL_LIBDIR}")
+INSTALL (TARGETS datastor_utils LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+INSTALL (TARGETS datastor_utils_static LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 INSTALL (FILES raid/common.py raid/err.py raid/raid_manager.py raid/raid.py
         raid/storage.py raid/vg.py
-        DESTINATION /opt/raid)
+        DESTINATION "opt/raid")
 
 
 ##################################################################################
@@ -264,8 +277,7 @@ INSTALL (FILES raid/common.py raid/err.py raid/raid_manager.py raid/raid.py
 execute_process(COMMAND python -m py_compile ../conf/lib/env.py)
 
 
-INSTALL(FILES conf/lib/env.py DESTINATION /usr/lib64/python2.7)
-#INSTALL(FILES conf/lib/env.pyc DESTINATION /usr/lib64/python2.7)
+INSTALL(FILES conf/lib/env.py DESTINATION "usr/lib64/python2.7")
 
 execute_process(COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/conf/conf OUTPUT_VARIABLE conf_dest)
 execute_process(COMMAND date "+%Y%m%d" OUTPUT_VARIABLE date_time)
@@ -273,20 +285,21 @@ string(REPLACE "\n" "" date_time ${date_time} )
 MESSAGE(STATUS "date_time : ${date_time}")
 
 string(REPLACE "\n" "" conf_dest ${conf_dest} )
-MESSAGE(STATUS "conf_dest : ${conf_dest}")
+string(REGEX REPLACE "^/" "" conf_dest ${conf_dest} )
+MESSAGE(STATUS "conf_dest : ${CMAKE_INSTALL_PREFIX}${conf_dest}")
 
 #execute_process(COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/conf/generate_profile.sh)
 #install(DIRECTORY conf/conf DESTINATION "${conf_dest}/")
 MESSAGE(STATUS "${conf_dest}/")
 install(DIRECTORY conf/awe-conf/conf DESTINATION "${conf_dest}/awe_conf/")
-install(FILES conf/awe_env.conf DESTINATION "/etc")
+install(FILES conf/awe_env.conf DESTINATION "etc")
 install(PROGRAMS conf/awe-conf/bin/check_start DESTINATION "${conf_dest}/awe_conf/bin/")
 install(PROGRAMS conf/awe-conf/bin/awe_env_base DESTINATION "${conf_dest}/awe_conf/bin/")
 install(PROGRAMS conf/awe-conf/bin/awe_env DESTINATION "${conf_dest}/awe_conf/bin/")
 install(PROGRAMS conf/awe-conf/bin/version DESTINATION "${conf_dest}/awe_conf/bin/")
-install(PROGRAMS conf/awe-conf/bin/awe_env_base DESTINATION "/usr/bin/")
-install(PROGRAMS conf/awe-conf/bin/awe_env DESTINATION "/usr/bin/")
-install(PROGRAMS conf/awe-conf/bin/version DESTINATION "/usr/bin/")
+install(PROGRAMS conf/awe-conf/bin/awe_env_base DESTINATION "usr/bin/")
+install(PROGRAMS conf/awe-conf/bin/awe_env DESTINATION "usr/bin/")
+install(PROGRAMS conf/awe-conf/bin/version DESTINATION "usr/bin/")
 #install(PROGRAMS conf/awe_conf_profile.sh DESTINATION "/etc/profile.d/")
 
 ###end conf

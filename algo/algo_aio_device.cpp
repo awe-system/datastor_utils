@@ -2,6 +2,7 @@
 // Created by root on 6/18/20.
 //
 
+#include <awe_log.h>
 #include "algo_aio_device.h"
 
 namespace ServerSan_Algo {
@@ -35,6 +36,9 @@ void ServerSan_Algo::algo_aio_device::close(void) {
 }
 
 void ServerSan_Algo::algo_aio_device::do_request(ServerSan_Algo::request_t *request) {
+    AWE_MODULE_DEBUG("algo",
+                     "do_request %p request %p : %s request",
+                     this, request, request->to_json_obj().dumps().c_str());
     if( request->is_read()) {
         aio_dev_.async_read(request->offset, request->len, request->buf, request);
     } else {
@@ -43,6 +47,9 @@ void ServerSan_Algo::algo_aio_device::do_request(ServerSan_Algo::request_t *requ
 }
 
 void algo_aio_device::req_done(void *pri, int error) {
+    AWE_MODULE_DEBUG("algo",
+                     "do_request %p request %p : %s request",
+                     this, pri, static_cast<ServerSan_Algo::request_t*>(pri)->to_json_obj().dumps().c_str());
     complete_request(static_cast<ServerSan_Algo::request_t*>(pri), error);
 }
 

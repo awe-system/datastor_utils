@@ -42,7 +42,7 @@ void request_worker(test_algo_device *device)
         request = device->pop_request();
         if(!request)
         {
-            usleep(100);
+            usleep(10);
             continue;
         }
         try
@@ -66,9 +66,9 @@ void request_worker(test_algo_device *device)
                 case REQUEST_ASYNC_WRITE:
                     while(real_len < request->len)
                     {
-                        int this_len = pwrite(device->fd, request->buf,
-                                              request->len,
-                                              request->offset * 512);
+                        int this_len = pwrite(device->fd, &request->buf[real_len],
+                                              request->len - real_len,
+                                              request->offset * 512 + real_len);
                         if(this_len <= 0)
                         {
                             AWE_MODULE_ERROR("algo",
@@ -85,9 +85,12 @@ void request_worker(test_algo_device *device)
                 case REQUEST_ASYNC_READ:
                     while(real_len < request->len)
                     {
-                        int this_len = pread(device->fd, request->buf,
-                                             request->len,
-                                             request->offset * 512);
+                        AWE_MODULE_DEBUG("algo",
+                                         "request_worker pread real_len[%u] device %p request %p : %s",
+                                         real_len, device, request, request->to_json_obj().dumps().c_str());
+                        int this_len = pread(device->fd, &request->buf[real_len],
+                                             request->len - real_len,
+                                             request->offset * 512 + real_len);
                         if(this_len <= 0)
                         {
                             AWE_MODULE_ERROR("algo",
@@ -239,8 +242,9 @@ void test_algo_device::do_request(request_t *request)
                 //                cout<<"fd:"<<fd<<" len:"<<request->len<<" off:"<<request->offset<<endl;
                 while(real_len < request->len)
                 {
-                    int this_len = pwrite(fd, request->buf, request->len,
-                                          request->offset * 512);
+                    int this_len = pwrite(fd, &request->buf[real_len],
+                                          request->len - real_len,
+                                          request->offset * 512 + real_len);
 
                     //                cout<<"after Write real_len:"<<real_len<<endl;
                     if(this_len <= 0)
@@ -260,8 +264,9 @@ void test_algo_device::do_request(request_t *request)
                 is_sync = true;
                 while(real_len < request->len)
                 {
-                    int this_len = pread(fd, request->buf, request->len,
-                                         request->offset * 512);
+                    int this_len = pread(fd, &request->buf[real_len],
+                                         request->len - real_len,
+                                         request->offset * 512 + real_len);
                     if(this_len <= 0)
                     {
                         throw ERROR_TYPE_DEVICE;

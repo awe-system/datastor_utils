@@ -14,7 +14,6 @@ algo_aio_device::algo_aio_device(const string ser, const string path, unsigned l
                                                      std::placeholders::_2)){}
 
 
-
 unsigned long long int ServerSan_Algo::algo_aio_device::get_sector_num() const {
     return sector_num_;
 }

@@ -38,6 +38,8 @@ public:
 
     void req_done(void *pri, int error);
 
+    virtual ~algo_aio_device() = default;
+
 private:
     libaio_device_service *aio_server_;
     string serial_num_;

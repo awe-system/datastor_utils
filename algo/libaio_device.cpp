@@ -168,8 +168,11 @@ void libaio_device::get_io()
         int res = io_getevents(*libaio_context, 1, 1, &event, &timeout);
         if(res < 1)
         {
+            assert_legal();
             // io timeout or get events error;
-            AWE_MODULE_ERROR("aio", "get events fail res=%d", res);
+            AWE_MODULE_ERROR("aio", "get events fail res=%d, libaio_device : %p, "
+                                    "libaio_context : %p, path : %s", res, this, libaio_context,
+                             dev_path.c_str());
             continue;
         }
 
@@ -209,4 +212,12 @@ libaio_device::~libaio_device()
 void libaio_device::set_open_buff()
 {
     is_buff_io = true;
+}
+void libaio_device::from_json_obj(const json_obj &obj)
+{
+
+}
+json_obj libaio_device::to_json_obj() const
+{
+    return json_obj();
 }

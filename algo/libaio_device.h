@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <inttypes.h>
+#include "algo_interface.h"
 
 #include <lt_function/thread_pool.hpp>
 
@@ -35,7 +36,7 @@ public:
     }
 };
 
-class libaio_device
+class libaio_device : public ServerSan_Algo::algo_obj
 {
 private:
     unsigned long dev_fd;
@@ -70,7 +71,9 @@ public:
     std::string &obtain_dev_path();
 
     void get_io();
-    ~libaio_device();
+    virtual ~libaio_device();
+    void from_json_obj(const json_obj &obj) override;
+    json_obj to_json_obj() const override;
 
 private:
     bool is_buff_io = false;

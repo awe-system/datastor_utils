@@ -29,7 +29,7 @@ public:
 
 	void request_done(request_t *request, int err);
  
-	~algo_block_open_ref(){}
+	virtual ~algo_block_open_ref(){}
 	
 };
 

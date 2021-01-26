@@ -15,6 +15,7 @@ public:
     void get();
     void put();
     bool is_ref();
+    virtual ~ref_obj()=default;
 };
 
 

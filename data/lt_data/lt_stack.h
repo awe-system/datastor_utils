@@ -44,5 +44,7 @@ public:
     {
         return private_data;
     }
+
+    virtual ~lt_stack()=default;
 };
 #endif //DATASTOR_UTILS_LT_STACK_H

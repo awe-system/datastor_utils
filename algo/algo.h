@@ -19,7 +19,7 @@ using namespace std;
 #include "algo_block_io_jbod.h"
 #include "super_algo_device.h"
 #include "algo_error.h"
-
+#include "psync_device.h"
 
 #define secs_to_size(secs) (unsigned int)((secs)<<9)
 #define size_to_secs(size) (unsigned long long)((size)>>9)

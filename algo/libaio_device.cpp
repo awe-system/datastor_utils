@@ -85,6 +85,11 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
 {
     void *buf_tmp = NULL;
 
+    AWE_MODULE_DEBUG("algo",
+                     "async_read %p request %p : %s request",
+                     this, static_cast<ServerSan_Algo::request_t*>(pri),
+                     static_cast<ServerSan_Algo::request_t*>(pri)->to_json_obj().dumps().c_str());
+
     struct iocb *iocb_p = (iocb *)malloc(sizeof(struct iocb));
     assert(iocb_p != NULL);
     memset(iocb_p, 0, sizeof(sizeof(struct iocb)));
@@ -95,9 +100,22 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
         AWE_MODULE_ERROR("aio", "read memalign failed len=%ud", len);
         io_cb_(pri, MEMALIGN_ERR);
     }
+    memset(buf_tmp, 0xAA, len);
+    memset(buf, 0xBB, len);
+
+    AWE_MODULE_DEBUG("algo",
+                     "async_read %p request %p : %s request, buf_tmp:%p, buf_tmp[0]:0x%X",
+                     this, static_cast<ServerSan_Algo::request_t*>(pri),
+                     static_cast<ServerSan_Algo::request_t*>(pri)->to_json_obj().dumps().c_str(), buf_tmp, ((char*)buf_tmp)[0]);
+
     io_prep_pread(iocb_p, dev_fd, buf_tmp, len, off);
 
     event_ctx *ctx = new (nothrow)event_ctx(pri, true, iocb_p, buf);
+    AWE_MODULE_DEBUG("algo",
+                     "async_read %p request %p : %s request, buf_tmp:%p, ctx:%p",
+                     this, static_cast<ServerSan_Algo::request_t*>(pri),
+                     static_cast<ServerSan_Algo::request_t*>(pri)->to_json_obj().dumps().c_str(), buf_tmp, ctx);
+
     assert(ctx != nullptr);
     iocb_p->data = ctx;
 
@@ -109,6 +127,11 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
 
 void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned char *buf, void *pri)
 {
+    AWE_MODULE_DEBUG("algo",
+                     "async_write %p request %p : %s request",
+                     this, static_cast<ServerSan_Algo::request_t*>(pri),
+                     static_cast<ServerSan_Algo::request_t*>(pri)->to_json_obj().dumps().c_str());
+
     void *tmp_buf = NULL;
 
     if(posix_memalign(&tmp_buf, ALIGN_SIZE, len))
@@ -190,10 +213,19 @@ void libaio_device::get_io()
             error = event.res;
         }
 
+        AWE_MODULE_DEBUG("algo",
+                         "async_read %p request %p : %s request, buf_tmp:%p, ctx:%p",
+                         this, static_cast<ServerSan_Algo::request_t*>(ctx->pri),
+                         static_cast<ServerSan_Algo::request_t*>(ctx->pri)->to_json_obj().dumps().c_str(), event.obj->u.c.buf, ctx);
+
         if(ctx->is_read)              //将读出来的内容拷贝到request buf
         {
             memcpy(ctx->buf_ptr, event.obj->u.c.buf, event.obj->u.c.nbytes);
         }
+        AWE_MODULE_DEBUG("algo",
+                         "async_read %p request %p : %s request, buf_tmp:%p, ctx:%p",
+                         this, static_cast<ServerSan_Algo::request_t*>(ctx->pri),
+                         static_cast<ServerSan_Algo::request_t*>(ctx->pri)->to_json_obj().dumps().c_str(), event.obj->u.c.buf, ctx);
 
         io_cb_(ctx->pri, error);
         free(event.obj->u.c.buf);

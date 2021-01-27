@@ -39,8 +39,14 @@ void ServerSan_Algo::algo_aio_device::do_request(ServerSan_Algo::request_t *requ
                      "do_request %p request %p : %s request",
                      this, request, request->to_json_obj().dumps().c_str());
     if( request->is_read()) {
+        AWE_MODULE_DEBUG("algo",
+                         "do_request %p request %p : %s request",
+                         this, request, request->to_json_obj().dumps().c_str());
         aio_dev_.async_read(request->offset, request->len, request->buf, request);
     } else {
+        AWE_MODULE_DEBUG("algo",
+                         "do_request %p request %p : %s request",
+                         this, request, request->to_json_obj().dumps().c_str());
         aio_dev_.async_write(request->offset, request->len, request->buf, request);
     }
 }

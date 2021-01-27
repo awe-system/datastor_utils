@@ -86,6 +86,7 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
     void *buf_tmp = NULL;
 
     struct iocb *iocb_p = (iocb *)malloc(sizeof(struct iocb));
+    assert(iocb_p != NULL);
     memset(iocb_p, 0, sizeof(sizeof(struct iocb)));
     unsigned long off = offset << 9;
 
@@ -96,7 +97,8 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
     }
     io_prep_pread(iocb_p, dev_fd, buf_tmp, len, off);
 
-    event_ctx *ctx = new event_ctx(pri, true, iocb_p, buf);
+    event_ctx *ctx = new (nothrow)event_ctx(pri, true, iocb_p, buf);
+    assert(ctx != nullptr);
     iocb_p->data = ctx;
 
     io_set_eventfd(iocb_p, event_fd);
@@ -157,7 +159,11 @@ void libaio_device::get_io()
                      dev_path.c_str());
     if(ret != sizeof(finished_aio))
     {
-        AWE_MODULE_ERROR("aio", "read event failed : %d", ret);
+        assert_legal();
+        // io timeout or get events error;
+        AWE_MODULE_ERROR("aio", "read events fail res=%d, libaio_device : %p, "
+                                "libaio_context : %p, path : %s", ret, this, libaio_context,
+                         dev_path.c_str());
         //FIXME  错误处理
         assert(ret <= 0);
         return;
@@ -168,8 +174,6 @@ void libaio_device::get_io()
         int res = io_getevents(*libaio_context, 1, 1, &event, &timeout);
         if(res < 1)
         {
-            assert_legal();
-            // io timeout or get events error;
             AWE_MODULE_ERROR("aio", "get events fail res=%d, libaio_device : %p, "
                                     "libaio_context : %p, path : %s", res, this, libaio_context,
                              dev_path.c_str());
@@ -191,9 +195,9 @@ void libaio_device::get_io()
             memcpy(ctx->buf_ptr, event.obj->u.c.buf, event.obj->u.c.nbytes);
         }
 
+        io_cb_(ctx->pri, error);
         free(event.obj->u.c.buf);
         free(event.obj);
-        io_cb_(ctx->pri, error);
         delete ctx;
     }
 }

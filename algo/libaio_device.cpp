@@ -92,7 +92,7 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
 
     struct iocb *iocb_p = (iocb *)malloc(sizeof(struct iocb));
     assert(iocb_p != NULL);
-    memset(iocb_p, 0, sizeof(sizeof(struct iocb)));
+    memset(iocb_p, 0, sizeof(struct iocb));
     unsigned long off = offset << 9;
 
     if(posix_memalign(&buf_tmp, ALIGN_SIZE, len))
@@ -142,7 +142,7 @@ void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned
 
     memcpy(tmp_buf, buf, len);
     struct iocb *iocb_p = (iocb *)malloc(sizeof(struct iocb));
-    memset(iocb_p, 0, sizeof(sizeof(struct iocb)));
+    memset(iocb_p, 0, sizeof(struct iocb));
     unsigned long off = offset << 9;
     io_prep_pwrite(iocb_p, dev_fd, tmp_buf, len, off);
 

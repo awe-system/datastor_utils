@@ -29,7 +29,7 @@ int psync_device::open(void)
     fd = ::open(path.c_str(), O_RDWR | O_DIRECT);
     if(fd == -1)
     {
-        AWE_MODULE_DEBUG("algo", "open file failed : %d, path : %s", fd, path.c_str());
+        AWE_MODULE_ERROR("algo", "open file failed : %d, path : %s", fd, path.c_str());
         return -1;
     }
     return 0;
@@ -49,8 +49,8 @@ void psync_device::close(void)
 void psync_device::do_request(ServerSan_Algo::request_t *request)
 {
     assert_legal();
-    AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
-                     path.c_str(), request, request->to_json_obj().dumps().c_str());
+    AWE_MODULE_DEBUG("algo", "fd [%d] path : %s do request [%p] [%s]",
+                     fd, path.c_str(), request, request->to_json_obj().dumps().c_str());
     switch(request->type)
     {
         case ServerSan_Algo::REQUEST_SYNC_WRITE:
@@ -108,8 +108,8 @@ void psync_device::request_mem_align_read(ServerSan_Algo::request_t *request)
     request->push_private(request->buf);
     request->buf = static_cast<unsigned char *>(buf_4K_aligned);
     memset(request->buf, 0xaa, request->len);
-    AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
-                     path.c_str(), request, request->to_json_obj().dumps().c_str());
+    AWE_MODULE_DEBUG("algo", "path : %s  request->buf [%p]do request [%p] [%s]",
+                     path.c_str(),request->buf, request, request->to_json_obj().dumps().c_str());
 }
 
 void psync_device::request_mem_recovery_read(ServerSan_Algo::request_t *request)
@@ -186,8 +186,8 @@ void psync_device::do_request_read(ServerSan_Algo::request_t *request)
 
     if(this_len <= 0)
     {
-        AWE_MODULE_ERROR("algo", "path : %s do request [%p] [%s]",
-                         path.c_str(), request, request->to_json_obj().dumps().c_str());
+        AWE_MODULE_ERROR("algo", "fd [%d] path : %s do request [%p] [%s] this_len [%d]",
+                         fd, path.c_str(), request, request->to_json_obj().dumps().c_str(), this_len);
         err = -ServerSan_Algo::ERROR_TYPE_DEVICE;
     }
     AWE_MODULE_DEBUG("algo", "complete read path : %s do request [%p] [%s]",

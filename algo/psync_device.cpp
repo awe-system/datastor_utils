@@ -155,7 +155,7 @@ void psync_device::do_request_write(ServerSan_Algo::request_t *request)
 
     request_mem_align_write(request);
 
-    ssize_t this_len = pwrite(fd, &request->buf,
+    ssize_t this_len = pwrite(fd, request->buf,
                               request->len,
                               request->offset * 512);
 
@@ -178,18 +178,19 @@ void psync_device::do_request_read(ServerSan_Algo::request_t *request)
 
     request_mem_align_read(request);
 
-    ssize_t this_len = pread(fd, &request->buf,
+    ssize_t this_len = pread(fd, request->buf,
                              request->len,
                              request->offset * 512);
-
-    request_mem_recovery_read(request);
-
     if(this_len <= 0)
     {
-        AWE_MODULE_ERROR("algo", "fd [%d] path : %s do request [%p] [%s] this_len [%d]",
+        AWE_MODULE_ERROR("algo", "fd [%d]  path : %s do request [%p] [%s] this_len [%d]",
                          fd, path.c_str(), request, request->to_json_obj().dumps().c_str(), this_len);
         err = -ServerSan_Algo::ERROR_TYPE_DEVICE;
     }
+
+    request_mem_recovery_read(request);
+
+
     AWE_MODULE_DEBUG("algo", "complete read path : %s do request [%p] [%s]",
                      path.c_str(), request, request->to_json_obj().dumps().c_str());
     complete_request(request, err);

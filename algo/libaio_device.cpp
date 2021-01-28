@@ -122,6 +122,9 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
 
     io_set_eventfd(iocb_p, event_fd);
     int submit_num = io_submit(*libaio_context, 1, &iocb_p);
+    if (submit_num <= 0) {
+        AWE_MODULE_ERROR("algo", "submit io failed submit_num:%d", submit_num);
+    }
     assert(submit_num == 1);
 }
 

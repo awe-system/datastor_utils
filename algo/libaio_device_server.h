@@ -7,7 +7,7 @@
 
 #include "libaio_device.h"
 
-#define MAX_EPOLL_EVENT 4096           //FIXME 设置epoll事件的最大值
+#define MAX_EPOLL_EVENT 65535           //FIXME 设置epoll事件的最大值
 
 class libaio_device_service
 {

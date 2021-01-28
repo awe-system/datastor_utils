@@ -5,7 +5,7 @@
 #include <awe_log.h>
 #include "psync_service.h"
 
-#define MAX_PSYNC_THREAD_NUM 30
+#define MAX_PSYNC_THREAD_NUM 100
 
 using namespace ServerSan_Algo;
 

@@ -253,6 +253,7 @@ INSTALL(FILES algo/algo.h
         algo/super_algo_device.h
         algo/test_algo_device.h
         algo/psync_device.h
+        algo/psync_service.h
         algo/test_block_io_set.h
         algo/debug.h
         algo/libaio_device_server.h

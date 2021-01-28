@@ -20,6 +20,7 @@ using namespace std;
 #include "super_algo_device.h"
 #include "algo_error.h"
 #include "psync_device.h"
+#include "psync_service.h"
 
 #define secs_to_size(secs) (unsigned int)((secs)<<9)
 #define size_to_secs(size) (unsigned long long)((size)>>9)

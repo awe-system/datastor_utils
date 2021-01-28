@@ -70,11 +70,10 @@ void psync_device::do_request(ServerSan_Algo::request_t *request)
         case ServerSan_Algo::REQUEST_ASYNC_WRITE:
         case ServerSan_Algo::REQUEST_ASYNC_READ:
         {
-            ServerSan_Algo::psync_service *service = ServerSan_Algo::get_psync_service();
-            assert(service);
+            assert(_service);
             AWE_MODULE_DEBUG("algo", "path : %s  service [%p] do request [%p] [%s]",
-                             path.c_str(), service, request, request->to_json_obj().dumps().c_str());
-            service->do_request(this, request);
+                             path.c_str(), _service, request, request->to_json_obj().dumps().c_str());
+            _service->do_request(this, request);
             break;
         }
         default:
@@ -87,8 +86,8 @@ psync_device::~psync_device()
     AWE_MODULE_DEBUG("algo", "~psync_device file : %d, path : %s", fd, path.c_str());
 }
 
-psync_device::psync_device(const string &_path, unsigned long _size_secs) :
-        path(_path), sector_num(_size_secs), fd(-1)
+psync_device::psync_device(const string &_path, unsigned long _size_secs,ServerSan_Algo::psync_service *service) :
+        path(_path), sector_num(_size_secs), fd(-1),_service(service)
 {
     AWE_MODULE_DEBUG("algo", "psync_device file : %d, path : %s", fd, path.c_str());
 }

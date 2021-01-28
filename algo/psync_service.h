@@ -21,7 +21,6 @@ public:
     void do_request(psync_device *block, request_t * request);
 };
 
-psync_service * get_psync_service();
 };
 
 #endif //DATASTOR_UTILS_PSYNC_SERVICE_H

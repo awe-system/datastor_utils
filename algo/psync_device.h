@@ -5,11 +5,14 @@
 #ifndef DATASTOR_UTILS_PSYNC_DEVICE_H
 #define DATASTOR_UTILS_PSYNC_DEVICE_H
 
-
+namespace ServerSan_Algo
+{
+class psync_service;
+}
 class psync_device : public ServerSan_Algo::block_io, public ServerSan_Algo::algo_obj
 {
 public:
-    psync_device(const string &_path, unsigned long _size_secs);
+    psync_device(const string &_path, unsigned long _size_secs, ServerSan_Algo::psync_service *service);
     virtual ~psync_device();
     void from_json_obj(const json_obj &obj) override;
     json_obj to_json_obj() const override;
@@ -30,6 +33,7 @@ private:
     string path;
     unsigned long long sector_num;
     int fd;
+    ServerSan_Algo::psync_service *_service;
 };
 
 

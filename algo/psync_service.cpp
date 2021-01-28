@@ -35,14 +35,3 @@ void psync_service::do_request_inpool(psync_device *block, request_t *request)
     block->do_request_sync(request);
 }
 
-static psync_service *service = nullptr;
-std::mutex m;
-psync_service *ServerSan_Algo::get_psync_service()
-{
-    std::unique_lock<std::mutex> lck(m);
-    if(service != nullptr)
-    {
-        return service;
-    }
-    return new(std::nothrow)psync_service();
-}

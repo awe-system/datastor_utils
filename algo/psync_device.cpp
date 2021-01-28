@@ -26,7 +26,7 @@ unsigned long long int psync_device::get_sector_num() const
 
 int psync_device::open(void)
 {
-    fd = ::open(path.c_str(), O_RDWR | O_DIRECT);
+    fd = ::open(path.c_str(), O_RDWR );
     if(fd == -1)
     {
         AWE_MODULE_ERROR("algo", "open file failed : %d, path : %s", fd, path.c_str());
@@ -96,56 +96,56 @@ void psync_device::request_mem_align_read(ServerSan_Algo::request_t *request)
 {
     AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
                      path.c_str(), request, request->to_json_obj().dumps().c_str());
-    void *buf_4K_aligned = NULL;
-    if(request->len % ALIGN_SIZE != 0)
-    {
-        AWE_MODULE_ERROR("algo", "path : %s do request [%p] [%s]",
-                         path.c_str(), request, request->to_json_obj().dumps().c_str());
-    }
-    assert(request->len % ALIGN_SIZE == 0);
-    assert(!::posix_memalign(&buf_4K_aligned, ALIGN_SIZE, request->len));
-    request->push_private(request->buf);
-    request->buf = static_cast<unsigned char *>(buf_4K_aligned);
+//    void *buf_4K_aligned = NULL;
+//    if(request->len % ALIGN_SIZE != 0)
+//    {
+//        AWE_MODULE_ERROR("algo", "path : %s do request [%p] [%s]",
+//                         path.c_str(), request, request->to_json_obj().dumps().c_str());
+//    }
+//    assert(request->len % ALIGN_SIZE == 0);
+//    assert(!::posix_memalign(&buf_4K_aligned, ALIGN_SIZE, request->len));
+//    request->push_private(request->buf);
+//    request->buf = static_cast<unsigned char *>(buf_4K_aligned);
     memset(request->buf, 0xaa, request->len);
-    AWE_MODULE_DEBUG("algo", "path : %s  request->buf [%p]do request [%p] [%s]",
-                     path.c_str(),request->buf, request, request->to_json_obj().dumps().c_str());
+//    AWE_MODULE_DEBUG("algo", "path : %s  request->buf [%p]do request [%p] [%s]",
+//                     path.c_str(),request->buf, request, request->to_json_obj().dumps().c_str());
 }
 
 void psync_device::request_mem_recovery_read(ServerSan_Algo::request_t *request)
 {
     AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
                      path.c_str(), request, request->to_json_obj().dumps().c_str());
-    void *buf_4K_aligned = request->buf;
-    request->buf = static_cast<unsigned char *>(request->pop_private());
-    memcpy(request->buf, buf_4K_aligned, request->len);
-    free(buf_4K_aligned);
-    AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
-                     path.c_str(), request, request->to_json_obj().dumps().c_str());
+//    void *buf_4K_aligned = request->buf;
+//    request->buf = static_cast<unsigned char *>(request->pop_private());
+//    memcpy(request->buf, buf_4K_aligned, request->len);
+//    free(buf_4K_aligned);
+//    AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
+//                     path.c_str(), request, request->to_json_obj().dumps().c_str());
 }
 
 void psync_device::request_mem_align_write(ServerSan_Algo::request_t *request)
 {
     AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
                      path.c_str(), request, request->to_json_obj().dumps().c_str());
-    void *buf_4K_aligned = NULL;
-    assert(request->len % ALIGN_SIZE == 0);
-    assert(!::posix_memalign(reinterpret_cast<void **>(&buf_4K_aligned), ALIGN_SIZE, request->len));
-    memcpy(buf_4K_aligned, request->buf, request->len);
-    request->push_private(request->buf);
-    request->buf = static_cast<unsigned char *>(buf_4K_aligned);
-    AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
-                     path.c_str(), request, request->to_json_obj().dumps().c_str());
+//    void *buf_4K_aligned = NULL;
+//    assert(request->len % ALIGN_SIZE == 0);
+//    assert(!::posix_memalign(reinterpret_cast<void **>(&buf_4K_aligned), ALIGN_SIZE, request->len));
+//    memcpy(buf_4K_aligned, request->buf, request->len);
+//    request->push_private(request->buf);
+//    request->buf = static_cast<unsigned char *>(buf_4K_aligned);
+//    AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
+//                     path.c_str(), request, request->to_json_obj().dumps().c_str());
 }
 
 void psync_device::request_mem_recovery_write(ServerSan_Algo::request_t *request)
 {
     AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
                      path.c_str(), request, request->to_json_obj().dumps().c_str());
-    void *buf_4K_aligned = request->buf;
-    request->buf = static_cast<unsigned char *>(request->pop_private());
-    free(buf_4K_aligned);
-    AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
-                     path.c_str(), request, request->to_json_obj().dumps().c_str());
+//    void *buf_4K_aligned = request->buf;
+//    request->buf = static_cast<unsigned char *>(request->pop_private());
+//    free(buf_4K_aligned);
+//    AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
+//                     path.c_str(), request, request->to_json_obj().dumps().c_str());
 }
 
 void psync_device::do_request_write(ServerSan_Algo::request_t *request)

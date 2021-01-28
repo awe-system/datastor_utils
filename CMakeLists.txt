@@ -93,6 +93,8 @@ set(SOURCE_FILES
         algo/algo_section.cpp algo/algo_section.h
         algo/request_ref.h algo/request_ref.cpp
         algo/super_algo_device.cpp algo/super_algo_device.h
+        algo/psync_device.h algo/psync_device.cpp
+        algo/psync_service.cpp algo/psync_service.h
         algo/test_algo_device.h algo/test_algo_device.cpp
         algo/algo_interface.h algo/algo_interface.cpp
         algo/debug.h algo/debug.cpp

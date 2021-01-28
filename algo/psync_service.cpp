@@ -5,7 +5,7 @@
 #include <awe_log.h>
 #include "psync_service.h"
 
-#define MAX_PSYNC_THREAD_NUM 100
+#define MAX_PSYNC_THREAD_NUM 30
 
 using namespace ServerSan_Algo;
 
@@ -35,10 +35,12 @@ void psync_service::do_request_inpool(psync_device *block, request_t *request)
     block->do_request_sync(request);
 }
 
-static psync_service *service;
+static psync_service *service = nullptr;
+std::mutex m;
 psync_service *ServerSan_Algo::get_psync_service()
 {
-    if(service)
+    std::unique_lock<std::mutex> lck(m);
+    if(service != nullptr)
     {
         return service;
     }

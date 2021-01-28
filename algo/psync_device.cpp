@@ -189,3 +189,29 @@ void psync_device::do_request_read(ServerSan_Algo::request_t *request)
                      path.c_str(), request, request->to_json_obj().dumps().c_str());
     complete_request(request, err);
 }
+
+void psync_device::do_request_sync(ServerSan_Algo::request_t *request)
+{
+    assert_legal();
+    AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
+                     path.c_str(), request, request->to_json_obj().dumps().c_str());
+    switch(request->type)
+    {
+        case ServerSan_Algo::REQUEST_ASYNC_WRITE:
+        {
+            AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
+                             path.c_str(), request, request->to_json_obj().dumps().c_str());
+            do_request_write(request);
+            break;
+        }
+        case ServerSan_Algo::REQUEST_ASYNC_READ:
+        {
+            AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
+                             path.c_str(), request, request->to_json_obj().dumps().c_str());
+            do_request_read(request);
+            break;
+        }
+        default:
+            abort();
+    }
+}

@@ -10,16 +10,15 @@
 
 namespace ServerSan_Algo
 {
-class psync_service : public block_io_callback
+class psync_service
 {
     data_channel::thread_pool pool;
 private:
-    void do_request_inpool(block_io *block, request_t * request);
+    void do_request_inpool(psync_device *block, request_t * request);
 public:
     psync_service();
     virtual ~psync_service();
-    void do_request(block_io *block, request_t * request);
-    void request_done(request_t *request, int err) override;
+    void do_request(psync_device *block, request_t * request);
 };
 
 psync_service * get_psync_service();

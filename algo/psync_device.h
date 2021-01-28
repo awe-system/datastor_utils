@@ -17,6 +17,7 @@ public:
     int open(void) override;
     void close(void) override;
     void do_request(ServerSan_Algo::request_t *request) override;
+    void do_request_sync(ServerSan_Algo::request_t *request);
 private:
     void do_request_write(ServerSan_Algo::request_t *request);
     void do_request_read(ServerSan_Algo::request_t *request);

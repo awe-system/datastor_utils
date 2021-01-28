@@ -98,8 +98,13 @@ void psync_device::request_mem_align_read(ServerSan_Algo::request_t *request)
     AWE_MODULE_DEBUG("algo", "path : %s do request [%p] [%s]",
                      path.c_str(), request, request->to_json_obj().dumps().c_str());
     void *buf_4K_aligned = NULL;
+    if(request->len % ALIGN_SIZE != 0)
+    {
+        AWE_MODULE_ERROR("algo", "path : %s do request [%p] [%s]",
+                         path.c_str(), request, request->to_json_obj().dumps().c_str());
+    }
     assert(request->len % ALIGN_SIZE == 0);
-    assert(::posix_memalign(reinterpret_cast<void **>(&buf_4K_aligned), ALIGN_SIZE, request->len));
+    assert(!::posix_memalign(&buf_4K_aligned, ALIGN_SIZE, request->len));
     request->push_private(request->buf);
     request->buf = static_cast<unsigned char *>(buf_4K_aligned);
     memset(request->buf, 0xaa, request->len);
@@ -125,7 +130,7 @@ void psync_device::request_mem_align_write(ServerSan_Algo::request_t *request)
                      path.c_str(), request, request->to_json_obj().dumps().c_str());
     void *buf_4K_aligned = NULL;
     assert(request->len % ALIGN_SIZE == 0);
-    assert(::posix_memalign(reinterpret_cast<void **>(&buf_4K_aligned), ALIGN_SIZE, request->len));
+    assert(!::posix_memalign(reinterpret_cast<void **>(&buf_4K_aligned), ALIGN_SIZE, request->len));
     memcpy(buf_4K_aligned, request->buf, request->len);
     request->push_private(request->buf);
     request->buf = static_cast<unsigned char *>(buf_4K_aligned);

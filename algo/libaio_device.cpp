@@ -99,6 +99,7 @@ void libaio_device::async_read(unsigned long offset, unsigned int len, unsigned 
     {
         AWE_MODULE_ERROR("aio", "read memalign failed len=%ud", len);
         io_cb_(pri, MEMALIGN_ERR);
+        return;
     }
     memset(buf_tmp, 0xAA, len);
     memset(buf, 0xBB, len);
@@ -138,6 +139,7 @@ void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned
     {
         AWE_MODULE_ERROR("aio", "write memalign failed len=%ud", len);
         io_cb_(pri, MEMALIGN_ERR);
+        return;
     }
 
     memcpy(tmp_buf, buf, len);

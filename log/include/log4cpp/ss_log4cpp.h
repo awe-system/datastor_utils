@@ -25,6 +25,7 @@ public:
 //约定在打log级别里将某个模块的日志界别降低
     void set_module_priority(const std::string &module, int pri);
 
+    int init_awe_log(const std::string &project);
 private:
     ss_log4cpp();
     

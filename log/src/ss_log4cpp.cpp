@@ -270,3 +270,105 @@ int ss_log4cpp::compare_priority(int pri_a, int pri_b)
     assert(pri_a < LOG_PRIORITY_DEFAULT && pri_b < LOG_PRIORITY_DEFAULT);
     return pri_b - pri_a;
 }
+
+int ss_log4cpp::init_awe_log(const std::string &project)
+{
+    root_category.removeAllAppenders();
+
+    static env    log_prefix_dest("awe_log", project.c_str());
+    static env    log_level("awe_log", "log_level");
+    if(log_prefix_dest.get_string().length() <= 0)
+    {
+        printf("conf %s empty!", project.c_str());
+        return -1;
+    }
+
+    static string log_path_prefix =
+            (log4cpp::StringUtil::trim(log_prefix_dest.get_string()) ==
+             "") ? ("/var/log/msg") : log4cpp::StringUtil::trim(
+                    log_prefix_dest.get_string());
+
+    std::string size_conf = project + "_size";
+    static env log_size("awe_log", size_conf.c_str());
+    static int max_log_file_size = (log_size.get_int() == 0) ? (MAX_LOG_FILE_SIZE) : log_size.get_int();
+    max_log_file_size = max_log_file_size * 1024 * 1024;
+
+    std::string log_num_conf = project + "_num";
+    static env log_num("awe_log", log_num_conf.c_str());
+    static int max_log_num = (log_num.get_int() == 0) ? 3 : log_num.get_int();
+
+    static string loglevel = (log4cpp::StringUtil::trim(log_level.get_string()) == "") ?
+            ("info") : log4cpp::StringUtil::trim(log_level.get_string());
+
+    log4cpp::PatternLayout *root_layout = new log4cpp::PatternLayout();
+    root_layout->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
+
+    log4cpp::RollingFileAppender
+            *roll_appender_all = new log4cpp::RollingFileAppender(
+            "roll_appender", log_path_prefix + ".log", max_log_file_size, max_log_num);
+    roll_appender_all->setLayout(root_layout);
+
+
+    log4cpp::PatternLayout *layout_error = new log4cpp::PatternLayout();
+    layout_error
+            ->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
+
+    log4cpp::RollingFileAppender
+            *roll_appender_error = new log4cpp::RollingFileAppender(
+            "roll_appender_error", log_path_prefix + "_error.log",
+            MAX_LOG_FILE_SIZE, 3);
+    roll_appender_error->setLayout(layout_error);
+
+
+    log4cpp::PatternLayout *layout_warn = new log4cpp::PatternLayout();
+    layout_warn->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
+
+    log4cpp::RollingFileAppender
+            *roll_appender_warn = new log4cpp::RollingFileAppender(
+            "roll_appender_error", log_path_prefix + "_warn.log",
+            MAX_LOG_FILE_SIZE, 3);
+    roll_appender_warn->setLayout(layout_warn);
+
+
+    log4cpp::PatternLayout *layout_info = new log4cpp::PatternLayout();
+    layout_info->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
+
+    log4cpp::RollingFileAppender
+            *roll_appender_info = new log4cpp::RollingFileAppender(
+            "roll_appender_error", log_path_prefix + "_info.log",
+            MAX_LOG_FILE_SIZE, 3);
+    roll_appender_info->setLayout(layout_info);
+
+    log4cpp::PatternLayout *layout_debug = new log4cpp::PatternLayout();
+    layout_debug
+            ->setConversionPattern("[%d{%Y-%m-%d %H:%M:%S.%l} - %p] : %m%n");
+
+    log4cpp::RollingFileAppender
+            *roll_appender_debug = new log4cpp::RollingFileAppender(
+            "roll_appender_error", log_path_prefix + "_debug.log",
+            MAX_LOG_FILE_SIZE, 3);
+    roll_appender_debug->setLayout(layout_debug);
+
+    if ( loglevel == "error" )
+    {
+        root_category.setPriority(log4cpp::Priority::ERROR);
+        cur_pri = LOG_PRIORITY_ERROR;
+    }
+    else if ( loglevel == "debug" )
+    {
+        root_category.setPriority(log4cpp::Priority::DEBUG);
+        cur_pri = LOG_PRIORITY_DEBUG;
+    }
+    else if ( loglevel == "warning" )
+    {
+        root_category.setPriority(log4cpp::Priority::WARN);
+        cur_pri = LOG_PRIORITY_WARN;
+    }
+    else
+    {
+        root_category.setPriority(log4cpp::Priority::INFO);
+        cur_pri = LOG_PRIORITY_INFO;
+    }
+    root_category.addAppender(roll_appender_all);
+    return 0;
+}

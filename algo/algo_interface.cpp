@@ -186,6 +186,10 @@ json_obj request_t::to_json_obj() const
     obj.merge(json_obj("data_buf", data.to_less_string()));
     obj.merge(json_obj("private_data", (long long) private_data));
     obj.merge(json_obj("private_data_str", dump_void(private_data)));
+    if(trace_info.length() > 0)
+    {
+        obj.merge(json_obj("trace", trace_info));
+    }
     if(checksum_on.get_string() == string("yes"))
     {
         long long checksum_val = checksum();

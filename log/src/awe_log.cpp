@@ -98,3 +98,8 @@ std::string tid_str()
     auto id = gettid();
     return std::to_string(id);
 }
+
+int init_awe_log(const std::string &project)
+{
+    return logger.init_awe_log(project);
+}

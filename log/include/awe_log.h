@@ -60,4 +60,5 @@ void awe_log_set_priority(enum priority pri);
 
 void awe_log_set_module_priority(const char *module, enum priority pri);
 
+int init_awe_log(const std::string &project);
 #endif //SS_METADATA_LOG_HEAD_H

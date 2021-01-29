@@ -156,6 +156,10 @@ void libaio_device::async_write(unsigned long offset, unsigned int len, unsigned
 
     io_set_eventfd(iocb_p, event_fd);
     int submit_num = io_submit(*libaio_context, 1, &iocb_p);
+    if(submit_num != 1)
+    {
+        AWE_MODULE_ERROR("aio", "write io_submit failed num=%d", submit_num);
+    }
     assert(submit_num == 1);
 }
 
@@ -225,6 +229,7 @@ void libaio_device::get_io()
 
         if(ctx->is_read)              //将读出来的内容拷贝到request buf
         {
+            AWE_MODULE_DEBUG("libaio_fix", "get offset=%u", event.obj->u.c.offset);
             memcpy(ctx->buf_ptr, event.obj->u.c.buf, event.obj->u.c.nbytes);
         }
         AWE_MODULE_DEBUG("algo",

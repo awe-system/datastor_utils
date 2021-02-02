@@ -49,15 +49,18 @@ public:/*下面函数会根据不同设备进行不同实现*/
     
     boost::thread_group io_worker_threads;
     int fd;
-
+    string path;
 private:
     string serial_num;
-    string path;
     unsigned long long sector_num;
     string host_name;
     bool _is_local;
     string ip;
 };
 
+bool is_buf_4k_aligned(void *buf);
+
 }
+
+
 #endif

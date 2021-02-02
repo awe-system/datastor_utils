@@ -24,6 +24,15 @@ static void dump_request(request_t *req)
     }
 }
 
+#define ALIGNED_BASE 4096
+#define uintptr_t unsigned long long int
+
+bool ServerSan_Algo::is_buf_4k_aligned(void *buf)
+{
+    uintptr_t buf_long = (uintptr_t)buf;
+    return buf_long % ALIGNED_BASE == 0;
+}
+
 void request_worker(test_algo_device *device)
 {
     request_t *request = NULL;
@@ -43,19 +52,29 @@ void request_worker(test_algo_device *device)
             {
                 throw ERROR_TYPE_NOTOPEN;
             }
+
+            if(!is_buf_4k_aligned(request->buf))
+            {
+                AWE_MODULE_ERROR("algo",
+                                 "fault IO not 4K align request_worker path[%s] count[%lu] seek[%lu] buf[%p]  <=0 %p request %p : %s",
+                                 device->path.c_str(), size_to_secs(request->len), request->offset, request->buf,
+                                 device, request, request->to_json_obj().dumps().c_str());
+            }
+
             switch(request->type)
             {
                 case REQUEST_ASYNC_WRITE:
                     while(real_len < request->len)
                     {
-                        auto this_len = pwrite(device->fd, request->buf,
-                                               request->len,
-                                               request->offset * 512);
+                        int this_len = pwrite(device->fd, request->buf,
+                                              request->len,
+                                              request->offset * 512);
                         if(this_len <= 0)
                         {
-                            cout
-                                    << "request_worker REQUEST_ASYNC_READ this_len:["
-                                    << this_len << "]" << endl;
+                            AWE_MODULE_ERROR("algo",
+                                             "fault IO request_worker path[%s] count[%lu] seek[%lu] buf[%p] this_len[%d] <=0 %p request %p : %s",
+                                             device->path.c_str(), size_to_secs(request->len), request->offset, request->buf, this_len,
+                                             device, request, request->to_json_obj().dumps().c_str());
                             dump_request(request);
                             throw ERROR_TYPE_DEVICE;
                         }
@@ -66,14 +85,15 @@ void request_worker(test_algo_device *device)
                 case REQUEST_ASYNC_READ:
                     while(real_len < request->len)
                     {
-                        auto this_len = pread(device->fd, request->buf,
-                                              request->len,
-                                              request->offset * 512);
+                        int this_len = pread(device->fd, request->buf,
+                                             request->len,
+                                             request->offset * 512);
                         if(this_len <= 0)
                         {
-                            cout
-                                    << "request_worker REQUEST_ASYNC_READ this_len:["
-                                    << this_len << "]" << endl;
+                            AWE_MODULE_ERROR("algo",
+                                             "fault IO request_worker path[%s] count[%u] seek[%lu] this_len[%d] <=0 %p request %p : %s",
+                                             device->path.c_str(), size_to_secs(request->len), request->offset, this_len,
+                                             device, request, request->to_json_obj().dumps().c_str());
                             dump_request(request);
                             throw ERROR_TYPE_DEVICE;
                         }
@@ -89,13 +109,13 @@ void request_worker(test_algo_device *device)
         }
         catch(...)
         {
-            AWE_MODULE_DEBUG("algo",
+            AWE_MODULE_ERROR("algo",
                              "request_worker before complete ERROR_TYPE_DEVICE device %p request %p : %s",
                              device, request, request->to_json_obj().dumps().c_str());
             //            printf("test error req done catch\n");
             device->complete_request(request, ERROR_TYPE_DEVICE);
 
-            AWE_MODULE_DEBUG("algo",
+            AWE_MODULE_ERROR("algo",
                              "request_worker after complete ERROR_TYPE_DEVICE device %p request %p",
                              device, request);
             continue;
@@ -111,13 +131,12 @@ void request_worker(test_algo_device *device)
     }
 }
 
-test_algo_device::test_algo_device(const string &serial_num, const string &path,
+test_algo_device::test_algo_device(const string &serial_num, const std::string &path,
                                    unsigned long sector_num) :
-
-        io_request_queue(MAX_QUE_DEPTH),
         serial_num(serial_num),
         path(path),
-        sector_num(sector_num)
+        sector_num(sector_num),
+        io_request_queue(MAX_QUE_DEPTH)
 {
     th = io_worker_threads.create_thread(bind(request_worker, this));
 }
@@ -126,26 +145,27 @@ test_algo_device::test_algo_device(const string &serial_num, const string &path,
 test_algo_device::test_algo_device(const string &_ser, const string &_path,
                                    const string &host,
                                    unsigned long _size_secs, bool is_local) :
-        io_request_queue(MAX_QUE_DEPTH),
         serial_num(_ser),
         path(_path),
-        sector_num(_size_secs),
         host_name(host),
-        _is_local(is_local)
+        sector_num(_size_secs),
+        _is_local(is_local),
+        io_request_queue(MAX_QUE_DEPTH)
 {
     th = io_worker_threads.create_thread(bind(request_worker, this));
 }
+
 
 test_algo_device::test_algo_device(const string &_ser, const string &_path,
                                    const string &host,
                                    unsigned long long sector_num,
                                    const string &ip) :
-        io_request_queue(MAX_QUE_DEPTH),
         serial_num(_ser),
         path(_path),
-        sector_num(sector_num),
         host_name(host),
+        sector_num(sector_num),
         //        _is_local(is_local),
+        io_request_queue(MAX_QUE_DEPTH),
         ip(ip)
 {
     th = io_worker_threads.create_thread(bind(request_worker, this));
@@ -174,7 +194,7 @@ bool test_algo_device::is_local(void) const
 
 int test_algo_device::open(void)
 {
-    fd = ::open(path.c_str(), O_RDWR);
+    fd = ::open(path.c_str(), O_RDWR | O_DIRECT);
     //    printf("test_algo_device::open:fd = %d, errno = %d, path = %s\n", fd, errno, path.c_str());
     if(fd == -1)
     {
@@ -219,8 +239,8 @@ void test_algo_device::do_request(request_t *request)
                 //                cout<<"fd:"<<fd<<" len:"<<request->len<<" off:"<<request->offset<<endl;
                 while(real_len < request->len)
                 {
-                    auto this_len = pwrite(fd, request->buf, request->len,
-                                           request->offset * 512);
+                    int this_len = pwrite(fd, request->buf, request->len,
+                                          request->offset * 512);
 
                     //                cout<<"after Write real_len:"<<real_len<<endl;
                     if(this_len <= 0)
@@ -240,8 +260,8 @@ void test_algo_device::do_request(request_t *request)
                 is_sync = true;
                 while(real_len < request->len)
                 {
-                    auto this_len = pread(fd, request->buf, request->len,
-                                          request->offset * 512);
+                    int this_len = pread(fd, request->buf, request->len,
+                                         request->offset * 512);
                     if(this_len <= 0)
                     {
                         throw ERROR_TYPE_DEVICE;
